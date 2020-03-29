@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ThemeConstantService } from '../../services/theme-constant.service';
+import { User } from '@covid19-helpline/models';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-header',
@@ -12,8 +14,15 @@ export class HeaderComponent{
     quickViewVisible : boolean = false;
     isFolded : boolean;
     isExpand : boolean;
+    currentUser: User = {
+      firstName : "Pradeep",
+      lastName : "Sharma",
+      profilePic:'',
+      mobileNo:'9716464156',
+      aadhaarNo:'222971644156',
+    };
 
-    constructor( private themeService: ThemeConstantService) {}
+    constructor(private router: Router, private themeService: ThemeConstantService) {}
 
     ngOnInit(): void {
         this.themeService.isMenuFoldedChanges.subscribe(isFolded => this.isFolded = isFolded);
@@ -32,38 +41,9 @@ export class HeaderComponent{
         this.themeService.toggleFold(this.isFolded);
     }
 
-    searchToggle(): void {
-        this.searchVisible = !this.searchVisible;
-    }
+  logOut() {
 
-    quickViewToggle(): void {
-        this.quickViewVisible = !this.quickViewVisible;
-    }
+      this.router.navigate(['login']);
 
-    notificationList = [
-        {
-            title: 'You received a new message',
-            time: '8 min',
-            icon: 'mail',
-            color: 'ant-avatar-' + 'blue'
-        },
-        {
-            title: 'New user registered',
-            time: '7 hours',
-            icon: 'user-add',
-            color: 'ant-avatar-' + 'cyan'
-        },
-        {
-            title: 'System Alert',
-            time: '8 hours',
-            icon: 'warning',
-            color: 'ant-avatar-' + 'red'
-        },
-        {
-            title: 'You have a new update',
-            time: '2 days',
-            icon: 'sync',
-            color: 'ant-avatar-' + 'gold'
-        }
-    ];
+  }
 }

@@ -161,8 +161,17 @@ $color-gray-light: #6E829C;
   opacity: 0.7;
 }
 
-.btn-medium {
+.ant-calendar-picker {
+  width: 100%;
+}
 
+.ant-calendar-picker-input.ant-input {
+  padding: 0.25rem 0.5rem !important;
+}
+
+
+.ant-form-item-label {
+  text-align: left;
 }
 
 .ant-form-item{

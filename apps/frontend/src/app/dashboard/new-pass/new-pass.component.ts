@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { GeneralService } from '../../shared/services/general.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'nest-js-boiler-plate-new-pass',
@@ -13,7 +14,8 @@ import { GeneralService } from '../../shared/services/general.service';
 export class NewPassComponent implements OnInit {
 
   public applicationForm: FormGroup;
-
+  public requestId:string;
+  public dateFormat = 'MM/dd/yyyy';
 
   // doc upload
   public uploadedImages = [];
@@ -26,33 +28,61 @@ export class NewPassComponent implements OnInit {
   public selectedReason:any;
   public selectedState:any;
   public selectedCity:any;
+  public selectedPurpose:any;
+
   public cityDataSource: any[] = [{
     name:'Indore',
     id:'10',
   }];
+
   public stateDataSource: any[] = [{
     name:'Madhya Pradesh',
     id:'23',
   }];
+
   public reasonDataReason: any[] = [{
     name:'Medical',
     id:'23',
   }];
+
+  public purposeDataReason: any[] = [
+    {
+      name:'Medical emergency',
+      id:'1',
+    },
+    {
+    name:'Police complaint',
+    id:'2',
+    },
+    {
+      name:'Doctors appointment',
+      id:'3',
+    }];
+
   public isSearchingState: boolean;
   public isSearchingCity: boolean;
   public isSearchingReason:boolean;
+  public isSearchingPurpose: boolean;
+
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
   public modelChangedReason = new Subject<string>();
+  public modelChangedPurpose = new Subject<string>();
 
   constructor(private FB: FormBuilder, protected notification: NzNotificationService,
-              private _generalService: GeneralService) {
+              private _generalService: GeneralService, private _activatedRouter: ActivatedRoute) {
     this.notification.config({
       nzPlacement: 'bottomRight'
     });
   }
 
   ngOnInit() {
+
+    this.requestId = this._activatedRouter.snapshot.params.requestId;
+
+    if (this.requestId) {
+      this.getPassRequest();
+    }
 
     this.attachementUrl = '';
 
@@ -71,7 +101,7 @@ export class NewPassComponent implements OnInit {
       address: [null, [Validators.required]],
       mobile: [null, [Validators.required]],
       passDate: [null, [Validators.required]],
-      passNeededFor: [null, [Validators.required]],
+      purpose: [null, [Validators.required]],
       vehicleNumber: [null, [Validators.required]],
       reasonCode: [null, [Validators.required]],
       reasonDetails: [null, [Validators.required]],
@@ -81,6 +111,8 @@ export class NewPassComponent implements OnInit {
       profilePic :[null, [Validators.required]],
       aadharPic :[null, [Validators.required]],
       supportingDocs :[[], [Validators.required]],
+      travellerName :[null],
+      travellerAadhar :[null],
     });
 
 
@@ -155,9 +187,36 @@ export class NewPassComponent implements OnInit {
       });
     // end search state
 
+    // search state
+    this.modelChangedPurpose
+      .pipe(
+        debounceTime(500))
+      .subscribe(() => {
+        const queryText = this.applicationForm.get('purpose').value;
+        const name = this.selectedReason.name
+        if (!queryText || this.applicationForm.get('purpose').value === name) {
+          return;
+        }
+        this.isSearchingPurpose = true;
+        const json = {
+          stateId: this.selectedPurpose.id,
+          query : queryText
+        }
+        // this._locationService.searchState(json).subscribe((data) => {
+        //   this.isSearchingPurpose = false;
+        //   this.purposeDataSource = data.data;
+        // });
+
+      });
+    // end search purpose
+
 
   }
 
+
+  public getPassRequest() {
+
+  }
 
   public selectStateTypeahead(state: any) {
     if (state && state.id) {
@@ -182,6 +241,14 @@ export class NewPassComponent implements OnInit {
       this.applicationForm.get('reasonCode').patchValue(reason.name);
     }
     this.modelChangedReason.next();
+  }
+
+  public selectPurposeTypeahead(purpose: any) {
+    if (purpose && purpose.id) {
+      this.selectedPurpose = purpose;
+      this.applicationForm.get('purpose').patchValue(purpose.name);
+    }
+    this.modelChangedPurpose.next();
   }
 
 

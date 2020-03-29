@@ -14,9 +14,10 @@ import { AuthService as SocialAuthService, GoogleLoginProvider } from 'angularx-
 
 export class LoginComponent implements OnInit, OnDestroy {
   public loginForm: FormGroup;
+  public otpForm: FormGroup;
+
   public loginInProcess = false;
   public isSubmitted: boolean;
-  public featuresList: any;
 
   constructor(private _authService: AuthService,
               private _authQuery: AuthQuery,
@@ -26,8 +27,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
-      emailId: new FormControl(null, [Validators.required, Validators.pattern('^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$')]),
-      password: new FormControl(null, [Validators.required])
+      mobile: new FormControl(null, [Validators.required]),
+      firstName: new FormControl(null, [Validators.required]),
+      lastName: new FormControl(null, [Validators.required])
+    });
+
+    this.otpForm = new FormGroup({
+      otp: new FormControl(null, [Validators.required])
     });
 
     this._authQuery.isLoginInProcess$.pipe(untilDestroyed(this)).subscribe(res => {
@@ -48,22 +54,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.featuresList = [
-      {
-        title: 'Ant Design Title 1',
-        description: 'wlsdfjldsfkj'
-      },
-      {
-        title: 'Ant Design Title 2'
-      },
-      {
-        title: 'Ant Design Title 3'
-      },
-      {
-        title: 'Ant Design Title 4'
-      }
-    ];
-
   }
 
   loginWithGoogle() {
@@ -75,7 +65,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   submitForm() {
     this.isSubmitted = true;
-    this._authService.login(this.loginForm.value).subscribe();
+    //this._authService.login(this.loginForm.value).subscribe();
+  }
+
+  submitOTP() {
+    this.isSubmitted = false;
+    //this._authService.login(this.loginForm.value).subscribe();
   }
 
   ngOnDestroy(): void {

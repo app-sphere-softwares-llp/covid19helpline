@@ -28,25 +28,19 @@
               class="login-form"
               (ngSubmit)="submitForm()">
               <nz-form-item>
-                <nz-form-label nzRequired nzFor="emailId">Email</nz-form-label>
-                <nz-form-control>
-                  <input
-                    type="email"
-                    nz-input
-                    formControlName="emailId"
-                    placeholder="Email"
-                    autocomplete="none"
-                    nzSize="small"
-                    id="emailId"
-                    maxlength="100"
-                    required
-                  />
-
-                  <nz-form-explain
-                    *ngIf="
-                      forgotForm.get('emailId').dirty &&
-                      forgotForm.get('emailId').errors
-                    ">Please input your email!</nz-form-explain>
+                <nz-form-label class="m-b-5" nzRequired nzFor="emailId">Mobile Number (मोबाइल नंबर)<span class="text-danger">*</span>
+                  <br>(Preferable WhatsApp number)</nz-form-label>
+                <nz-form-control nzValidatingTip="Please enter Mobile number!">
+                  <nz-input-group [nzPrefix]="prefixUser">
+                    <input
+                      type="text"
+                      nz-input
+                      nzSize="small"
+                      maxlength="10"
+                      formControlName="mobile"
+                      required="true"
+                      placeholder="Mobile"/>
+                  </nz-input-group>
                 </nz-form-control>
               </nz-form-item>
 
@@ -69,9 +63,14 @@
                   </div>
                 </nz-form-control>
               </nz-form-item>
+
               <nz-form-item *ngIf="responseMessage && responseMessage.message" >
                 <span [ngClass]="'text-'+responseMessage.type">{{responseMessage.message}}</span>
               </nz-form-item>
+
+              <ng-template #prefixUser><i nz-icon nzType="user"></i></ng-template>
+
+
             </form>
 
           </nz-card>

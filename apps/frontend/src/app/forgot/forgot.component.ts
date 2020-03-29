@@ -14,7 +14,7 @@ export class ForgotComponent implements OnInit {
   submitForm(): void {
     this.loading=true;
     if(!this.forgotForm.invalid){
-      setTimeout(()=>{this.responseMessage={message:'Please check your email to reset password.', type:'success'};this.loading=false},1000);
+      setTimeout(()=>{this.responseMessage={message:'Please check your mobile to get OTP.', type:'success'};this.loading=false},1000);
     }
   }
 
@@ -23,7 +23,7 @@ export class ForgotComponent implements OnInit {
 
   ngOnInit(): void {
     this.forgotForm = new FormGroup({
-      emailId: new FormControl(null, [Validators.required])
+      mobile: new FormControl(null, [Validators.required])
     });
   }
 }

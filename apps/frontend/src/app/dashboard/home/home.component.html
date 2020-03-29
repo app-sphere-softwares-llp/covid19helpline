@@ -1,9 +1,120 @@
-<nz-card style="height:300px;padding-top:50px">
-  <nz-empty
-    [nzNotFoundImage]="false"
-    [nzNotFoundContent]="contentTpl">
-    <ng-template #contentTpl>
-      <span>Coming soon...</span>
-    </ng-template>
-  </nz-empty>
+<nz-card [nzSize]="'small'">
+
+  <nz-tabset>
+
+    <nz-tab nzTitle="Dashboard">
+
+      <div class="row">
+        <div class="col-md-4">
+          Map
+
+          <div class="map-box">
+
+          </div>
+
+        </div>
+        <div class="col-md-8">
+          Heat Map
+          <div class="map-box">
+
+          </div>
+        </div>
+      </div>
+
+    </nz-tab>
+    <!-- tab 1 -->
+
+    <nz-tab nzTitle="New Request">
+
+      <nz-table #basicTable [nzData]="listOfData">
+        <thead>
+          <tr>
+            <th>SN.</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Destination Address</th>
+            <th>Pass Date & Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data; let i=index;">
+            <td>{{(i+1)}}.</td>
+            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+            <td>{{data.lastName}}</td>
+            <td>{{data.destinationAddress}}</td>
+            <td>{{data.passDate | date : 'medium'}}</td>
+            <td>
+              <a routerLink="./pass-request/{{data.id}}">View Request</a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+    </nz-tab>
+    <!-- tab 2 -->
+
+    <nz-tab nzTitle="Approved Requests">
+
+      <nz-table #basicTable [nzData]="listOfData">
+        <thead>
+          <tr>
+            <th>SN.</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Destination Address</th>
+            <th>Pass Date & Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data; let i=index;">
+            <td>{{(i+1)}}.</td>
+            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+            <td>{{data.lastName}}</td>
+            <td>{{data.destinationAddress}}</td>
+            <td>{{data.passDate | date : 'medium'}}</td>
+            <td>
+              <a routerLink="./pass-request/{{data.id}}">View Request</a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+    </nz-tab>
+    <!-- tab 3 -->
+
+    <nz-tab nzTitle="Rejected Requests">
+
+      <nz-table #basicTable [nzData]="listOfData">
+        <thead>
+          <tr>
+            <th>SN.</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Destination Address</th>
+            <th>Pass Date & Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data; let i=index;">
+            <td>{{(i+1)}}.</td>
+            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+            <td>{{data.lastName}}</td>
+            <td>{{data.destinationAddress}}</td>
+            <td>{{data.passDate | date : 'medium'}}</td>
+            <td>
+              <a routerLink="./pass-request/{{data.id}}">View Request</a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+
+    </nz-tab>
+    <!-- tab 4 -->
+
+
+  </nz-tabset>
 </nz-card>

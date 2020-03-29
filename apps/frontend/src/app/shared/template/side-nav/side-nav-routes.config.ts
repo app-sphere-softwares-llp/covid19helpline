@@ -9,7 +9,7 @@ export const ROUTES: SideNavInterface[] = [
         submenu: []
     },
     {
-        path: 'new-pass',
+        path: 'pass-request',
         title: 'New Pass',
         iconType: 'nzIcon',
         iconTheme: 'outline',

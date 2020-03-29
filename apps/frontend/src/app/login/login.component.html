@@ -7,8 +7,6 @@
       </div>
       <div class="col-md-8 p-t-30 p-h-40 bg-light text-right menu-header">
         <div>
-          <a href="">About Us</a>
-          <a href="">Pricing</a>
           <a href="">Supports</a>
         </div>
       </div>
@@ -20,45 +18,69 @@
         <nz-card class="p-h-60" nzBordered="false">
 
           <p class="m-b-0">Welcome to</p>
-          <h2 class="m-b-25 font-weight-bold">Assign.Work</h2>
+          <h2 class="m-b-25 font-weight-bold">Covid-19 Helpline</h2>
 
           <form
+            *ngIf="!isSubmitted"
             nz-form
             [formGroup]="loginForm"
             class="login-form"
             (ngSubmit)="submitForm()">
+
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="emailId">Email</nz-form-label>
-              <nz-form-control nzValidatingTip="Please input your email!">
+              <nz-form-label class="m-b-5" nzRequired nzFor="emailId">Mobile Number (मोबाइल नंबर)<span class="text-danger">*</span>
+              <br>(Preferable WhatsApp number)</nz-form-label>
+
+              <nz-form-control nzValidatingTip="Please enter Mobile number!">
                 <nz-input-group [nzPrefix]="prefixUser">
                   <input
-                    type="email"
+                    type="text"
                     nz-input
                     nzSize="small"
-                    maxlength="100"
-                    formControlName="emailId"
+                    maxlength="10"
+                    formControlName="mobile"
                     required="true"
-                    pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
-                    placeholder="Email"/>
+                    placeholder="Mobile"/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+
+
+
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="emailId">First Name (पहला नाम)<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzValidatingTip="Please enter First Name!">
+                <nz-input-group [nzPrefix]="prefixUser">
+                  <input
+                    type="text"
+                    nz-input
+                    nzSize="small"
+                    maxlength="20"
+                    formControlName="firstName"
+                    required="true"
+                    placeholder="First Name"/>
                 </nz-input-group>
               </nz-form-control>
             </nz-form-item>
 
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
-              <nz-form-control nzValidatingTip="Please input your Password!">
-                <nz-input-group [nzPrefix]="prefixLock">
+              <nz-form-label nzRequired nzFor="emailId">Last Name (उपनाम)<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzValidatingTip="Please enter Last Name!">
+                <nz-input-group [nzPrefix]="prefixUser">
                   <input
-                    type="password"
+                    type="text"
                     nz-input
-                    maxlength="50"
                     nzSize="small"
+                    maxlength="30"
+                    formControlName="lastName"
                     required="true"
-                    formControlName="password"
-                    placeholder="Password"
-                  />
+                    placeholder="Last Name"/>
                 </nz-input-group>
               </nz-form-control>
+            </nz-form-item>
+
+
+            <nz-form-item>
               <a class="float-right font-size-12 m-t-5 text-primary"
                  [routerLink]="['/forgot']">Forget Password?</a>
             </nz-form-item>
@@ -74,7 +96,56 @@
                     [nzLoading]="loginInProcess"
                     class="login-form-button"
                     [nzType]="'primary'">
-                    Sign In
+                    GET OTP
+                  </button>
+                </div>
+
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+
+        <!--otp form-->
+          <form
+            *ngIf="isSubmitted"
+            nz-form
+            [formGroup]="otpForm"
+            class="login-form"
+            (ngSubmit)="submitOTP()">
+
+            <nz-form-item>
+              <nz-form-label nzRequired nzFor="otp">OTP<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzValidatingTip="Please enter OTP!">
+                <nz-input-group [nzPrefix]="prefixUser">
+                  <input
+                    type="text"
+                    nz-input
+                    nzSize="small"
+                    maxlength="4"
+                    formControlName="otp"
+                    required="true"
+                    placeholder="OTP"/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+
+
+            <nz-form-item>
+              <a class="float-right font-size-12 m-t-5 text-primary"
+                 [routerLink]="['/forgot']">Forget Password?</a>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-control>
+                <div>
+
+                  <button
+                    nz-button
+                    [nzBlock]="true"
+                    [disabled]="loginForm.invalid"
+                    [nzLoading]="loginInProcess"
+                    class="login-form-button"
+                    [nzType]="'primary'">
+                    GET OTP
                   </button>
                 </div>
 
@@ -92,12 +163,12 @@
             </div>
           </div>
           <ng-template #prefixUser><i nz-icon nzType="user"></i></ng-template>
-          <ng-template #prefixLock><i nz-icon nzType="lock"></i></ng-template>
         </nz-card>
 
         <div class="p-h-90 signup-link" style="position: absolute; bottom:20px; width: 100%;">Don't have an account? <a class="small font-weight-bold" [routerLink]="['/register']">Signup</a></div>
 
       </div>
+
       <div class="col-md-8 p-h-40 p-t-20 bg-light login-wall">
         <h2 class="text-black m-b-30">Advance Feature</h2>
         <ul class="list-unstyled login-features-list">
@@ -105,23 +176,14 @@
             <img src="../../assets/images/icons/feature_1.svg" class="mr-3" alt="Feature 1">
             <div class="media-body">
               <h5 class="mt-0 mb-0">List-based media object</h5>
+              Lorem ipsum is placeholder text commonly used in the graphic, Lorem ipsum is placeholder text commonly used in the graphic
               Lorem ipsum is placeholder text commonly used in the graphic
+              Lorem ipsum is placeholder text commonly used in the graphic
+              Lorem ipsum is placeholder text commonly used in the graphic
+              v
             </div>
           </li>
-          <li class="media my-4">
-            <img src="../../assets/images/icons/feature_2.svg" class="mr-3" alt="Feature 2">
-            <div class="media-body">
-              <h5 class="mt-0 mb-0">List-based media object</h5>
-              Lorem ipsum is placeholder text commonly used in the graphic
-            </div>
-          </li>
-          <li class="media">
-            <img src="../../assets/images/icons/feature_3.svg" class="mr-3" alt="Feature 3">
-            <div class="media-body">
-              <h5 class="mt-0 mb-0">List-based media object</h5>
-              Lorem ipsum is placeholder text commonly used in the graphic
-            </div>
-          </li>
+
         </ul>
 
       </div>

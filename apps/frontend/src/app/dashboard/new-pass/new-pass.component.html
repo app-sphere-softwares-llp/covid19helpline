@@ -1,7 +1,15 @@
-<nz-card nzTitle="Application Form"  [nzExtra]="extraTemplate">
+<nz-card class="application-form" nzTitle="Application Form" [nzExtra]="extraTemplate">
 
   <ng-template #extraTemplate>
-    <button nz-button type="submit" nzType="primary">Submit</button>
+    <div *ngIf="!requestId">
+      <button nz-button type="submit" nzType="primary" class="m-r-5">Submit</button>
+      <button nz-button type="submit" nzType="default">Cancel</button>
+    </div>
+
+    <div *ngIf="requestId">
+      <button nz-button type="submit" nzType="primary" class="m-r-5">Approve</button>
+      <button nz-button type="submit" nzType="danger">Reject</button>
+    </div>
   </ng-template>
 
   <form nz-form [formGroup]="applicationForm" (ngSubmit)="saveForm()">
@@ -32,6 +40,7 @@
                   nz-input
                   formControlName="firstName"
                   placeholder="eg: Pradeep"
+                  maxlength="20"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -49,6 +58,7 @@
                   nz-input
                   formControlName="lastName"
                   placeholder="eg : Sharma"
+                  maxlength="30"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -75,12 +85,8 @@
                   <nz-auto-option
                     *ngFor="let option of stateDataSource"
                     [nzLabel]="option && option.name"
-                    [nzValue]="option"
-                  >
+                    [nzValue]="option">
                     <span>{{ option && option.name }}</span>
-                    <span *ngIf="option && option.name">{{
-                      option && option.name
-                    }}</span>
                   </nz-auto-option>
                 </nz-autocomplete>
               </nz-form-control>
@@ -112,12 +118,8 @@
                   <nz-auto-option
                     *ngFor="let option of cityDataSource"
                     [nzLabel]="option && option.name"
-                    [nzValue]="option"
-                  >
+                    [nzValue]="option">
                     <span>{{ option && option.name }}</span>
-                    <span *ngIf="option && option.name">{{
-                      option && option.name
-                    }}</span>
                   </nz-auto-option>
                 </nz-autocomplete>
               </nz-form-control>
@@ -141,6 +143,7 @@
                   nz-input
                   formControlName="aadhar"
                   placeholder="eg: 0000 0000 0000"
+                  maxlength="12"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -158,6 +161,7 @@
                   nz-input
                   formControlName="mobile"
                   placeholder="eg: 99999 99999"
+                  maxlength="10"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -175,27 +179,82 @@
                   nz-input
                   formControlName="vehicleNumber"
                   placeholder="eg: MP 01 AB 0000"
+                  maxlength="15"
                 />
               </nz-form-control>
             </nz-form-item>
           </div>
 
-          <div class="col-md-8">
+
+          <div class="col-md-12">
+            <div class="row">
+
+          <div class="col-md-4">
             <nz-form-item>
               <nz-form-label
-                >Full Address (पूरा पता)<span class="text-danger"
-                  >*</span
-                ></nz-form-label
-              >
+              >Pass Date (पास की तारीख)<span class="text-danger">*</span
+              ></nz-form-label>
+
+              <nz-form-control nzErrorTip="Please enter Pass Date!">
+                <nz-date-picker [nzSize]="'default'" formControlName="passDate" placeholder="eg : MM/DD/YYYY" [nzFormat]="dateFormat"></nz-date-picker>
+              </nz-form-control>
+
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>Purpose? (उद्देश्य?)<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzErrorTip="Please select Purpose!">
+
+                <nz-input-group [nzSuffix]="suffixIconSearchPurpose">
+                  <input
+                    placeholder="Search"
+                    formControlName="purpose"
+                    nz-input
+                    (ngModelChange)="selectPurposeTypeahead($event)"
+                    nzSize="small"
+                    [nzAutocomplete]="autoPurpose"/>
+                </nz-input-group>
+
+                <nz-autocomplete #autoPurpose>
+                  <nz-auto-option
+                    *ngFor="let option of purposeDataReason"
+                    [nzLabel]="option && option.name"
+                    [nzValue]="option">
+                    <span>{{ option && option.name }}</span>
+
+                  </nz-auto-option>
+                </nz-autocomplete>
+
+              </nz-form-control>
+              <ng-template #suffixIconSearchPurpose>
+                <i nz-icon nzType="search" *ngIf="!isSearchingPurpose"></i>
+                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingPurpose"></i>
+              </ng-template>
+
+            </nz-form-item>
+
+
+          </div>
+
+
+          <div class="col-md-8">
+            <nz-form-item>
+              <nz-form-label>Full Address (पूरा पता)<span class="text-danger">*</span></nz-form-label>
               <nz-form-control nzErrorTip="Please enter your Full Address!">
                 <textarea
                   nz-input
                   formControlName="address"
                   placeholder="eg: Flat, Street, Village, etc..."
+                  maxlength="500"
+                  rows="3"
                 ></textarea>
               </nz-form-control>
             </nz-form-item>
           </div>
+
+          </div>
+          </div>
+
         </div>
       </div>
       <!--    Aadhar card upload -->
@@ -225,6 +284,7 @@
                   nz-input
                   formControlName="travellerName"
                   placeholder="eg: Pradeep Sharma"
+                  maxlength="50"
                 />
               </nz-form-control>
             </nz-form-item>
@@ -237,6 +297,7 @@
                 <input
                   nz-input
                   formControlName="travellerAadhar"
+                  maxlength="12"
                   placeholder="eg: 0000 0000 0000"/>
               </nz-form-control>
             </nz-form-item>
@@ -277,12 +338,9 @@
               <nz-auto-option
                 *ngFor="let option of reasonDataReason"
                 [nzLabel]="option && option.name"
-                [nzValue]="option"
-              >
+                [nzValue]="option">
                 <span>{{ option && option.name }}</span>
-                <span *ngIf="option && option.name">{{
-                  option && option.name
-                }}</span>
+
               </nz-auto-option>
             </nz-autocomplete>
           </nz-form-control>
@@ -302,6 +360,8 @@
             <textarea
               nz-input
               formControlName="reasonDetails"
+              maxlength="500"
+              rows="3"
               placeholder="eg: to get emergency medical treatment"
             ></textarea>
           </nz-form-control>
@@ -321,21 +381,20 @@
               nz-input
               formControlName="firstName"
               placeholder="eg: 000000"
+              maxlength="6"
             />
           </nz-form-control>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label
-            >Destination Area Address (गंतव्य क्षेत्र का पता)<span
-              class="text-danger"
-              >*</span
-            ></nz-form-label
-          >
+          <nz-form-label>Destination Area Address (गंतव्य क्षेत्र का पता)<span
+              class="text-danger">*</span></nz-form-label>
           <nz-form-control nzErrorTip="Please enter Destination Area Address!">
             <textarea
               nz-input
               formControlName="address"
               placeholder="eg: Flat, Street, Village, etc..."
+              maxlength="500"
+              rows="3"
             ></textarea>
           </nz-form-control>
         </nz-form-item>
@@ -385,7 +444,17 @@
     </section>
 
     <section class="row m-t-25">
-      <button nz-button type="submit" nzType="primary">Submit</button>
+
+      <div *ngIf="!requestId">
+        <button nz-button type="submit" nzType="primary" class="m-r-5">Submit</button>
+        <button nz-button type="submit" nzType="default">Cancel</button>
+      </div>
+
+      <div *ngIf="requestId">
+        <button nz-button type="submit" nzType="primary" class="m-r-5">Approve</button>
+        <button nz-button type="submit" nzType="danger">Reject</button>
+      </div>
+
     </section>
 
 

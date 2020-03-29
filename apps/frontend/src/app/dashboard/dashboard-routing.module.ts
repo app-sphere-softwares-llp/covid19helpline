@@ -20,8 +20,12 @@ const routes: Routes = [
       {
         path: 'dashboard', component: HomeComponent
       },
+
       {
-        path: 'new-pass', component: NewPassComponent
+        path: 'pass-request', component: NewPassComponent
+      },
+      {
+        path: 'pass-request/:requestId', component: NewPassComponent
       }
     ]
   }

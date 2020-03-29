@@ -1,8 +1,11 @@
-.switch-btns{
-  margin-top: 0px!important;
+.map-box {
+  margin-top: 5px;
+  height: 400px;
+  width: 100%;
+  border:1px solid #6E829C;
+  border-radius: 4px;
 }
-@media screen and (max-width: 768px) {
-  .switch-btns{
-    margin-top: auto!important;
-  }
+
+.ant-table-tbody > tr > td {
+  padding: 5px 5px;
 }
