@@ -36,5 +36,7 @@ export class User {
   username?: string;
   lastLoginProvider?: UserLoginProviderEnum;
   locale?: string;
+  mobileNo: string;
+  aadhaarNo: string;
 }
 

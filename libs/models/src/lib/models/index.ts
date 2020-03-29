@@ -4,3 +4,5 @@ export * from './reset-password.model';
 export * from './email.model';
 export * from './email.template.subject.mapper.model';
 export * from './sms.model';
+export * from './get-pass.model';
+export * from './city.model';
