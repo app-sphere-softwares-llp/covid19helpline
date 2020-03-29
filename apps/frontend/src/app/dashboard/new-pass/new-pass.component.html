@@ -1,7 +1,393 @@
-<nz-card>
-  <nz-empty [nzNotFoundImage]="false" [nzNotFoundContent]="contentTpl">
-    <ng-template #contentTpl>
-      <span>Coming soon...</span>
-    </ng-template>
-  </nz-empty>
+<nz-card nzTitle="Application Form"  [nzExtra]="extraTemplate">
+
+  <ng-template #extraTemplate>
+    <button nz-button type="submit" nzType="primary">Submit</button>
+  </ng-template>
+
+  <form nz-form [formGroup]="applicationForm" (ngSubmit)="saveForm()">
+    <section class="row">
+      <!--    profile picture-->
+      <div class="col-md-2 text-center">
+
+        <!-- if has image then remove "opacity-03" class-->
+        <div class="pic-box profile-pic opacity-03">
+
+        </div>
+        <p>Upload Photo<br />(अपलोड तस्वीर)<span class="text-danger">*</span></p>
+      </div>
+
+      <!--  form controls-->
+      <div class="col-md-7">
+        <!--      Row 1-->
+        <div class="row">
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label
+                >First Name (पहला नाम)<span class="text-danger"
+                  >*</span
+                ></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please input your First Name!">
+                <input
+                  nz-input
+                  formControlName="firstName"
+                  placeholder="eg: Pradeep"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label
+                >Last Name (उपनाम)<span class="text-danger"
+                  >*</span
+                ></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your Last Name!">
+                <input
+                  nz-input
+                  formControlName="lastName"
+                  placeholder="eg : Sharma"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-3">
+            <nz-form-item class="relative">
+              <nz-form-label nzFor="taskType"
+                >State (राज्य)<span class="text-danger">*</span></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your State!">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                  <input
+                    placeholder="Search"
+                    formControlName="state"
+                    nz-input
+                    (ngModelChange)="selectStateTypeahead($event)"
+                    nzSize="small"
+                    [nzAutocomplete]="autoState"
+                  />
+                </nz-input-group>
+
+                <nz-autocomplete #autoState>
+                  <nz-auto-option
+                    *ngFor="let option of stateDataSource"
+                    [nzLabel]="option && option.name"
+                    [nzValue]="option"
+                  >
+                    <span>{{ option && option.name }}</span>
+                    <span *ngIf="option && option.name">{{
+                      option && option.name
+                    }}</span>
+                  </nz-auto-option>
+                </nz-autocomplete>
+              </nz-form-control>
+              <ng-template #suffixIconSearch>
+                <i nz-icon nzType="search" *ngIf="!isSearchingState"></i>
+                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingState"></i>
+              </ng-template>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label
+                >City (शहर)<span class="text-danger">*</span></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your City!">
+                <nz-input-group [nzSuffix]="suffixIconSearchCity">
+                  <input
+                    placeholder="Search"
+                    formControlName="city"
+                    nz-input
+                    (ngModelChange)="selectCityTypeahead($event)"
+                    nzSize="small"
+                    [nzAutocomplete]="autoCity"
+                  />
+                </nz-input-group>
+
+                <nz-autocomplete #autoCity>
+                  <nz-auto-option
+                    *ngFor="let option of cityDataSource"
+                    [nzLabel]="option && option.name"
+                    [nzValue]="option"
+                  >
+                    <span>{{ option && option.name }}</span>
+                    <span *ngIf="option && option.name">{{
+                      option && option.name
+                    }}</span>
+                  </nz-auto-option>
+                </nz-autocomplete>
+              </nz-form-control>
+              <ng-template #suffixIconSearchCity>
+                <i nz-icon nzType="search" *ngIf="!isSearchingCity"></i>
+                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingCity"></i>
+              </ng-template>
+            </nz-form-item>
+          </div>
+        </div>
+        <!--      Row 2-->
+
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-item>
+              <nz-form-label
+                >Aadhar (आधार)<span class="text-danger">*</span></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your Aadhar Number!">
+                <input
+                  nz-input
+                  formControlName="aadhar"
+                  placeholder="eg: 0000 0000 0000"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-4">
+            <nz-form-item>
+              <nz-form-label
+                >Mobile (मोबाइल नंबर)<span class="text-danger"
+                  >*</span
+                ></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your Mobile!">
+                <input
+                  nz-input
+                  formControlName="mobile"
+                  placeholder="eg: 99999 99999"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-4">
+            <nz-form-item>
+              <nz-form-label
+                >Vehicle Number (गाडी नंबर)<span class="text-danger"
+                  >*</span
+                ></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your Vehicle Number!">
+                <input
+                  nz-input
+                  formControlName="vehicleNumber"
+                  placeholder="eg: MP 01 AB 0000"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-8">
+            <nz-form-item>
+              <nz-form-label
+                >Full Address (पूरा पता)<span class="text-danger"
+                  >*</span
+                ></nz-form-label
+              >
+              <nz-form-control nzErrorTip="Please enter your Full Address!">
+                <textarea
+                  nz-input
+                  formControlName="address"
+                  placeholder="eg: Flat, Street, Village, etc..."
+                ></textarea>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+      <!--    Aadhar card upload -->
+      <div class="col-md-3 text-center">
+
+        <!-- if has image then remove "opacity-03" class-->
+        <div class="pic-box aadhar-pic opacity-03"></div>
+        <p>Upload Aadhar (अपलोड आधार)<span class="text-danger">*</span></p>
+      </div>
+
+    </section>
+
+
+    <section class="row m-t-25">
+
+      <div class="col-md-12">
+        <p class="text-black">Add Person who is Travelling with You (अपने साथ यात्रा करने वाले व्यक्ति को जोड़ें )</p>
+
+
+      <!-- Traveller Info -->
+        <div class="row traveller-row">
+          <div class="col-md-4">
+            <nz-form-item>
+              <nz-form-label>Full Name (पूरा नाम)<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzErrorTip="Please enter Full Name!">
+                <input
+                  nz-input
+                  formControlName="travellerName"
+                  placeholder="eg: Pradeep Sharma"
+                />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="col-md-3">
+            <nz-form-item>
+              <nz-form-label>Aadhar (आधार)<span class="text-danger">*</span></nz-form-label>
+              <nz-form-control nzErrorTip="Please enter Aadhar!">
+                <input
+                  nz-input
+                  formControlName="travellerAadhar"
+                  placeholder="eg: 0000 0000 0000"/>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col-md-5">
+            <button nz-button type="button" nzType="default">Add</button>
+          </div>
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <section class="row m-t-25">
+      <div class="col-md-4">
+        <nz-form-item class="relative">
+          <nz-form-label
+            >Reason Code (कारण कोड)<span class="text-danger"
+              >*</span
+            ></nz-form-label
+          >
+          <nz-form-control nzErrorTip="Please select Reason Code!">
+            <nz-input-group [nzSuffix]="suffixIconSearchReasonCode">
+              <input
+                placeholder="Search"
+                formControlName="reasonCode"
+                nz-input
+                (ngModelChange)="selectReasonTypeahead($event)"
+                nzSize="small"
+                [nzAutocomplete]="autoReason"
+              />
+            </nz-input-group>
+
+            <nz-autocomplete #autoReason>
+              <nz-auto-option
+                *ngFor="let option of reasonDataReason"
+                [nzLabel]="option && option.name"
+                [nzValue]="option"
+              >
+                <span>{{ option && option.name }}</span>
+                <span *ngIf="option && option.name">{{
+                  option && option.name
+                }}</span>
+              </nz-auto-option>
+            </nz-autocomplete>
+          </nz-form-control>
+          <ng-template #suffixIconSearchReasonCode>
+            <i nz-icon nzType="search" *ngIf="!isSearchingReason"></i>
+            <i class="fas fa-spin fa-spinner" *ngIf="isSearchingReason"></i>
+          </ng-template>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label
+            >Reason Details (कारण विवरण)<span class="text-danger"
+              >*</span
+            ></nz-form-label
+          >
+          <nz-form-control nzErrorTip="Please enter Reason Details!">
+            <textarea
+              nz-input
+              formControlName="reasonDetails"
+              placeholder="eg: to get emergency medical treatment"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-4">
+        <nz-form-item>
+          <nz-form-label
+            >Destination Area PIN (गंतव्य क्षेत्र का PIN)<span
+              class="text-danger"
+              >*</span
+            ></nz-form-label
+          >
+          <nz-form-control nzErrorTip="Please enter Destination Area PIN code!">
+            <input
+              nz-input
+              formControlName="firstName"
+              placeholder="eg: 000000"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label
+            >Destination Area Address (गंतव्य क्षेत्र का पता)<span
+              class="text-danger"
+              >*</span
+            ></nz-form-label
+          >
+          <nz-form-control nzErrorTip="Please enter Destination Area Address!">
+            <textarea
+              nz-input
+              formControlName="address"
+              placeholder="eg: Flat, Street, Village, etc..."
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-4 font-size-13">
+        <nz-form-label class="m-b-5">Note :</nz-form-label>
+        <p>
+          Please enter the complete details about your destination.<br />
+          Any <strong>false</strong> information will lead to cancellation of
+          Pass.
+          Please carry your Aadhar card while travelling.
+        </p>
+
+        <p>
+          कृपया अपने गंतव्य के बारे में पूरा विवरण दर्ज करें।<br />
+          कोई भी <strong>गलत</strong> जानकारी पास को रद्द कर देगी।
+          कृपया यात्रा करते समय अपना आधार कार्ड साथ रखें।
+        </p>
+      </div>
+    </section>
+
+    <section class="row m-t-15">
+      <nz-form-item>
+      <nz-form-label class="m-b-5">
+        Upload Supporting Documents (Please Attach Supporting documents like Medical History, Appointment etc)
+        <br>(सहायक दस्तावेज अपलोड करें (कृपया मेडिकल इतिहास, नियुक्ति आदि जैसे सहायक दस्तावेजों को संलग्न करें))
+      </nz-form-label>
+
+        <nz-form-control>
+          <nz-upload class="upload-list-inline" (nzChange)="handleChange($event)" [nzRemove]="handleRemove" [nzAction]="attachementUrl" [nzHeaders]="attachementHeader" nzListType="picture" [(nzFileList)]="uploadedImages">
+            <button type="button" nz-button style="background: #f9f9f9!important;width: 100%;height: 120px;border-radius: 0px;border: 2px dashed #ddd;">
+              <div>
+
+                <img src="../../assets/images/icons/cloud_upload.svg" height="33" class="m-b-10">
+
+                <div><strong>drag & drop file</strong> or <strong>click choose</strong></div>
+                <small class="text-muted">(images & pdf format)</small>
+
+              </div>
+            </button>
+          </nz-upload>
+        </nz-form-control>
+
+      </nz-form-item>
+
+    </section>
+
+    <section class="row m-t-25">
+      <button nz-button type="submit" nzType="primary">Submit</button>
+    </section>
+
+
+  </form>
 </nz-card>

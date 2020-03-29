@@ -56,9 +56,8 @@ $color-gray-light: #6E829C;
 
 .ant-form-item-label label {
   color: $color-gray-light;
-  font-weight: 500;
-  text-transform: uppercase;
-  //letter-spacing: 1.12px;
+  font-weight: 400;
+  text-transform: capitalize;
   font-size: 13px;
   line-height: 13px;
   margin-bottom: 2px;
@@ -130,7 +129,7 @@ $color-gray-light: #6E829C;
   color: #ffffff;
 }
 .ant-btn {
-  border-radius: 25px;
+  border-radius: 3px;
   min-width: 80px;
   padding: 0.45rem 1rem!important;
   border: 0px;
