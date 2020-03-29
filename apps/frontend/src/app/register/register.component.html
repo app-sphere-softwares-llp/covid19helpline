@@ -1,0 +1,185 @@
+<div class="container-fluid h-100">
+  <div class="d-flex h-100 p-v-15 flex-column justify-content-between">
+    <div class="d-none d-md-flex p-h-40">
+      <img src="assets/images/logo/logo.svg" alt="Assign.Work" height="50"/>
+    </div>
+
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6 d-none d-md-block">
+          <img
+            class="img-fluid"
+            src="assets/images/others/signup_wall.svg"
+            alt=""
+          />
+        </div>
+
+        <div class="m-l-auto col-md-5">
+          <nz-card>
+            <h2 class="m-t-20">Sign Up</h2>
+            <p class="m-b-30">Create your account to get access</p>
+
+            <form
+              autocomplete="off"
+              nz-form
+              [formGroup]="signUpForm"
+              class="login-form"
+              (ngSubmit)="submitForm()">
+
+              <div class="row">
+                <div class="col">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzFor="firstName">First name</nz-form-label>
+                    <nz-form-control nzValidatingTip="Please input first name!">
+                      <input
+                        type="text"
+                        nz-input
+                        formControlName="firstName"
+                        placeholder="First Name"
+                        autocomplete="none"
+                        nzSize="small"
+                        id="firstName"
+                        maxlength="15"/>
+
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzFor="lastName">Last name</nz-form-label>
+                    <nz-form-control nzValidatingTip="Please input your last name!">
+                      <input
+                        type="text"
+                        nz-input
+                        formControlName="lastName"
+                        autocomplete="none"
+                        nzSize="small"
+                        placeholder="Last Name"
+                        id="lastName"
+                        maxlength="15"/>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="emailId">Email</nz-form-label>
+
+                <nz-form-control nzValidatingTip="Please input your username!">
+                  <input
+                    [disabled]="isInvitedLink"
+                    type="email"
+                    nz-input
+                    formControlName="emailId"
+                    autocomplete="none"
+                    nzSize="small"
+                    placeholder="Email"
+                    maxlength="100"
+                    id="emailId"/>
+
+                  <nz-form-explain
+                    *ngIf="
+                      signUpForm.get('emailId').dirty &&
+                      signUpForm.get('emailId').errors
+                    ">This is not valid E-mail!
+                  </nz-form-explain>
+                </nz-form-control>
+              </nz-form-item>
+
+              <div class="row">
+                <div class="col">
+                  <nz-form-item>
+                    <nz-form-label nzRequired nzFor="password"
+                    >Password
+                    </nz-form-label>
+                    <nz-form-control nzValidatingTip="Please input your Password!">
+                      <input
+                        type="password"
+                        nz-input
+                        formControlName="password"
+                        autocomplete="none"
+                        nzSize="small"
+                        maxlength="50"
+                        placeholder="Password"
+                        id="password"/>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+
+                <div class="col">
+                  <nz-form-item>
+                    <nz-form-label nzFor="checkPassword" nzRequired>Re-Password</nz-form-label>
+                    <nz-form-control nzValidatingTip="Please confirm your password!">
+                      <input
+                        nz-input
+                        type="password"
+                        nzSize="small"
+                        formControlName="checkPassword"
+                        autocomplete="none"
+                        maxlength="50"
+                        placeholder="Re-Password"
+                        id="checkPassword"
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+
+
+              <nz-form-item>
+                <nz-form-control>
+                  <label nz-checkbox formControlName="agree">
+                    <span>I have read the <a>agreement</a></span>
+                  </label>
+                </nz-form-control>
+              </nz-form-item>
+
+              <nz-form-item *ngIf="responseMessage && responseMessage.message">
+                <span [ngClass]="'text-'+responseMessage.type">{{responseMessage.message}}</span>
+              </nz-form-item>
+
+              <nz-form-item>
+                <nz-form-control>
+                  <div
+                    class="d-flex align-items-center justify-content-between">
+                    <span class="font-size-13 text-muted">Have an account?
+                      <a class="small"
+                         [routerLink]="['/login']">
+                        Signin</a></span>
+                    <button
+                      nz-button
+                      [disabled]="signUpForm.invalid"
+                      [nzLoading]="registerInProcess"
+                      class="login-form-button"
+                      [nzType]="'primary'">
+                      Sign Up
+                    </button>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+
+            </form>
+            <div class="text-center m-t-25 row">
+              <div class="col">
+                <img class="btn-google" src="../../assets/images/icons/btn-google.svg" width="100%" (click)='loginWithGoogle()'>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-none d-md-flex  p-h-40 justify-content-between">
+      <span class="">&copy; 2019 Assign.work</span>
+      <ul class="list-inline">
+        <li class="list-inline-item">
+          <a class="text-dark text-link" href="">Legal</a>
+        </li>
+        <li class="list-inline-item">
+          <a class="text-dark text-link" href="">Privacy</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

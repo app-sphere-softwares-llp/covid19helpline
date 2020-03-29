@@ -1,0 +1,24 @@
+<div class="common-layout {{ 'is-' + selectedHeaderColor }}"
+     [ngClass]="{
+        'is-folded': isFolded,
+        'is-side-nav-dark' : isSideNavDark,
+        'is-expand' : isExpand
+    }"
+>
+  <app-header></app-header>
+
+  <app-sidenav></app-sidenav>
+
+  <div class="page-container">
+
+    <div class="main-content">
+
+      <router-outlet></router-outlet>
+
+    </div>
+
+    <app-footer></app-footer>
+
+  </div>
+</div>
+
