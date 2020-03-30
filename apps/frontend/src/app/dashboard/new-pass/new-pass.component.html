@@ -201,37 +201,37 @@
 
             </nz-form-item>
 
-            <nz-form-item>
-              <nz-form-label>Purpose? (उद्देश्य?)<span class="text-danger">*</span></nz-form-label>
-              <nz-form-control nzErrorTip="Please select Purpose!">
+<!--            <nz-form-item>-->
+<!--              <nz-form-label>Purpose? (उद्देश्य?)<span class="text-danger">*</span></nz-form-label>-->
+<!--              <nz-form-control nzErrorTip="Please select Purpose!">-->
 
-                <nz-input-group [nzSuffix]="suffixIconSearchPurpose">
-                  <input
-                    placeholder="Search"
-                    formControlName="purpose"
-                    nz-input
-                    (ngModelChange)="selectPurposeTypeahead($event)"
-                    nzSize="small"
-                    [nzAutocomplete]="autoPurpose"/>
-                </nz-input-group>
+<!--                <nz-input-group [nzSuffix]="suffixIconSearchPurpose">-->
+<!--                  <input-->
+<!--                    placeholder="Search"-->
+<!--                    formControlName="purpose"-->
+<!--                    nz-input-->
+<!--                    (ngModelChange)="selectPurposeTypeahead($event)"-->
+<!--                    nzSize="small"-->
+<!--                    [nzAutocomplete]="autoPurpose"/>-->
+<!--                </nz-input-group>-->
 
-                <nz-autocomplete #autoPurpose>
-                  <nz-auto-option
-                    *ngFor="let option of purposeDataReason"
-                    [nzLabel]="option && option.name"
-                    [nzValue]="option">
-                    <span>{{ option && option.name }}</span>
+<!--                <nz-autocomplete #autoPurpose>-->
+<!--                  <nz-auto-option-->
+<!--                    *ngFor="let option of purposeDataReason"-->
+<!--                    [nzLabel]="option && option.name"-->
+<!--                    [nzValue]="option">-->
+<!--                    <span>{{ option && option.name }}</span>-->
 
-                  </nz-auto-option>
-                </nz-autocomplete>
+<!--                  </nz-auto-option>-->
+<!--                </nz-autocomplete>-->
 
-              </nz-form-control>
-              <ng-template #suffixIconSearchPurpose>
-                <i nz-icon nzType="search" *ngIf="!isSearchingPurpose"></i>
-                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingPurpose"></i>
-              </ng-template>
+<!--              </nz-form-control>-->
+<!--              <ng-template #suffixIconSearchPurpose>-->
+<!--                <i nz-icon nzType="search" *ngIf="!isSearchingPurpose"></i>-->
+<!--                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingPurpose"></i>-->
+<!--              </ng-template>-->
 
-            </nz-form-item>
+<!--            </nz-form-item>-->
 
 
           </div>
