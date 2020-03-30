@@ -4,7 +4,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import {GeneralService} from '../general.service';
-import {DbCollection, MongooseQueryModel, StateModel} from "@covid19-helpline/models";
+import {CityModel, DbCollection, MongooseQueryModel, StateModel} from "@covid19-helpline/models";
 import {BadRequest} from "../../helpers/helpers";
 
 @Injectable()
@@ -100,6 +100,20 @@ export class StateService extends BaseService<StateModel & Document> implements 
     } catch (e) {
       throw e;
     }
+  }
+
+  /**
+   * bulk insert states
+   * @param model
+   */
+  async bulkInsert(model: StateModel[]) {
+    if (!model || model.length) {
+      BadRequest('Please add at least one State');
+    }
+
+    return this.withRetrySession(async (session) => {
+      return this.create(model, session);
+    });
   }
 
   /**

@@ -1,6 +1,8 @@
 import {Schema} from "mongoose";
-import {commonSchemaFields} from "./base.schema";
+import {commonSchemaFields, mongooseErrorTransformPluginOptions} from "./base.schema";
 import {DbCollection} from "@covid19-helpline/models";
+
+const mongooseValidationErrorTransform = require('mongoose-validation-error-transform');
 
 export const passSchema = new Schema({
   picUrl: {type: String},
@@ -29,3 +31,15 @@ export const passSchema = new Schema({
   approvedById: {type: Schema.Types.ObjectId, ref: DbCollection.users, required: [true, 'Created by is required']},
   ...commonSchemaFields
 });
+
+
+// options
+passSchema
+  .set('toObject', {virtuals: true})
+  .set('toJSON', {virtuals: true});
+
+// virtual
+
+// plugins
+passSchema
+  .plugin(mongooseValidationErrorTransform, mongooseErrorTransformPluginOptions);

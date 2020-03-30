@@ -7,5 +7,5 @@ export class SendSmsModel {
 
 export class SmsMessageModel {
   message: string;
-  to: number[];
+  to: string[];
 }

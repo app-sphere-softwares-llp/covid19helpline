@@ -5,5 +5,6 @@ export enum DbCollection {
   state = 'states',
   city = 'cities',
   pass = 'passes',
-  reason = 'reasons'
+  reason = 'reasons',
+  otpRequest = 'otp-requests'
 }

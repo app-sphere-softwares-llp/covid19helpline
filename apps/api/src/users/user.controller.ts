@@ -21,8 +21,8 @@ export class UserController {
     return await this._userService.updateUser(id, user, null);
   }
 
-  @Post('send-otp')
-  async sendOtp(@Body() mobileNo: number) {
+  @Post('send-otp-request')
+  async sendOtp(@Body() mobileNo: string) {
     const sendSms = new SendSmsModel();
     sendSms.sender = 'SOCKET';
     sendSms.route = 4;

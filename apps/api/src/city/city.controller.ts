@@ -1,7 +1,7 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {CityService} from "../shared/services/city/city.service";
-import {CityModel} from "@covid19-helpline/models";
+import {CityModel, StateModel} from "@covid19-helpline/models";
 
 @Controller('city')
 @UseGuards(AuthGuard('jwt'))
@@ -22,5 +22,10 @@ export class CityController {
   @Post('get-all')
   async getAllCities(@Body('stateId') stateId: string, @Body('term') term: string) {
     return await this._cityService.getAllCities(stateId, term);
+  }
+
+  @Post('bulk-insert')
+  async bulkInsert(@Body() model: CityModel[]) {
+    return await this._cityService.bulkInsert(model);
   }
 }

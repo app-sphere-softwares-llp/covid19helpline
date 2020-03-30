@@ -1,6 +1,6 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {StateModel} from "@covid19-helpline/models";
+import {ReasonModel, StateModel} from "@covid19-helpline/models";
 import {StateService} from "../shared/services/state/state.service";
 
 @Controller('state')
@@ -22,5 +22,10 @@ export class StateController {
   @Post('get-all')
   async getAllStates(@Body('term') term: string) {
     return await this._stateService.getAllStates(term);
+  }
+
+  @Post('bulk-insert')
+  async bulkInsert(@Body() model: StateModel[]) {
+    return await this._stateService.bulkInsert(model);
   }
 }

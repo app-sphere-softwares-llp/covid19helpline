@@ -8,6 +8,7 @@ import {stateSchema} from "./schemas/state.schema";
 import {citySchema} from "./schemas/city.schema";
 import {passSchema} from "./schemas/pass.schema";
 import {reasonSchema} from "./schemas/reason.schema";
+import {otpRequestSchema} from "./schemas/otp-request.schema";
 
 
 @Module({
@@ -40,6 +41,10 @@ import {reasonSchema} from "./schemas/reason.schema";
       name: DbCollection.reason,
       schema: reasonSchema,
       collection: DbCollection.reason
+    }, {
+      name: DbCollection.otpRequest,
+      schema: otpRequestSchema,
+      collection: DbCollection.otpRequest
     }])
   ],
   exports: [

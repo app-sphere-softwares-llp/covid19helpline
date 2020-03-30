@@ -109,6 +109,20 @@ export class CityService extends BaseService<CityModel & Document> implements On
   }
 
   /**
+   * bulk insert cities
+   * @param model
+   */
+  async bulkInsert(model: CityModel[]) {
+    if (!model || model.length) {
+      BadRequest('Please add at least one city');
+    }
+
+    return this.withRetrySession(async (session) => {
+      return this.create(model, session);
+    });
+  }
+
+  /**
    * duplicate checker
    * check duplicity for name
    * if exceptThisId present than filter that record

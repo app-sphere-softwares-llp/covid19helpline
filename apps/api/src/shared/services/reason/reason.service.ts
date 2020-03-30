@@ -4,7 +4,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import {GeneralService} from '../general.service';
-import {DbCollection, MongooseQueryModel, ReasonModel} from "@covid19-helpline/models";
+import {CityModel, DbCollection, MongooseQueryModel, ReasonModel} from "@covid19-helpline/models";
 import {BadRequest} from "../../helpers/helpers";
 
 @Injectable()
@@ -100,6 +100,20 @@ export class ReasonService extends BaseService<ReasonModel & Document> implement
     } catch (e) {
       throw e;
     }
+  }
+
+  /**
+   * bulk insert reason
+   * @param model
+   */
+  async bulkInsert(model: ReasonModel[]) {
+    if (!model || model.length) {
+      BadRequest('Please add at least one Reason');
+    }
+
+    return this.withRetrySession(async (session) => {
+      return this.create(model, session);
+    });
   }
 
   /**

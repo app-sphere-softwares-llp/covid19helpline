@@ -7,7 +7,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 export const userSchema = new Schema(
   {
-    emailId: {type: String, required: true},
+    emailId: {type: String, required: false},
     userName: {type: String},
     password: {type: String},
     firstName: {type: String, default: ''},
@@ -19,11 +19,9 @@ export const userSchema = new Schema(
     confirmed: {type: Boolean, default: false},
     locale: {type: String},
     mobileNumber: {type: String, required: true},
-    aadhaarNo: {type: String, required: true},
     status: {type: String, enum: Object.values(UserStatus)},
     lastLoginProvider: {type: String, enum: Object.values(UserLoginProviderEnum)},
     memberType: {type: String, enum: Object.values(MemberTypes)},
-    ...commonSchemaFields
   }, schemaOptions
 );
 

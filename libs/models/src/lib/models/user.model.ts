@@ -5,7 +5,7 @@ import {UserLoginProviderEnum, UserStatus} from '../enums';
 export class UserLoginWithPasswordRequest {
   emailId?: string;
   mobileNumber?: string;
-  password: string;
+  password?: string;
 }
 
 export class UserLoginSignUpSuccessResponse {
@@ -32,9 +32,6 @@ export class User {
   password?: string;
   firstName?: string;
   lastName?: string;
-  otp?: string;
-  otpSentAt?: Date;
-  isOtpExpired?: boolean;
   confirmed?: boolean;
   profilePic?: string;
   status?: UserStatus;
@@ -42,7 +39,6 @@ export class User {
   lastLoginProvider?: UserLoginProviderEnum;
   locale?: string;
   mobileNumber: string;
-  aadhaarNo: string;
   memberType?: MemberTypes;
 }
 

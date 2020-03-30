@@ -23,4 +23,9 @@ export class ReasonController {
   async getAllStates(@Body('term') term: string) {
     return await this._reasonService.getAllReason(term);
   }
+
+  @Post('bulk-insert')
+  async bulkInsert(@Body() model: ReasonModel[]) {
+    return await this._reasonService.bulkInsert(model);
+  }
 }

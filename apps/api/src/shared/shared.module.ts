@@ -19,6 +19,7 @@ import {CityService} from "./services/city/city.service";
 import {ReasonService} from "./services/reason/reason.service";
 import {HeaderResolver, I18nJsonParser, I18nModule} from "nestjs-i18n";
 import {PassService} from "./services/pass/pass.service";
+import {OtpRequestService} from "./services/otp-request/otp-request.service";
 
 const providers = [
   GeneralService,
@@ -30,7 +31,8 @@ const providers = [
   StateService,
   CityService,
   ReasonService,
-  PassService
+  PassService,
+  OtpRequestService
 ];
 
 @Global()

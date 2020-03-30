@@ -26,6 +26,7 @@ import {
   UserStatus
 } from '@covid19-helpline/models';
 import {UsersService} from '../shared/services/users/users.service';
+import {OtpRequestService} from "../shared/services/otp-request/otp-request.service";
 
 const saltRounds = 10;
 
@@ -33,6 +34,7 @@ const saltRounds = 10;
 export class AuthService implements OnModuleInit {
   private _userService: UsersService;
   private _resetPasswordService: ResetPasswordService;
+  private _otpService: OtpRequestService;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -47,45 +49,41 @@ export class AuthService implements OnModuleInit {
   onModuleInit(): void {
     this._userService = this._moduleRef.get('UsersService', {strict: false});
     this._resetPasswordService = this._moduleRef.get('ResetPasswordService', {strict: false});
+    this._otpService = this._moduleRef.get('OtpRequestService', {strict: false});
   }
 
   /**
-   * login with emailId and password
-   * get user by email id and then compare hashed password from db with user request plain password
+   * login with mobile
    * @param req
    */
   async login(req: UserLoginWithPasswordRequest) {
+    // start session
+    const session = await this._userModel.db.startSession();
+    session.startTransaction();
 
-    // get user by email id
-    const user = await this._userModel.findOne({
-      mobileNumber: req.mobileNumber
-    }).exec();
+    try {
+      // get user by email id
+      const user = await this._userModel.findOne({
+        mobileNumber: req.mobileNumber
+      }).exec();
 
-    // check if user is there
-    if (user) {
-      // check if user is logged in with user name and password not with any social login helper
-      if (!user.password || user.lastLoginProvider !== UserLoginProviderEnum.normal) {
-        throw new UnauthorizedException('Invalid credentials');
+      if (user) {
+        // user is already login
+        // create otp and send otp
+        await this._otpService.createOtp(req.mobileNumber, session);
+
+        // commit transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        return 'And otp sent to your mobile';
       } else {
-        // compare hashed password
-        const isPasswordMatched = await bcrypt.compare(req.password, user.password);
-
-        if (isPasswordMatched) {
-          // update user last login provider to normal
-          await user.updateOne({$set: {lastLoginProvider: UserLoginProviderEnum.normal}});
-
-          // return jwt token
-          return {
-            access_token: this.jwtService.sign({sub: user.mobileNumber, id: user.id})
-          };
-        } else {
-          // throw invalid login error
-          throw new UnauthorizedException('Invalid credentials');
-        }
+        throw new UnauthorizedException('User not found');
       }
-    } else {
-      // throw invalid login error
-      throw new UnauthorizedException('Invalid credentials');
+    } catch (e) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw e;
     }
   }
 
@@ -224,40 +222,32 @@ export class AuthService implements OnModuleInit {
     session.startTransaction();
 
     try {
-      const jwtPayload = {sub: '', id: ''};
-
       // get user details by emailId id
-      const userDetails = await this.getUserByEmailId(user.emailId);
+      const userDetails = await this.getUserByMobileNo(user.mobileNumber);
 
       // user exist or not
       if (userDetails) {
-        BadRequest('Email address already in use');
-      } else {
-
-        // create new user and assign jwt token
-        const model = new User();
-        model.emailId = user.emailId;
-        model.username = model.emailId;
-        model.firstName = user.firstName;
-        model.lastName = user.lastName;
-        model.locale = user.locale;
-        model.status = UserStatus.Active;
-        model.lastLoginProvider = UserLoginProviderEnum.normal;
-
-        // hashed password
-        model.password = await bcrypt.hash(user.password, saltRounds);
-
-        const newUser = await this._userService.create([model], session);
-        jwtPayload.id = newUser[0].id;
-        jwtPayload.sub = newUser[0].emailId;
+        BadRequest('Mobile no already in use');
       }
+
+      // create new user and assign jwt token
+      const model = new User();
+      model.mobileNumber = user.mobileNumber;
+      model.username = model.mobileNumber;
+      model.firstName = user.firstName;
+      model.lastName = user.lastName;
+      model.status = UserStatus.Active;
+      model.lastLoginProvider = UserLoginProviderEnum.normal;
+
+      // create new user
+      await this._userService.create([model], session);
+
+      // create otp and send otp
+      await this._otpService.createOtp(model.mobileNumber, session);
 
       await session.commitTransaction();
       session.endSession();
-
-      return {
-        access_token: this.jwtService.sign(jwtPayload)
-      };
+      return 'Otp sent successfully to your Mobile';
     } catch (e) {
       await session.abortTransaction();
       session.endSession();
@@ -297,7 +287,7 @@ export class AuthService implements OnModuleInit {
           const jwtPayload = {sub: '', id: ''};
 
           // get user details by email id from db
-          const userDetails = await this.getUserByEmailId(authTokenResult.email);
+          const userDetails = await this.getUserByMobileNo(authTokenResult.email);
 
           // check user exist
           if (userDetails) {
@@ -381,18 +371,9 @@ export class AuthService implements OnModuleInit {
    * @param user
    */
   private checkSignUpValidations(user: User) {
-    // check email address
-    if (!user.emailId) {
-      throw new BadRequestException('Email address is mandatory');
-    } else {
-      if (!emailAddressValidator(user.emailId)) {
-        throw new BadRequestException('Invalid email address');
-      }
-    }
-
-    // check password
-    if (!user.password) {
-      throw new BadRequestException('Password is mandatory');
+    // check first name
+    if (!user.mobileNumber) {
+      throw new BadRequestException('Mobile Number is mandatory');
     }
 
     // check first name
@@ -407,15 +388,15 @@ export class AuthService implements OnModuleInit {
   }
 
   /**
-   * get user by email id
-   * @param emailId
+   * get user by mobile no
+   * @param mobileNumber
    */
-  private async getUserByEmailId(emailId: string) {
+  private async getUserByMobileNo(mobileNumber: string) {
     const userQuery = new MongooseQueryModel();
     userQuery.filter = {
-      emailId: emailId
+      mobileNumber
     };
-    userQuery.select = '_id emailId';
+    userQuery.select = '_id mobileNumber';
     userQuery.lean = true;
     return this._userService.findOne(userQuery);
   }
