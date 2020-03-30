@@ -17,8 +17,38 @@
       <!--    profile picture-->
       <div class="col-md-2 text-center">
 
-        <!-- if has image then remove "opacity-03" class-->
-        <div class="pic-box profile-pic opacity-03">
+
+        <div class="pic-box profile-pic">
+
+
+          <nz-upload class="avatar-uploader"
+                     [nzAction]="attachementUrl"
+                     [nzHeaders]="attachementHeader"
+                     [nzShowUploadList]="false"
+                     [nzBeforeUpload]="beforeUpload"
+                     (nzChange)="handleProfilePicChange($event)">
+
+            <ng-container *ngIf="!avatarUrl">
+
+              <button type="button" nz-button class="upload-btn">
+                <div>
+
+                  <img src="../../assets/images/avatars/user_placeholder.png" height="60" class="border-radius-round m-b-10">
+
+                  <div><strong>drag & drop file</strong>
+                  <br>or <br>
+                  <strong>click choose</strong></div>
+                  <small class="text-muted">(JPG only)</small>
+
+                </div>
+              </button>
+
+            </ng-container>
+
+            <img *ngIf="avatarUrl" [src]="avatarUrl" class="avatar">
+          </nz-upload>
+
+          <div class="ant-upload-text ant-uploading-text" *ngIf="loadingProfilePic">Uploading Profile Pic...</div>
 
         </div>
         <p>Upload Photo<br />(अपलोड तस्वीर)<span class="text-danger">*</span></p>
@@ -260,9 +290,43 @@
       <!--    Aadhar card upload -->
       <div class="col-md-3 text-center">
 
-        <!-- if has image then remove "opacity-03" class-->
-        <div class="pic-box aadhar-pic opacity-03"></div>
+
+        <div class="pic-box aadhar-pic">
+
+          <nz-upload
+                     [nzAction]="attachementUrl"
+                     [nzHeaders]="attachementHeader"
+                     [nzShowUploadList]="false"
+                     [nzBeforeUpload]="beforeUpload"
+                     (nzChange)="handleAadharChange($event)">
+
+            <ng-container *ngIf="!aadharUrl">
+
+              <button type="button" nz-button class="upload-btn">
+                <div>
+
+                  <img src="../../assets/images/avatars/aadhar_placeholder.jpg" height="60" class="border-radius-round m-b-10">
+
+                  <div><strong>drag & drop file</strong>
+                    <br>or <br>
+                    <strong>click choose</strong></div>
+                  <small class="text-muted">(JPG only)</small>
+
+                </div>
+              </button>
+
+            </ng-container>
+
+            <img *ngIf="aadharUrl" [src]="aadharUrl" class="avatar">
+          </nz-upload>
+
+          <div class="ant-upload-text ant-uploading-text" *ngIf="loadingAadharPic">Uploading Aadhar Pic...</div>
+
+
+        </div>
+
         <p>Upload Aadhar (अपलोड आधार)<span class="text-danger">*</span></p>
+
       </div>
 
     </section>

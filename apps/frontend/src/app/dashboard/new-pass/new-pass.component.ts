@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import { NzNotificationService } from 'ng-zorro-antd';
+import { NzNotificationService, UploadFile } from 'ng-zorro-antd';
 import { GeneralService } from '../../shared/services/general.service';
 import { ActivatedRoute } from '@angular/router';
 
@@ -16,6 +16,17 @@ export class NewPassComponent implements OnInit {
   public applicationForm: FormGroup;
   public requestId:string;
   public dateFormat = 'MM/dd/yyyy';
+
+  // upload profile pic
+  public loadingProfilePic = false;
+  public avatarUrl: string;
+
+
+  // upload aadhar
+  public loadingAadharPic = false;
+  public aadharUrl: string;
+
+
 
   // doc upload
   public uploadedImages = [];
@@ -215,7 +226,7 @@ export class NewPassComponent implements OnInit {
 
 
   public getPassRequest() {
-
+    // api call for get existing request
   }
 
   public selectStateTypeahead(state: any) {
@@ -253,6 +264,8 @@ export class NewPassComponent implements OnInit {
 
 
 
+
+  // document uploads
   handleChange({ file, fileList }): void {
     const status = file.status;
     if (status !== 'uploading') {
@@ -280,6 +293,71 @@ export class NewPassComponent implements OnInit {
     });
     obs.next(false);
   });
+
+
+  // profile pic upload
+
+  // common for both
+  private getBase64(img: File, callback: (img: {}) => void): void {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(img);
+  }
+
+
+  beforeUpload = (file: File) => {
+    const isJPG = file.type === 'image/jpeg' || 'image/png';
+    if (!isJPG) {
+      this.notification.error('Error', 'You can only upload JPG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      this.notification.error('Error', 'Image must smaller than 2MB!');
+    }
+    return isJPG && isLt2M;
+  }
+
+
+  // profile
+  handleProfilePicChange(info: { file: UploadFile }): void {
+    if (info.file.status === 'uploading') {
+      this.loadingProfilePic = true;
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      this.getBase64(info.file.originFileObj, (img: string) => {
+        this.loadingProfilePic = false;
+        this.avatarUrl = img;
+      });
+    }
+
+    if (info.file.status === 'error') {
+      this.notification.error('Error', 'Profile pic not uploaded');
+    }
+
+  }
+
+
+  // aadhar
+  handleAadharChange(info: { file: UploadFile }): void {
+    if (info.file.status === 'uploading') {
+      this.loadingAadharPic = true;
+      return;
+    }
+    if (info.file.status === 'done') {
+      // Get this url from response in real world.
+      this.getBase64(info.file.originFileObj, (img: string) => {
+        this.loadingAadharPic = false;
+        this.aadharUrl = img;
+      });
+    }
+
+    if (info.file.status === 'error') {
+      this.notification.error('Error', 'Aadhar pic not uploaded');
+    }
+
+  }
 
 
 
