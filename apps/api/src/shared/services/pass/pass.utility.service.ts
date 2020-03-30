@@ -8,7 +8,7 @@ export class PassUtilityService {
 
   async createPassValidations(model: PassModel) {
     if (!model) {
-      BadRequest(await this.i18n.translate('CREATE_VALIDATIONS.NO_MOBILE_NO'));
+      BadRequest(await this.i18n.translate('pass.CREATE_VALIDATIONS.NO_MOBILE_NO'));
     }
 
     if (!model.firstName) {

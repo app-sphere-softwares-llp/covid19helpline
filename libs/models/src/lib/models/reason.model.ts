@@ -1,4 +1,4 @@
-import {BaseDbModel} from "@covid19-helpline/models";
+import { BaseDbModel } from '../general';
 
 export class ReasonModel extends BaseDbModel {
   name: string;

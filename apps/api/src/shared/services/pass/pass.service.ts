@@ -19,10 +19,11 @@ export class PassService extends BaseService<PassModel & Document> implements On
     protected readonly i18n: I18nRequestScopeService
   ) {
     super(passModel);
+
+    this._utilityService = new PassUtilityService(i18n);
   }
 
   onModuleInit(): void {
-    this._utilityService = new PassUtilityService(this.i18n);
   }
 
   /**
