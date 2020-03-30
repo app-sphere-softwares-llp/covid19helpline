@@ -4,7 +4,7 @@ import {PassModel} from "@covid19-helpline/models";
 import {PassService} from "../shared/services/pass/pass.service";
 
 @Controller('pass')
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 export class PassController {
   constructor(private readonly _passService: PassService) {
   }
