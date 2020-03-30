@@ -1,16 +1,19 @@
-import { SendSmsModel } from '@covid19-helpline/models';
-import { post, Response } from 'request';
-import { SEND_SMS_URL } from '../../helpers/defaultValueConstant';
+import {SendSmsModel} from '@covid19-helpline/models';
+import {post, Response,} from 'request';
+
+const urls = {
+  sendSms: 'https://api.msg91.com/api/v2/sendsms',
+};
 
 export class SmsService {
   constructor() {
   }
 
-  sendSms(config: SendSmsModel) {
+  sendSms(model: SendSmsModel) {
     return new Promise((resolve, reject) => {
-      post(SEND_SMS_URL, {
+      post(urls.sendSms, {
         json: true,
-        body: config,
+        body: model,
         headers: {
           authkey: process.env.SMS_AUTH_KEY,
           'Content-Type': 'application/json'

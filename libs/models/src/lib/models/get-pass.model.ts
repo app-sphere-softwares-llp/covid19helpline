@@ -1,4 +1,7 @@
-import {AttachmentModel, BaseDbModel, CityModel, User} from "@covid19-helpline/models";
+import {BaseDbModel} from '../general';
+import {CityModel} from './city.model';
+import {AttachmentModel} from './attachment.model';
+import {User} from "./user.model";
 
 export class GetPassModel extends BaseDbModel {
   picUrl: string;
@@ -11,11 +14,9 @@ export class GetPassModel extends BaseDbModel {
   address: string;
   mobileNo: string;
   passDate: string;
-  passNeededForId: string;
-  passNeededFor?: any;
   vehicleNo?: string;
-  reasonCodeId: string;
-  reasonCodeDetails?: any;
+  reasonId: string;
+  reason?: any;
   reasonDetails: string;
   destinationAddress: string;
   attachments: string[];
@@ -24,4 +25,8 @@ export class GetPassModel extends BaseDbModel {
     fullName: string;
     aadhaarNo: string;
   }>;
+  isApproved: boolean;
+  approvedAt: Date;
+  approvedById: string;
+  approvedBy?: User;
 }

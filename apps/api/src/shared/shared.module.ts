@@ -14,6 +14,9 @@ import { ResetPasswordService } from './services/reset-password/reset-password.s
 import { EmailService } from './services/email/email.service';
 import { AttachmentService } from './services/attachment/attachment.service';
 import { SmsService } from './services/sms/sms.service';
+import {StateService} from "./services/state/state.service";
+import {CityService} from "./services/city/city.service";
+import {ReasonService} from "./services/reason/reason.service";
 
 const providers = [
   GeneralService,
@@ -21,7 +24,10 @@ const providers = [
   ResetPasswordService,
   EmailService,
   AttachmentService,
-  SmsService
+  SmsService,
+  StateService,
+  CityService,
+  ReasonService
 ];
 
 @Global()

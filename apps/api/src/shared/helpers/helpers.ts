@@ -193,3 +193,9 @@ export const maxLengthValidator = (property: string = '', maxLength: number) => 
 export const isResetPasswordCodeExpired = (date: Date): boolean => {
   return moment.utc(date).add(DEFAULT_RESET_PASSWORD_CODE_EXPIRY, 's').isBefore(moment.utc());
 };
+
+
+/**
+ * helper function to convert _id to id in aggregate query
+ */
+export const aggregateConvert_idToId = { $addFields: { id: '$_id' } };

@@ -44,10 +44,10 @@ const appRoutes: Routes = [
 
 @NgModule({
     imports: [
-        RouterModule.forRoot(appRoutes, { 
+        RouterModule.forRoot(appRoutes, {
             preloadingStrategy: PreloadAllModules,
-            useHash: true,
-            scrollPositionRestoration: 'enabled' 
+            useHash: false,
+            scrollPositionRestoration: 'enabled'
         })
     ],
     exports: [

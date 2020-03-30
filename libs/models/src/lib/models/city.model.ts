@@ -1,5 +1,8 @@
-import {BaseDbModel} from "@covid19-helpline/models";
+import { BaseDbModel } from '../general';
+import { StateModel } from './state.model';
 
-export class CityModel extends BaseDbModel{
+export class CityModel extends BaseDbModel {
   name: string;
+  stateId: string;
+  state?: StateModel;
 }

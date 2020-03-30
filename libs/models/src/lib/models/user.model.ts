@@ -1,9 +1,10 @@
-import { MemberTypes, OneTimeMessagesDismissed } from '../general';
-import { UserLoginProviderEnum, UserStatus } from '../enums';
+import {MemberTypes, OneTimeMessagesDismissed} from '../general';
+import {UserLoginProviderEnum, UserStatus} from '../enums';
 
 
 export class UserLoginWithPasswordRequest {
-  emailId: string;
+  emailId?: string;
+  mobileNumber?: string;
   password: string;
 }
 
@@ -31,12 +32,17 @@ export class User {
   password?: string;
   firstName?: string;
   lastName?: string;
+  otp?: string;
+  otpSentAt?: Date;
+  isOtpExpired?: boolean;
+  confirmed?: boolean;
   profilePic?: string;
   status?: UserStatus;
   username?: string;
   lastLoginProvider?: UserLoginProviderEnum;
   locale?: string;
-  mobileNo: string;
+  mobileNumber: string;
   aadhaarNo: string;
+  memberType?: MemberTypes;
 }
 

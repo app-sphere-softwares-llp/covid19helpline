@@ -5,6 +5,10 @@ import * as aws from 'aws-sdk';
 import { SharedModule } from '../shared/shared.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
+import {CityModel} from "@covid19-helpline/models";
+import {CityModule} from "../city/city.module";
+import {StateModule} from "../state/state.module";
+import {ReasonModule} from "../reason/reason.module";
 
 // set db connection string on basis of environment
 const dbConnectionString = environment.production ? process.env.DB_CONNECTION_STRING_PROD : process.env.DB_CONNECTION_STRING_DEV;
@@ -18,7 +22,10 @@ const dbConnectionString = environment.production ? process.env.DB_CONNECTION_ST
     }),
     SharedModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    StateModule,
+    CityModule,
+    ReasonModule
   ],
 })
 export class AppModule {

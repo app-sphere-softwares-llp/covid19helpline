@@ -1,35 +1,29 @@
 import {Schema} from 'mongoose';
 import {MemberTypes, UserLoginProviderEnum, UserStatus} from '@covid19-helpline/models';
-import {mongooseErrorTransformPluginOptions, schemaOptions} from './base.schema';
+import {commonSchemaFields, mongooseErrorTransformPluginOptions, schemaOptions} from './base.schema';
 
 const mongooseValidationErrorTransform = require('mongoose-validation-error-transform');
 const uniqueValidator = require('mongoose-unique-validator');
 
 export const userSchema = new Schema(
   {
-    emailId: {
-      type: String, required: true, index: {unique: true},
-      uniqueCaseInsensitive: true
-    },
+    emailId: {type: String, required: true},
     userName: {type: String},
     password: {type: String},
     firstName: {type: String, default: ''},
     lastName: {type: String, default: ''},
     profilePic: {type: String},
+    otp: {type: String},
+    otpSentAt: {type: Date},
+    isOtpExpired: {type: Boolean},
     confirmed: {type: Boolean, default: false},
     locale: {type: String},
-    mobileNumber: {type: String},
+    mobileNumber: {type: String, required: true},
+    aadhaarNo: {type: String, required: true},
     status: {type: String, enum: Object.values(UserStatus)},
     lastLoginProvider: {type: String, enum: Object.values(UserLoginProviderEnum)},
     memberType: {type: String, enum: Object.values(MemberTypes)},
-    oneTimeMessagesDismissed: {type: Array},
-    timezoneInfo: {
-      type: Schema.Types.Mixed
-    },
-    recentLoginInfo: {
-      type: Schema.Types.Mixed
-    },
-    isDeleted: {type: Boolean, default: false}
+    ...commonSchemaFields
   }, schemaOptions
 );
 

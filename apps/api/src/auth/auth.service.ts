@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {BadRequestException, Injectable, OnModuleInit, UnauthorizedException} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
 
-import { InjectModel } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
-import { get, Response } from 'request';
-import { ModuleRef } from '@nestjs/core';
+import {InjectModel} from '@nestjs/mongoose';
+import {Document, Model} from 'mongoose';
+import {get, Response} from 'request';
+import {ModuleRef} from '@nestjs/core';
 import {
   BadRequest,
   emailAddressValidator,
@@ -13,8 +13,8 @@ import {
   isResetPasswordCodeExpired
 } from '../shared/helpers/helpers';
 import * as bcrypt from 'bcrypt';
-import { EmailService } from '../shared/services/email/email.service';
-import { ResetPasswordService } from '../shared/services/reset-password/reset-password.service';
+import {EmailService} from '../shared/services/email/email.service';
+import {ResetPasswordService} from '../shared/services/reset-password/reset-password.service';
 import {
   DbCollection,
   EmailTemplatePathEnum,
@@ -25,7 +25,7 @@ import {
   UserLoginWithPasswordRequest,
   UserStatus
 } from '@covid19-helpline/models';
-import { UsersService } from '../shared/services/users/users.service';
+import {UsersService} from '../shared/services/users/users.service';
 
 const saltRounds = 10;
 
@@ -45,8 +45,8 @@ export class AuthService implements OnModuleInit {
    * on module init
    */
   onModuleInit(): void {
-    this._userService = this._moduleRef.get('UsersService', { strict: false });
-    this._resetPasswordService = this._moduleRef.get('ResetPasswordService', { strict: false });
+    this._userService = this._moduleRef.get('UsersService', {strict: false});
+    this._resetPasswordService = this._moduleRef.get('ResetPasswordService', {strict: false});
   }
 
   /**
@@ -58,34 +58,34 @@ export class AuthService implements OnModuleInit {
 
     // get user by email id
     const user = await this._userModel.findOne({
-      emailId: req.emailId
+      mobileNumber: req.mobileNumber
     }).exec();
 
     // check if user is there
     if (user) {
       // check if user is logged in with user name and password not with any social login helper
       if (!user.password || user.lastLoginProvider !== UserLoginProviderEnum.normal) {
-        throw new UnauthorizedException('Invalid email or password');
+        throw new UnauthorizedException('Invalid credentials');
       } else {
         // compare hashed password
         const isPasswordMatched = await bcrypt.compare(req.password, user.password);
 
         if (isPasswordMatched) {
           // update user last login provider to normal
-          await user.updateOne({ $set: { lastLoginProvider: UserLoginProviderEnum.normal } });
+          await user.updateOne({$set: {lastLoginProvider: UserLoginProviderEnum.normal}});
 
           // return jwt token
           return {
-            access_token: this.jwtService.sign({ sub: user.emailId, id: user.id })
+            access_token: this.jwtService.sign({sub: user.mobileNumber, id: user.id})
           };
         } else {
           // throw invalid login error
-          throw new UnauthorizedException('Invalid email or password');
+          throw new UnauthorizedException('Invalid credentials');
         }
       }
     } else {
       // throw invalid login error
-      throw new UnauthorizedException('Invalid email or password');
+      throw new UnauthorizedException('Invalid credentials');
     }
   }
 
@@ -96,7 +96,7 @@ export class AuthService implements OnModuleInit {
    * @param emailId
    */
   async forgotPassword(emailId: string) {
-    const userDetails = await this._userService.findOne({ filter: { emailId: emailId } });
+    const userDetails = await this._userService.findOne({filter: {emailId: emailId}});
 
     if (!userDetails) {
       throw new BadRequestException('User not found');
@@ -112,7 +112,7 @@ export class AuthService implements OnModuleInit {
       try {
         // generate random code
         const code = generateRandomCode(6);
-        const templateData = { user: { firstName: userDetails.firstName, lastName: userDetails.lastName }, code };
+        const templateData = {user: {firstName: userDetails.firstName, lastName: userDetails.lastName}, code};
 
         // send email
         const messageTemplate = await this._emailService.getTemplate(EmailTemplatePathEnum.resetPassword, templateData);
@@ -189,10 +189,10 @@ export class AuthService implements OnModuleInit {
 
         // update user password
         const hashedPassword = await bcrypt.hash(model.password, saltRounds);
-        await this._userService.update({ emailId: model.emailId }, { password: hashedPassword }, session);
+        await this._userService.update({emailId: model.emailId}, {password: hashedPassword}, session);
 
         // expire all this verification code
-        await this._resetPasswordService.bulkUpdate(codeDetailsFilter, { isExpired: true }, session);
+        await this._resetPasswordService.bulkUpdate(codeDetailsFilter, {isExpired: true}, session);
 
         await session.commitTransaction();
         session.endSession();
@@ -224,7 +224,7 @@ export class AuthService implements OnModuleInit {
     session.startTransaction();
 
     try {
-      const jwtPayload = { sub: '', id: '' };
+      const jwtPayload = {sub: '', id: ''};
 
       // get user details by emailId id
       const userDetails = await this.getUserByEmailId(user.emailId);
@@ -294,7 +294,7 @@ export class AuthService implements OnModuleInit {
 
         if (authTokenResult.aud === process.env.GOOGLE_CLIENT_ID) {
 
-          const jwtPayload = { sub: '', id: '' };
+          const jwtPayload = {sub: '', id: ''};
 
           // get user details by email id from db
           const userDetails = await this.getUserByEmailId(authTokenResult.email);

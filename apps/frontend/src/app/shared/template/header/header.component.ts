@@ -18,7 +18,7 @@ export class HeaderComponent{
       firstName : "Pradeep",
       lastName : "Sharma",
       profilePic:'',
-      mobileNo:'9716464156',
+      mobileNumber:'9716464156',
       aadhaarNo:'222971644156',
     };
 

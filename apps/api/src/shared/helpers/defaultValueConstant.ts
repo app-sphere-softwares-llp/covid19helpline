@@ -29,7 +29,3 @@ export const DEFAULT_EMAIL_TEMPLATE_PATH = 'shared/email-templates/';
 
 // default reset password code expiry in seconds
 export const DEFAULT_RESET_PASSWORD_CODE_EXPIRY = 10800;
-
-// sens sms url
-export const SEND_SMS_URL = 'https://api.msg91.com/api/v2/sendsms';
-
