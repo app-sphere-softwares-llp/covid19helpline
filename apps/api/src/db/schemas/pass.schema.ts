@@ -2,7 +2,7 @@ import {Schema} from "mongoose";
 import {commonSchemaFields} from "./base.schema";
 import {DbCollection} from "@covid19-helpline/models";
 
-export const getPassSchema = new Schema({
+export const passSchema = new Schema({
   picUrl: {type: String},
   firstName: {type: String},
   lastName: {type: String},

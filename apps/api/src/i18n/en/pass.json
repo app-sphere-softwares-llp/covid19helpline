@@ -1,0 +1,5 @@
+{
+  "CREATE_VALIDATIONS" : {
+    "NO_MOBILE_NO": "Please enter mobile no"
+  }
+}

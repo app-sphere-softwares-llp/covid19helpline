@@ -4,10 +4,10 @@ import * as moment from 'moment';
 import {
   DEFAULT_DECIMAL_PLACES, DEFAULT_RESET_PASSWORD_CODE_EXPIRY
 } from './defaultValueConstant';
-import { BadRequestException } from '@nestjs/common';
-import { Types } from 'mongoose';
-import { EmailSubjectEnum } from '@covid19-helpline/models';
-import { emailSubjectTemplateMapper } from '@covid19-helpline/models';
+import {BadRequestException} from '@nestjs/common';
+import {Types} from 'mongoose';
+import {EmailSubjectEnum} from '@covid19-helpline/models';
+import {emailSubjectTemplateMapper} from '@covid19-helpline/models';
 
 /**
  * converts given string to seconds
@@ -198,4 +198,12 @@ export const isResetPasswordCodeExpired = (date: Date): boolean => {
 /**
  * helper function to convert _id to id in aggregate query
  */
-export const aggregateConvert_idToId = { $addFields: { id: '$_id' } };
+export const aggregateConvert_idToId = {$addFields: {id: '$_id'}};
+
+/**
+ * addhaar no validator
+ * @param aadhaarNo
+ */
+export const aadhaarNoValidator = (aadhaarNo: string = '') => {
+  return /^\d{4}\d{4}\d{4}$/g.test(aadhaarNo);
+};

@@ -4,6 +4,6 @@ export enum DbCollection {
   attachments = 'attachments',
   state = 'states',
   city = 'cities',
-  getPass = 'getPass',
+  pass = 'passes',
   reason = 'reasons'
 }

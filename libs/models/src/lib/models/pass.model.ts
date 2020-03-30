@@ -2,11 +2,14 @@ import {BaseDbModel} from '../general';
 import {CityModel} from './city.model';
 import {AttachmentModel} from './attachment.model';
 import {User} from "./user.model";
+import {StateModel} from "./state.model";
 
-export class GetPassModel extends BaseDbModel {
+export class PassModel extends BaseDbModel {
   picUrl: string;
   firstName: string;
   lastName: string;
+  stateId: string;
+  state?: StateModel;
   cityId: string;
   city?: CityModel[];
   aadhaarNo: string;
@@ -18,15 +21,19 @@ export class GetPassModel extends BaseDbModel {
   reasonId: string;
   reason?: any;
   reasonDetails: string;
+  destinationPinCode: string;
   destinationAddress: string;
   attachments: string[];
   attachmentDetails: AttachmentModel[];
-  otherPersonDetails: Array<{
-    fullName: string;
-    aadhaarNo: string;
-  }>;
+  otherPersonDetails: OtherPersonDetails[];
   isApproved: boolean;
   approvedAt: Date;
   approvedById: string;
   approvedBy?: User;
+}
+
+
+export class OtherPersonDetails {
+  fullName: string;
+  aadhaarNo: string;
 }

@@ -72,6 +72,7 @@
     "mongoose-validation-error-transform": "^0.0.5",
     "nest-winston": "^1.1.4",
     "nestjs-easyconfig": "^1.5.1",
+    "nestjs-i18n": "^7.0.0",
     "ng-chartjs": "^0.1.7",
     "ng-zorro-antd": "8.1.2",
     "ngx-bootstrap": "^5.1.2",

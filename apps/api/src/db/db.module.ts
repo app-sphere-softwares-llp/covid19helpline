@@ -6,7 +6,7 @@ import {resetPasswordSchema} from './schemas/reset-password.schema';
 import {attachmentSchema} from './schemas/attachment.schema';
 import {stateSchema} from "./schemas/state.schema";
 import {citySchema} from "./schemas/city.schema";
-import {getPassSchema} from "./schemas/get-pass.schema";
+import {passSchema} from "./schemas/pass.schema";
 import {reasonSchema} from "./schemas/reason.schema";
 
 
@@ -33,9 +33,9 @@ import {reasonSchema} from "./schemas/reason.schema";
       schema: citySchema,
       collection: DbCollection.city
     }, {
-      name: DbCollection.getPass,
-      schema: getPassSchema,
-      collection: DbCollection.getPass
+      name: DbCollection.pass,
+      schema: passSchema,
+      collection: DbCollection.pass
     }, {
       name: DbCollection.reason,
       schema: reasonSchema,

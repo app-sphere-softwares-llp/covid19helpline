@@ -97,7 +97,7 @@ export class CityService extends BaseService<CityModel & Document> implements On
       });
 
       if (!cityDetails) {
-        BadRequest('State not found...');
+        BadRequest('City not found...');
       } else {
         cityDetails.id = cityDetails._id;
       }
