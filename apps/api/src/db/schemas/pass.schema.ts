@@ -26,9 +26,6 @@ export const passSchema = new Schema({
   destinationPinCode: {type: String},
   destinationAddress: {type: String},
   attachments: [{type: Schema.Types.ObjectId, ref: DbCollection.attachments}],
-  isApproved: {type: Boolean, default: false},
-  approvedAt: {type: Date},
-  approvedById: {type: Schema.Types.ObjectId, ref: DbCollection.users, required: [true, 'Created by is required']},
   passStatus: {
     status: {
       type: String,
@@ -47,6 +44,42 @@ passSchema
   .set('toJSON', {virtuals: true});
 
 // virtual
+passSchema
+  .virtual('reason', {
+    ref: DbCollection.reason,
+    localField: 'reasonId',
+    foreignField: '_id'
+  });
+
+passSchema
+  .virtual('createdBy', {
+  ref: DbCollection.users,
+  localField: 'createdById',
+  foreignField: '_id'
+});
+
+passSchema
+  .virtual('updatedBy', {
+  ref: DbCollection.users,
+  localField: 'updatedById',
+  foreignField: '_id'
+});
+
+passSchema
+  .virtual('attachmentsDetails', {
+  ref: DbCollection.attachments,
+  localField: 'attachments',
+  foreignField: '_id'
+});
+
+passSchema
+  .virtual('passStatus.updatedBy', {
+    ref: DbCollection.users,
+    localField: 'passStatus.passStatus',
+    foreignField: '_id',
+    justOne: true
+  });
+
 
 // plugins
 passSchema

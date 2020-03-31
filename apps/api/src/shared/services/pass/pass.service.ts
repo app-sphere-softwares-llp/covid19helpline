@@ -15,6 +15,28 @@ import {BadRequest, generateUtcDate} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 import {PassUtilityService} from "./pass.utility.service";
 
+const COMMON_POPULATION = [{
+  path: 'reason',
+  select: 'name',
+  justOne: true
+}, {
+  path: 'createdBy',
+  select: 'mobileNumber userName firstName lastName profilePic -_id',
+  justOne: true
+}, {
+  path: 'updatedBy',
+  select: 'mobileNumber userName firstName lastName profilePic -_id',
+  justOne: true
+}];
+
+const DETAILED_POPULATION = [...COMMON_POPULATION, {
+  path: 'attachmentsDetails'
+}, {
+  path: 'passStatus.updatedBy',
+  select: 'mobileNumber userName firstName lastName profilePic -_id',
+  justOne: true
+}];
+
 @Injectable()
 export class PassService extends BaseService<PassModel & Document> implements OnModuleInit {
   private _utilityService: PassUtilityService;
@@ -146,6 +168,14 @@ export class PassService extends BaseService<PassModel & Document> implements On
   }
 
   /**
+   * get get pass by id
+   * @param id
+   */
+  async getPassById(id: string) {
+    return this.getDetails(id, true);
+  }
+
+  /**
    * delete pass
    * @param id
    */
@@ -164,18 +194,29 @@ export class PassService extends BaseService<PassModel & Document> implements On
   /**
    * get pass details by id
    * @param id
+   * @param getFullDetails
    */
-  async getDetails(id: string) {
+  async getDetails(id: string, getFullDetails: boolean = false) {
     try {
       if (!this.isValidObjectId(id)) {
         BadRequest('Pass not found..');
       }
 
-      const passDetails = await this.findOne({
-        filter: {_id: id},
-        lean: true
-      });
+      // query object
+      const detailsQuery = new MongooseQueryModel();
+      detailsQuery.filter = {_id: id};
+      detailsQuery.lean = true;
+      detailsQuery.populate = COMMON_POPULATION;
 
+      // if get full details is true then send all details
+      if (getFullDetails) {
+        detailsQuery.populate = DETAILED_POPULATION;
+      }
+
+      // get pass details
+      const passDetails = await this.findOne(detailsQuery);
+
+      // if pass details not found then throw error
       if (!passDetails) {
         BadRequest('Pass not found...');
       } else {

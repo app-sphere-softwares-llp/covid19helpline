@@ -13,15 +13,12 @@ export const userSchema = new Schema(
     firstName: {type: String, default: ''},
     lastName: {type: String, default: ''},
     profilePic: {type: String},
-    otp: {type: String},
-    otpSentAt: {type: Date},
-    isOtpExpired: {type: Boolean},
     locale: {type: String},
     mobileNumber: {type: String, required: true},
     status: {type: String, enum: Object.values(UserStatus)},
     lastLoginProvider: {type: String, enum: Object.values(UserLoginProviderEnum)},
     memberType: {type: String, enum: Object.values(MemberTypes)},
-    isDeleted: { type: Boolean, default: false }
+    isDeleted: {type: Boolean, default: false}
   }, schemaOptions
 );
 
