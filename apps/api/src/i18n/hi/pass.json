@@ -1,5 +1,13 @@
 {
   "CREATE_VALIDATIONS": {
     "NO_MOBILE_NO": "कृपया मोबाइल नंबर दर्ज करें"
+  },
+  "UPDATE_PASS_STATUS_VALIDATIONS": {
+    "INVALID_STATUS": "Invalid Status",
+    "ALREADY_APPROVED": "Pass already approved",
+    "ALREADY_REJECTED": "Pass already rejected"
+  },
+  "RESPONSES": {
+    "STATUS_UPDATED": "Pass Status Updated Successfully"
   }
 }

@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
 import {commonSchemaFields, mongooseErrorTransformPluginOptions} from "./base.schema";
-import {DbCollection} from "@covid19-helpline/models";
+import {DbCollection, PassStatusEnum} from "@covid19-helpline/models";
 
 const mongooseValidationErrorTransform = require('mongoose-validation-error-transform');
 
@@ -29,6 +29,14 @@ export const passSchema = new Schema({
   isApproved: {type: Boolean, default: false},
   approvedAt: {type: Date},
   approvedById: {type: Schema.Types.ObjectId, ref: DbCollection.users, required: [true, 'Created by is required']},
+  passStatus: {
+    status: {
+      type: String,
+      enum: Object.values(PassStatusEnum)
+    },
+    updatedAt: {type: Date},
+    updatedById: {type: Schema.Types.ObjectId, ref: DbCollection.users}
+  },
   ...commonSchemaFields
 });
 

@@ -1,8 +1,9 @@
 import {BaseDbModel} from '../general';
 import {CityModel} from './city.model';
 import {AttachmentModel} from './attachment.model';
-import {User} from "./user.model";
 import {StateModel} from "./state.model";
+import {PassStatusEnum} from "../enums";
+import {User} from "./user.model";
 
 export class PassModel extends BaseDbModel {
   picUrl: string;
@@ -24,16 +25,24 @@ export class PassModel extends BaseDbModel {
   destinationPinCode: string;
   destinationAddress: string;
   attachments: string[];
-  attachmentDetails: AttachmentModel[];
+  attachmentDetails?: AttachmentModel[];
   otherPersonDetails: OtherPersonDetails[];
-  isApproved: boolean;
-  approvedAt: Date;
-  approvedById: string;
-  approvedBy?: User;
+  passStatus: {
+    status: PassStatusEnum;
+    updatedAt?: Date;
+    updatedById?: string;
+    updateBy?: User;
+  }
 }
 
 
 export class OtherPersonDetails {
   fullName: string;
   aadhaarNo: string;
+}
+
+
+export class UpdatePassRequestModel {
+  id: string;
+  status: PassStatusEnum;
 }

@@ -1,4 +1,4 @@
-import {PassModel, OtherPersonDetails} from "@covid19-helpline/models";
+import {PassModel, OtherPersonDetails, PassStatusEnum, UpdatePassRequestModel} from "@covid19-helpline/models";
 import {aadhaarNoValidator, BadRequest} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 
@@ -74,5 +74,19 @@ export class PassUtilityService {
     return otherPerson.every(person => {
       return (!!person.fullName && aadhaarNoValidator(person.aadhaarNo));
     });
+  }
+
+  /**
+   * update pass status validations
+   * @param model
+   */
+  async updatePassStatusValidations(model: UpdatePassRequestModel) {
+    if (!model) {
+      BadRequest('Pass not found');
+    }
+
+    if (!Object.values(PassStatusEnum).includes(model.status)) {
+      BadRequest(await this.i18n.translate('pass.UPDATE_PASS_STATUS_VALIDATIONS.INVALID_STATUS'));
+    }
   }
 }
