@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Headers, Post, Request, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
+import {Body, Controller, Get, Headers, Post, Request, UseGuards} from '@nestjs/common';
+import {AuthGuard} from '@nestjs/passport';
+import {AuthService} from './auth.service';
 import {
   User,
   UserLoginWithPasswordRequest,
@@ -33,6 +33,11 @@ export class AuthController {
   @Post('verify-otp')
   async verifyOtp(@Body() model: VerifyOtpRequestModel) {
     return await this._authService.verifyOtp(model);
+  }
+
+  @Post('resend-otp')
+  async resendOtp(@Body() mobileNumber: string) {
+    return await this._authService.resendOtp(mobileNumber);
   }
 
   @Post('google/validate-token')

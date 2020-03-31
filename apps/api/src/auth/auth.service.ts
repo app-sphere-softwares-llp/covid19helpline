@@ -70,7 +70,7 @@ export class AuthService implements OnModuleInit {
         await session.commitTransaction();
         session.endSession();
 
-        return 'And otp sent to your mobile';
+        return 'An otp sent to your mobile';
       } else {
         throw new UnauthorizedException('User not found');
       }
@@ -275,6 +275,24 @@ export class AuthService implements OnModuleInit {
       return {
         access_token: this.jwtService.sign(jwtPayload)
       };
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
+  async resendOtp(mobileNumber: string) {
+    // start session
+    const session = await this._userModel.db.startSession();
+    session.startTransaction();
+
+    try {
+      // create otp and send otp
+      await this._otpService.createOtp(mobileNumber, session);
+      await session.commitTransaction();
+      session.endSession();
+      return 'An otp sent to your mobile';
     } catch (e) {
       await session.abortTransaction();
       session.endSession();
