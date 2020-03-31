@@ -1,9 +1,8 @@
-import {Body, Controller, Get, Post, Put, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Put, Request, UseGuards} from '@nestjs/common';
 import {UsersService} from '../shared/services/users/users.service';
 import {AuthGuard} from '@nestjs/passport';
-import {SendSmsModel, User} from '@covid19-helpline/models';
+import {User} from '@covid19-helpline/models';
 import {SmsService} from '../shared/services/sms/sms.service';
-import {generateRandomCode} from "../shared/helpers/helpers";
 
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))

@@ -19,6 +19,11 @@ export class CityController {
     return await this._cityService.addUpdate(model);
   }
 
+  @Post('delete')
+  async deleteCity(@Body('id') id: string) {
+    return await this._cityService.deleteCity(id);
+  }
+
   @Post('get-all')
   async getAllCities(@Body('stateId') stateId: string, @Body('term') term: string) {
     return await this._cityService.getAllCities(stateId, term);

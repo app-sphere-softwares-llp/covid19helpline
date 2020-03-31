@@ -19,6 +19,11 @@ export class StateController {
     return await this._stateService.addUpdate(model);
   }
 
+  @Post('delete')
+  async deleteState(@Body('id') id: string) {
+    return await this._stateService.deleteState(id);
+  }
+
   @Post('get-all')
   async getAllStates(@Body('term') term: string) {
     return await this._stateService.getAllStates(term);

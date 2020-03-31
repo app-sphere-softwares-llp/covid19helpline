@@ -39,19 +39,4 @@ export class AuthController {
   async resendOtp(@Body('mobileNumber') mobileNumber: string) {
     return await this._authService.resendOtp(mobileNumber);
   }
-
-  @Post('google/validate-token')
-  async googleValidateToken(@Body('token') token: string) {
-    return await this._authService.verifyGoogleAuthToken(token);
-  }
-
-  @Post('forgot-password')
-  async forgotPassword(@Body('emailId') emailId: string) {
-    return await this._authService.forgotPassword(emailId);
-  }
-
-  @Post('reset-password')
-  async resetPassword(@Body() model: ResetPasswordVerifyModel) {
-    return await this._authService.resetPassword(model);
-  }
 }

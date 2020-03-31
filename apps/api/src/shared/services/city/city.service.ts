@@ -34,7 +34,8 @@ export class CityService extends BaseService<CityModel & Document> implements On
       BadRequest('State name is mandatory');
     }
 
-    return await this.withRetrySession(async (session: ClientSession) => {
+    // add/ update city
+    const result = await this.withRetrySession(async (session: ClientSession) => {
 
       if (model.id) {
         await this.getDetails(model.id);
@@ -48,14 +49,39 @@ export class CityService extends BaseService<CityModel & Document> implements On
       const city = new CityModel();
       city.name = model.name;
       city.stateId = model.stateId;
-      city.createdById = this._generalService.userId;
 
       if (!model.id) {
+        city.createdById = this._generalService.userId;
+
+        // create new city
         const newCity = await this.create([city], session);
         return newCity[0];
       } else {
-        // update task priority by id
+        city.updatedById = this._generalService.userId;
+
+        // update city by id
+        await this.updateById(model.id, city, session);
+        return model;
       }
+    });
+
+    // return details city details
+    return await this.getDetails(result.id);
+  }
+
+  /**
+   * delete city
+   * @param id
+   */
+  async deleteCity(id: string) {
+    return this.withRetrySession(async (session: ClientSession) => {
+      // check whether city exists
+      await this.getDetails(id);
+
+      // delete city
+      await this.delete(id, session);
+
+      return 'City deleted successfully';
     });
   }
 
@@ -93,7 +119,10 @@ export class CityService extends BaseService<CityModel & Document> implements On
 
       const cityDetails = await this.findOne({
         filter: {_id: id},
-        lean: true
+        lean: true,
+        populate: [{
+          path: 'state'
+        }]
       });
 
       if (!cityDetails) {

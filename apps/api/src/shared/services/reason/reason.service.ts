@@ -30,7 +30,8 @@ export class ReasonService extends BaseService<ReasonModel & Document> implement
       BadRequest('Reason name is mandatory');
     }
 
-    return await this.withRetrySession(async (session: ClientSession) => {
+    // add/update reason process
+    const result = await this.withRetrySession(async (session: ClientSession) => {
 
       if (model.id) {
         await this.getDetails(model.id);
@@ -43,14 +44,39 @@ export class ReasonService extends BaseService<ReasonModel & Document> implement
 
       const reason = new ReasonModel();
       reason.name = model.name;
-      reason.createdById = this._generalService.userId;
 
       if (!model.id) {
+        reason.createdById = this._generalService.userId;
+
+        // create new reason
         const newState = await this.create([reason], session);
         return newState[0];
       } else {
-        // update task priority by id
+        reason.updatedById = this._generalService.userId;
+
+        // update reason by id
+        await this.updateById(model.id, reason, session);
+        return model;
       }
+    });
+
+    // return report details
+    return await this.getDetails(result.id);
+  }
+
+  /**
+   * delete reason
+   * @param id
+   */
+  async deleteReason(id: string) {
+    return this.withRetrySession(async (session: ClientSession) => {
+      // check whether reason exists
+      await this.getDetails(id);
+
+      // delete reason
+      await this.delete(id, session);
+
+      return 'Reason deleted successfully';
     });
   }
 

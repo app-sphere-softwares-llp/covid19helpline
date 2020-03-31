@@ -10,13 +10,18 @@ export class ReasonController {
   }
 
   @Post('create')
-  async createState(@Body() model: ReasonModel) {
+  async createReason(@Body() model: ReasonModel) {
     return await this._reasonService.addUpdate(model);
   }
 
   @Post('update')
-  async updateState(@Body() model: ReasonModel) {
+  async updateReason(@Body() model: ReasonModel) {
     return await this._reasonService.addUpdate(model);
+  }
+
+  @Post('delete')
+  async deleteReason(@Body('id') id: string) {
+    return await this._reasonService.deleteReason(id);
   }
 
   @Post('get-all')

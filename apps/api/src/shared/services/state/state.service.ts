@@ -4,7 +4,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import {GeneralService} from '../general.service';
-import {CityModel, DbCollection, MongooseQueryModel, StateModel} from "@covid19-helpline/models";
+import {DbCollection, MongooseQueryModel, StateModel} from "@covid19-helpline/models";
 import {BadRequest} from "../../helpers/helpers";
 
 @Injectable()
@@ -30,7 +30,8 @@ export class StateService extends BaseService<StateModel & Document> implements 
       BadRequest('State name is mandatory');
     }
 
-    return await this.withRetrySession(async (session: ClientSession) => {
+    // add/update state
+    const result = await this.withRetrySession(async (session: ClientSession) => {
 
       if (model.id) {
         await this.getDetails(model.id);
@@ -43,14 +44,38 @@ export class StateService extends BaseService<StateModel & Document> implements 
 
       const state = new StateModel();
       state.name = model.name;
-      state.createdById = this._generalService.userId;
 
       if (!model.id) {
+        state.createdById = this._generalService.userId;
+
         const newState = await this.create([state], session);
         return newState[0];
       } else {
+        state.updatedById = this._generalService.userId;
+
         // update task priority by id
+        await this.updateById(model.id, state, session);
+        return model;
       }
+    });
+
+    // return state details
+    return await this.getDetails(result.id);
+  }
+
+  /**
+   * delete state
+   * @param id
+   */
+  async deleteState(id: string) {
+    return this.withRetrySession(async (session: ClientSession) => {
+      // check whether state exists
+      await this.getDetails(id);
+
+      // delete state
+      await this.delete(id, session);
+
+      return 'State deleted successfully';
     });
   }
 
