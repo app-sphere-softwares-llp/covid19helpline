@@ -11,7 +11,7 @@ import {BadRequest} from "../../helpers/helpers";
 export class ReasonService extends BaseService<ReasonModel & Document> implements OnModuleInit {
 
   constructor(
-    @InjectModel(DbCollection.state) private readonly _reasonModel: Model<ReasonModel & Document>,
+    @InjectModel(DbCollection.reason) private readonly _reasonModel: Model<ReasonModel & Document>,
     private _moduleRef: ModuleRef, private readonly _generalService: GeneralService
   ) {
     super(_reasonModel);

@@ -1,6 +1,6 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {CityModel, ReasonModel} from "@covid19-helpline/models";
+import {ReasonModel} from "@covid19-helpline/models";
 import {ReasonService} from "../shared/services/reason/reason.service";
 
 @Controller('reason')

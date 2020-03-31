@@ -92,18 +92,25 @@ export class CityService extends BaseService<CityModel & Document> implements On
    * @param term
    */
   async getAllCities(stateId: string, term: string) {
-
+    // query object
     const query = new MongooseQueryModel();
 
+    // prepare query filter
     query.filter = {
       isDeleted: false,
-      stateId: stateId,
       $and: [{
         $or: [
           {name: {$regex: new RegExp(term), $options: 'i'}},
         ]
       }]
     };
+
+    // if state id is present than get cities by state id
+    if (stateId) {
+      query.filter['stateId'] = stateId;
+    }
+
+    query.populate = [{path: 'state', select: 'name'}];
     return this.find(query);
   }
 
