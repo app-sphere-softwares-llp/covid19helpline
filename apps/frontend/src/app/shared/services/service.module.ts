@@ -7,6 +7,9 @@ import { GeneralService } from './general.service';
 import { LoaderService } from './loader.service';
 import { UserService } from './user/user.service';
 import { PassService } from './pass/pass.service';
+import { CityService } from './state-city/city.service';
+import { StateService } from './state-city/state.service';
+
 
 @NgModule()
 export class ServiceModule {
@@ -22,7 +25,9 @@ export class ServiceModule {
         GeneralService,
         LoaderService,
         UserService,
-        PassService
+        PassService,
+        StateService,
+        CityService
       ]
     };
   }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { StateService } from '../../shared/services/state-city/state.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -30,11 +31,16 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor() {
+  constructor(private _stateCityService : StateService) {
   }
 
   ngOnInit(): void {
+    this.getInitialData();
+  }
 
+
+  public getInitialData() {
+    this._stateCityService.getStates().subscribe();
   }
 
 }

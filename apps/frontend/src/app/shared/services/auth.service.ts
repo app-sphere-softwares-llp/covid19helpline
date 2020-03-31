@@ -5,7 +5,7 @@ import {
   User,
   UserLoginProviderEnum,
   UserLoginSignUpSuccessResponse,
-  UserLoginWithPasswordRequest
+  VerifyOtpRequestModel
 } from '@covid19-helpline/models';
 import { BaseService } from './base.service';
 import { HttpWrapperService } from './httpWrapper.service';
@@ -29,19 +29,18 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
     });
   }
 
-  login(request: UserLoginWithPasswordRequest) {
+  login(json: User) {
     this.updateState({ isLoginInProcess: true, isLoginSuccess: false, token: null });
-    return this._http.post(AuthUrls.login, request).pipe(
-      map((res: BaseResponseModel<UserLoginSignUpSuccessResponse>) => {
+    return this._http.post(AuthUrls.login, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+
         this.updateState({
-          isLoginSuccess: true,
           isLoginInProcess: false,
-          token: res.data.access_token
+          isLoginSuccess: true,
+          token: null
         });
 
-        this._generalService.token = res.data.access_token;
-
-        this.router.navigate(['dashboard']);
+        this.notification.success('Success', res.data);
 
         return res;
       }),
@@ -59,14 +58,30 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
     );
   }
 
-  register(user: User) {
-    this.updateState({ isRegisterInProcess: true, isRegisterSuccess: false });
-    return this._http.post(AuthUrls.register, user).pipe(
+  register(json: User) {
+    this.updateState({ isSignupInProcess: true, isSignupSuccess: false });
+    return this._http.post(AuthUrls.register, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.updateState({ isSignupSuccess: true, isSignupInProcess: false });
+        this.notification.success('Success', res.data);
+        return res;
+      }),
+      catchError((err) => {
+        this._generalService.token = null;
+        this.notification.error('Error', err.error.message);
+        return of(err);
+      })
+    );
+  }
+
+  verifyOtp(json: VerifyOtpRequestModel) {
+    this.updateState({ isVerificationInProcess: true, isVerificationInSuccess: false });
+    return this._http.post(AuthUrls.verifyOtp, json).pipe(
       map((res: BaseResponseModel<UserLoginSignUpSuccessResponse>) => {
 
         this.updateState({
-          isRegisterSuccess: true,
-          isRegisterInProcess: false,
+          isVerificationInSuccess: true,
+          isVerificationInProcess: false,
           token: res.data.access_token
         });
 
@@ -76,8 +91,8 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
       }),
       catchError((err) => {
         this.updateState({
-          isRegisterInProcess: false,
-          isRegisterSuccess: false,
+          isVerificationInSuccess: false,
+          isVerificationInProcess: false,
           token: null
         });
 
@@ -87,6 +102,32 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
       })
     );
   }
+
+  resendOtp(json: User) {
+    this.updateState({ isResendInProcess: true, isResendInSuccess: false });
+    return this._http.post(AuthUrls.resendOtp, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.notification.success('Success', res.data);
+        this.updateState({
+          isResendInProcess: false,
+          isResendInSuccess: false,
+          token: null
+        });
+        return res;
+      }),
+      catchError((err) => {
+        this.notification.error('Error', err.error.message);
+        this.updateState({
+          isResendInProcess: false,
+          isResendInSuccess: false,
+          token: null
+        });
+        return of(err);
+      })
+    );
+  }
+
+
 
   logOut() {
     // if login from social user then please logout from social platforms

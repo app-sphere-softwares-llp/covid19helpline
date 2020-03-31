@@ -21,7 +21,7 @@
           <h2 class="m-b-25 font-weight-bold">Covid-19 Helpline</h2>
 
           <form
-            *ngIf="!isSubmitted"
+            *ngIf="!isLoginSuccess"
             nz-form
             [formGroup]="loginForm"
             class="login-form"
@@ -38,18 +38,13 @@
                     nz-input
                     nzSize="small"
                     maxlength="10"
-                    formControlName="mobile"
+                    formControlName="mobileNumber"
                     required="true"
                     placeholder="Mobile"/>
                 </nz-input-group>
               </nz-form-control>
             </nz-form-item>
 
-
-            <nz-form-item>
-              <a class="float-right font-size-12 m-t-5 text-primary"
-                 [routerLink]="['/forgot']">Forget Password?</a>
-            </nz-form-item>
 
             <nz-form-item>
               <nz-form-control>
@@ -72,7 +67,7 @@
 
         <!--otp-request form-->
           <form
-            *ngIf="isSubmitted"
+            *ngIf="isLoginSuccess"
             nz-form
             [formGroup]="otpForm"
             class="login-form"
@@ -87,11 +82,17 @@
                     nz-input
                     nzSize="small"
                     maxlength="4"
-                    formControlName="otp"
+                    formControlName="code"
                     required="true"
                     placeholder="OTP"/>
                 </nz-input-group>
               </nz-form-control>
+            </nz-form-item>
+
+
+            <nz-form-item>
+              <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="!resendInProcess" (click)="resendOtp()" href="javascript:void(0);">Resend OTP</a>
+              <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="resendInProcess" href="javascript:void(0);">Resending...</a>
             </nz-form-item>
 
 
@@ -102,11 +103,11 @@
                   <button
                     nz-button
                     [nzBlock]="true"
-                    [disabled]="loginForm.invalid"
-                    [nzLoading]="loginInProcess"
+                    [disabled]="otpForm.invalid"
+                    [nzLoading]="verificationInProcess"
                     class="login-form-button"
                     [nzType]="'primary'">
-                    GET OTP
+                    SUBMIT
                   </button>
                 </div>
 
@@ -115,14 +116,14 @@
           </form>
 
 
-          <div class="m-t-20 m-b-20 relative or-line">
-            <span>or</span><div></div>
-          </div>
-          <div class="text-center m-t-25 row">
-            <div class="col">
-              <img class="btn-google" src="../../assets/images/icons/btn-google.svg" width="100%" (click) = 'loginWithGoogle()'>
-            </div>
-          </div>
+<!--          <div class="m-t-20 m-b-20 relative or-line">-->
+<!--            <span>or</span><div></div>-->
+<!--          </div>-->
+<!--          <div class="text-center m-t-25 row">-->
+<!--            <div class="col">-->
+<!--              <img class="btn-google" src="../../assets/images/icons/btn-google.svg" width="100%" (click) = 'loginWithGoogle()'>-->
+<!--            </div>-->
+<!--          </div>-->
           <ng-template #prefixUser><i nz-icon nzType="user"></i></ng-template>
         </nz-card>
 
@@ -136,12 +137,8 @@
           <li class="media">
             <img src="../../assets/images/icons/feature_1.svg" class="mr-3" alt="Feature 1">
             <div class="media-body">
-              <h5 class="mt-0 mb-0">List-based media object</h5>
-              Lorem ipsum is placeholder text commonly used in the graphic, Lorem ipsum is placeholder text commonly used in the graphic
-              Lorem ipsum is placeholder text commonly used in the graphic
-              Lorem ipsum is placeholder text commonly used in the graphic
-              Lorem ipsum is placeholder text commonly used in the graphic
-              v
+              <h5 class="mt-0 mb-0">Gate Pass</h5>
+            ...
             </div>
           </li>
 

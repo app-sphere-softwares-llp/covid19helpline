@@ -6,3 +6,10 @@ export class CityModel extends BaseDbModel {
   stateId: string;
   state?: StateModel;
 }
+
+export class CityRequestModel {
+  stateId: string;
+  term?: string;
+}
+
+
