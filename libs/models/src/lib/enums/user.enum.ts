@@ -3,7 +3,8 @@ export enum UserStatus {
   'blocked' = 'blocked',
   'Active' = 'Active',
   'Left' = 'Left',
-  'Expired' = 'Expired'
+  'Expired' = 'Expired',
+  'NotConfirmed' = 'NotConfirmed'
 }
 
 export enum UserLoginProviderEnum {

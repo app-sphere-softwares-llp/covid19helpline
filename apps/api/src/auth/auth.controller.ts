@@ -1,7 +1,12 @@
 import { Body, Controller, Get, Headers, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { User, UserLoginWithPasswordRequest, ResetPasswordVerifyModel } from '@covid19-helpline/models';
+import {
+  User,
+  UserLoginWithPasswordRequest,
+  ResetPasswordVerifyModel,
+  VerifyOtpRequestModel
+} from '@covid19-helpline/models';
 
 @Controller('auth')
 export class AuthController {
@@ -22,7 +27,12 @@ export class AuthController {
   @Post('register')
   async signUp(@Body() user: User, @Headers('accept-language') locale: string) {
     user.locale = locale || 'en-Us';
-    return await this._authService.signUpWithPassword(user);
+    return await this._authService.signUp(user);
+  }
+
+  @Post('verify-otp')
+  async verifyOtp(@Body() model: VerifyOtpRequestModel) {
+    return await this._authService.verifyOtp(model);
   }
 
   @Post('google/validate-token')

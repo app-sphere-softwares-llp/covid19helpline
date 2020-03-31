@@ -16,7 +16,6 @@ export const userSchema = new Schema(
     otp: {type: String},
     otpSentAt: {type: Date},
     isOtpExpired: {type: Boolean},
-    confirmed: {type: Boolean, default: false},
     locale: {type: String},
     mobileNumber: {type: String, required: true},
     status: {type: String, enum: Object.values(UserStatus)},

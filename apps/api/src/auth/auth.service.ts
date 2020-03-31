@@ -5,13 +5,7 @@ import {InjectModel} from '@nestjs/mongoose';
 import {Document, Model} from 'mongoose';
 import {get, Response} from 'request';
 import {ModuleRef} from '@nestjs/core';
-import {
-  BadRequest,
-  emailAddressValidator,
-  generateRandomCode,
-  generateUtcDate,
-  isResetPasswordCodeExpired
-} from '../shared/helpers/helpers';
+import {BadRequest, generateRandomCode, generateUtcDate, isResetPasswordCodeExpired} from '../shared/helpers/helpers';
 import * as bcrypt from 'bcrypt';
 import {EmailService} from '../shared/services/email/email.service';
 import {ResetPasswordService} from '../shared/services/reset-password/reset-password.service';
@@ -23,7 +17,7 @@ import {
   User,
   UserLoginProviderEnum,
   UserLoginWithPasswordRequest,
-  UserStatus
+  UserStatus, VerifyOtpRequestModel
 } from '@covid19-helpline/models';
 import {UsersService} from '../shared/services/users/users.service';
 import {OtpRequestService} from "../shared/services/otp-request/otp-request.service";
@@ -208,12 +202,12 @@ export class AuthService implements OnModuleInit {
   }
 
   /**
-   * sign up with password
+   * sign up
    * check basic validations
    * create jwt token and return it
    * @param user
    */
-  async signUpWithPassword(user: User) {
+  async signUp(user: User) {
     // validations
     this.checkSignUpValidations(user);
 
@@ -227,27 +221,56 @@ export class AuthService implements OnModuleInit {
 
       // user exist or not
       if (userDetails) {
-        BadRequest('Mobile no already in use');
+        if (userDetails.status === UserStatus.Active) {
+          BadRequest('Mobile no already in use');
+        } else {
+          // create otp and send otp
+          await this._otpService.createOtp(user.mobileNumber, session);
+        }
+      } else {
+        // create new user
+        const model = new User();
+        model.mobileNumber = user.mobileNumber;
+        model.username = model.mobileNumber;
+        model.firstName = user.firstName;
+        model.lastName = user.lastName;
+        model.status = UserStatus.NotConfirmed;
+
+        // create new user
+        await this._userService.create([model], session);
+
+        // create otp and send otp
+        await this._otpService.createOtp(model.mobileNumber, session);
       }
 
-      // create new user and assign jwt token
-      const model = new User();
-      model.mobileNumber = user.mobileNumber;
-      model.username = model.mobileNumber;
-      model.firstName = user.firstName;
-      model.lastName = user.lastName;
-      model.status = UserStatus.Active;
-      model.lastLoginProvider = UserLoginProviderEnum.normal;
-
-      // create new user
-      await this._userService.create([model], session);
-
-      // create otp and send otp
-      await this._otpService.createOtp(model.mobileNumber, session);
-
+      // commit transaction
       await session.commitTransaction();
       session.endSession();
       return 'Otp sent successfully to your Mobile';
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
+  async verifyOtp(model: VerifyOtpRequestModel) {
+    // start session
+    const session = await this._userModel.db.startSession();
+    session.startTransaction();
+    try {
+      await this._otpService.verifyOtp(model, session);
+      const userDetails = await this.getUserByMobileNo(model.mobileNumber);
+
+      const jwtPayload = {sub: '', id: ''};
+
+      jwtPayload.id = userDetails._id;
+      jwtPayload.sub = userDetails.mobileNumber;
+
+      // return jwt token
+      return {
+        access_token: this.jwtService.sign(jwtPayload)
+      };
     } catch (e) {
       await session.abortTransaction();
       session.endSession();

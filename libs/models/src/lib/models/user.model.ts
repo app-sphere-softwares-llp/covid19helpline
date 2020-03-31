@@ -13,8 +13,9 @@ export class UserLoginSignUpSuccessResponse {
   user: User;
 }
 
-export interface UserRecentLoginInfo {
-  lastLoggedInTime: string;
+export class VerifyOtpRequestModel {
+  mobileNumber: string;
+  code: string;
 }
 
 export class UserTimeZoneInfo {
@@ -32,7 +33,6 @@ export class User {
   password?: string;
   firstName?: string;
   lastName?: string;
-  confirmed?: boolean;
   profilePic?: string;
   status?: UserStatus;
   username?: string;
