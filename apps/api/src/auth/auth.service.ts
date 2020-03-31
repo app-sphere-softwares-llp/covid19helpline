@@ -140,6 +140,9 @@ export class AuthService implements OnModuleInit {
       await this._otpService.verifyOtp(model, session);
       const userDetails = await this.getUserByMobileNo(model.mobileNumber);
 
+      // update user and set is active user
+      await this._userService.updateById(userDetails.id, {$set: {status: UserStatus.Active}}, session);
+
       if (!userDetails) {
         BadRequest('User not found');
       }
