@@ -6,21 +6,22 @@ import {
   OnModuleInit,
   PayloadTooLargeException
 } from '@nestjs/common';
-import { ClientSession, Document, Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+import {ClientSession, Document, Model} from 'mongoose';
+import {InjectModel} from '@nestjs/mongoose';
 import * as aws from 'aws-sdk';
 
-import { ModuleRef } from '@nestjs/core';
-import { BaseService } from '../base.service';
-import { AttachmentModel, DbCollection, MongooseQueryModel, UserStatus } from '@covid19-helpline/models';
-import { GeneralService } from '../general.service';
-import { UsersService } from '../users/users.service';
-import { S3Client } from '../S3Client.service';
+import {ModuleRef} from '@nestjs/core';
+import {BaseService} from '../base.service';
+import {AttachmentModel, DbCollection, MongooseQueryModel, UserStatus} from '@covid19-helpline/models';
+import {GeneralService} from '../general.service';
+import {UsersService} from '../users/users.service';
+import {S3Client} from '../S3Client.service';
 import {
   DEFAULT_DECIMAL_PLACES,
   MAX_FILE_UPLOAD_SIZE,
   MAX_PROFILE_PIC_UPLOAD_SIZE
 } from '../../helpers/defaultValueConstant';
+import {BadRequest} from "../../helpers/helpers";
 
 @Injectable()
 export class AttachmentService extends BaseService<AttachmentModel & Document> implements OnModuleInit {
@@ -37,33 +38,38 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
       accessKeyId: process.env.AWS_ACCESSKEYID,
       secretAccessKey: process.env.AWS_SECRETACCESSKEY
     });
-    this.s3Client = new S3Client(new aws.S3({ region: 'ap-south-1' }), 'images.assign.work', '');
+    this.s3Client = new S3Client(new aws.S3({region: 'ap-south-1'}), 'images.assign.work', '');
   }
 
   onModuleInit(): void {
     this._userService = this._moduleRef.get('UsersService');
   }
 
-  async addAttachment(moduleName: string, files = []): Promise<{ id: string, url: string }> {
+  async addAttachment(files = []): Promise<{ id: string, url: string }> {
     const file = files[0];
 
     if (!file) {
-      throw new BadRequestException('file not found!');
+      BadRequest('file not found!');
     }
 
-    if (!moduleName) {
-      throw new BadRequestException('invalid request');
-    }
-
+    // get mime type
     const mimeType = file.mimetype.split('/')[0];
-    const fileType = mimeType.includes('image') ? 'images' : mimeType.includes('video') ? 'videos' : 'others';
-    const filePath = `${moduleName}/${fileType}/${file.originalname}`;
+
+    // check valid mime type
+    if (mimeType.includes('image')) {
+      BadRequest('Only images are allowed to upload');
+    }
+
+    // prepare file path and file type variables
+    const fileType = mimeType.includes('image') ? 'images' : 'others';
+    const filePath = `${fileType}/${file.originalname}`;
     let fileUrl: string;
 
     // validations
     this.fileSizeValidator(file);
 
     try {
+      // get file url from uploaded file
       fileUrl = await this.s3Client.upload(filePath, file.buffer);
     } catch (e) {
       throw new InternalServerErrorException('file not uploaded');
@@ -72,11 +78,14 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
     const session = await this.startSession();
 
     try {
+      // create entry attachment collection in db
       const result = await this.createAttachmentInDb(file, fileUrl, session);
       await this.commitTransaction(session);
+      session.endSession();
       return result;
     } catch (error) {
       await this.abortTransaction(session);
+      session.endSession();
       throw error;
     }
   }
@@ -152,7 +161,7 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
       // create attachment doc in db
       const result = await this.createAttachmentInDb(file, fileUrl, session);
       // update user profilePic url
-      await this._userService.updateUser(this._generalService.userId, { $set: { profilePic: result.url } }, session);
+      await this._userService.updateUser(this._generalService.userId, {$set: {profilePic: result.url}}, session);
       await this.commitTransaction(session);
       return result;
     } catch (error) {
