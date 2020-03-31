@@ -46,40 +46,6 @@
             </nz-form-item>
 
 
-
-            <nz-form-item>
-              <nz-form-label nzRequired nzFor="emailId">First Name (पहला नाम)<span class="text-danger">*</span></nz-form-label>
-              <nz-form-control nzValidatingTip="Please enter First Name!">
-                <nz-input-group [nzPrefix]="prefixUser">
-                  <input
-                    type="text"
-                    nz-input
-                    nzSize="small"
-                    maxlength="20"
-                    formControlName="firstName"
-                    required="true"
-                    placeholder="First Name"/>
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
-
-            <nz-form-item>
-              <nz-form-label nzRequired nzFor="emailId">Last Name (उपनाम)<span class="text-danger">*</span></nz-form-label>
-              <nz-form-control nzValidatingTip="Please enter Last Name!">
-                <nz-input-group [nzPrefix]="prefixUser">
-                  <input
-                    type="text"
-                    nz-input
-                    nzSize="small"
-                    maxlength="30"
-                    formControlName="lastName"
-                    required="true"
-                    placeholder="Last Name"/>
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
-
-
             <nz-form-item>
               <a class="float-right font-size-12 m-t-5 text-primary"
                  [routerLink]="['/forgot']">Forget Password?</a>
@@ -165,7 +131,7 @@
           <ng-template #prefixUser><i nz-icon nzType="user"></i></ng-template>
         </nz-card>
 
-        <div class="p-h-90 signup-link" style="position: absolute; bottom:20px; width: 100%;">Don't have an account? <a class="small font-weight-bold" [routerLink]="['/register']">Signup</a></div>
+        <div class="p-h-90 signup-link" style="position: absolute; bottom:20px; width: 100%;">Don't have an account? <a class="small font-weight-bold" [routerLink]="['/signup']">Signup</a></div>
 
       </div>
 
