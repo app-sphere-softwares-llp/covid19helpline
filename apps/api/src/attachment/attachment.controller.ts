@@ -1,4 +1,4 @@
-import {Controller, Delete, Param, Post, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
+import {Body, Controller, Delete, Param, Post, UploadedFiles, UseGuards, UseInterceptors} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {AnyFilesInterceptor} from '@nestjs/platform-express';
 import {AttachmentService} from "../shared/services/attachment/attachment.service";
@@ -22,8 +22,8 @@ export class AttachmentController {
     return await this._attachmentService.uploadProfilePic(files);
   }
 
-  @Delete(':id')
-  async deleteAttachment(@Param() id: string) {
+  @Post('delete')
+  async deleteAttachment(@Body('id') id: string) {
     return await this._attachmentService.deleteAttachment(id);
   }
 
