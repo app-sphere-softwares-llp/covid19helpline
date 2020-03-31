@@ -7,8 +7,9 @@ export const otpRequestSchema = new Schema({
   mobileNumber: {type: String, required: true},
   code: {type: String, required: true},
   codeSentAt: {type: Date},
-  isApproved: {type: Boolean},
-  isExpired: {type: Boolean},
+  isApproved: {type: Boolean, default: false},
+  isExpired: {type: Boolean, default: false},
+  isDeleted: {type: Boolean, default: false},
 }, schemaOptions);
 
 // options

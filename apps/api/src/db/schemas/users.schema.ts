@@ -21,6 +21,7 @@ export const userSchema = new Schema(
     status: {type: String, enum: Object.values(UserStatus)},
     lastLoginProvider: {type: String, enum: Object.values(UserLoginProviderEnum)},
     memberType: {type: String, enum: Object.values(MemberTypes)},
+    isDeleted: { type: Boolean, default: false }
   }, schemaOptions
 );
 

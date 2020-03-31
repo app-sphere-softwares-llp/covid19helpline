@@ -262,6 +262,10 @@ export class AuthService implements OnModuleInit {
       await this._otpService.verifyOtp(model, session);
       const userDetails = await this.getUserByMobileNo(model.mobileNumber);
 
+      if (!userDetails) {
+        BadRequest('User not found');
+      }
+
       const jwtPayload = {sub: '', id: ''};
 
       jwtPayload.id = userDetails._id;
@@ -421,7 +425,12 @@ export class AuthService implements OnModuleInit {
     };
     userQuery.select = '_id mobileNumber';
     userQuery.lean = true;
-    return this._userService.findOne(userQuery);
+
+    const userDetails = await this._userService.findOne(userQuery);
+    if (userDetails) {
+      userDetails.id = userDetails._id;
+    }
+    return userDetails;
   }
 }
 

@@ -20,19 +20,4 @@ export class UserController {
   async updateUserProfile(@Body() id: string, @Body() user: Partial<User>) {
     return await this._userService.updateUser(id, user, null);
   }
-
-  @Post('send-otp-request')
-  async sendOtp(@Body() mobileNo: string) {
-    const sendSms = new SendSmsModel();
-    sendSms.sender = 'SOCKET';
-    sendSms.route = 4;
-    sendSms.sms = [{
-      to: [mobileNo],
-      message: `Here's your otp :-
-        ${generateRandomCode(4)}
-      `
-    }];
-
-    return await this._smsService.sendSms(sendSms);
-  }
 }

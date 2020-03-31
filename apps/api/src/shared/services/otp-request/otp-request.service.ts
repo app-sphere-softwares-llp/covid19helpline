@@ -47,9 +47,7 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
     smsRequest.route = 4;
     smsRequest.sms = [{
       to: [otpRequest.mobileNumber],
-      message: `Here's your otp :-
-        ${otpRequest.code}
-      `
+      message: `Here's your otp :-${otpRequest.code}`
     }];
 
     await this._smsService.sendSms(smsRequest);
@@ -72,7 +70,7 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
 
   async getDetails(mobileNumber: string, code: string) {
     if (!mobileNumber || !code) {
-      BadRequest('Otp expired, Please click resend');
+      BadRequest('Invalid otp');
     }
 
     const query: MongooseQueryModel = new MongooseQueryModel();
@@ -84,7 +82,7 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
     const otpDetails = await this.findOne(query);
 
     if (!otpDetails) {
-      BadRequest('Otp expired, Please click resend');
+      BadRequest('Invalid otp');
     }
 
     otpDetails.id = otpDetails._id;
