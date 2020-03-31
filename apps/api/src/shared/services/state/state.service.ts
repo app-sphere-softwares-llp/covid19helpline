@@ -132,12 +132,17 @@ export class StateService extends BaseService<StateModel & Document> implements 
    * @param model
    */
   async bulkInsert(model: StateModel[]) {
-    if (!model || model.length) {
+    if (!model || !model.length) {
       BadRequest('Please add at least one State');
     }
 
+    const states = model.map(m => {
+      m.createdById = this._generalService.userId;
+      return m;
+    });
+
     return this.withRetrySession(async (session) => {
-      return this.create(model, session);
+      return this.create(states, session);
     });
   }
 

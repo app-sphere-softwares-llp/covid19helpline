@@ -133,12 +133,17 @@ export class ReasonService extends BaseService<ReasonModel & Document> implement
    * @param model
    */
   async bulkInsert(model: ReasonModel[]) {
-    if (!model || model.length) {
+    if (!model || !model.length) {
       BadRequest('Please add at least one Reason');
     }
 
+    const reason = model.map(m => {
+      m.createdById = this._generalService.userId;
+      return m;
+    });
+
     return this.withRetrySession(async (session) => {
-      return this.create(model, session);
+      return this.create(reason, session);
     });
   }
 

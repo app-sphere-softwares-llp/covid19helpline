@@ -142,12 +142,17 @@ export class CityService extends BaseService<CityModel & Document> implements On
    * @param model
    */
   async bulkInsert(model: CityModel[]) {
-    if (!model || model.length) {
+    if (!model || !model.length) {
       BadRequest('Please add at least one city');
     }
 
+    const cities = model.map(m => {
+      m.createdById = this._generalService.userId;
+      return m;
+    });
+
     return this.withRetrySession(async (session) => {
-      return this.create(model, session);
+      return this.create(cities, session);
     });
   }
 
