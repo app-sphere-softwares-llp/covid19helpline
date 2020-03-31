@@ -42,7 +42,7 @@ export class OtherPersonDetails {
 }
 
 
-export class UpdatePassRequestModel {
+export class UpdatePassStatusRequestModel {
   id: string;
   status: PassStatusEnum;
 }

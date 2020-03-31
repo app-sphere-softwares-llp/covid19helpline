@@ -9,7 +9,7 @@ import {
   MongooseQueryModel,
   PassModel,
   PassStatusEnum,
-  UpdatePassRequestModel
+  UpdatePassStatusRequestModel
 } from "@covid19-helpline/models";
 import {BadRequest, generateUtcDate} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
@@ -93,7 +93,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
   /**
    * update pass status
    */
-  async updatePassStatus(model: UpdatePassRequestModel) {
+  async updatePassStatus(model: UpdatePassStatusRequestModel) {
     await this._utilityService.updatePassStatusValidations(model);
 
     return await this.withRetrySession(async (session: ClientSession) => {

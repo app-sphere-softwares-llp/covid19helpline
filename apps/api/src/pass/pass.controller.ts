@@ -1,6 +1,6 @@
 import {Body, Controller, Post, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
-import {PassModel} from "@covid19-helpline/models";
+import {PassModel, UpdatePassStatusRequestModel} from "@covid19-helpline/models";
 import {PassService} from "../shared/services/pass/pass.service";
 
 @Controller('pass')
@@ -17,6 +17,11 @@ export class PassController {
   @Post('update')
   async updatePass(@Body() model: PassModel) {
     return await this._passService.addUpdate(model);
+  }
+
+  @Post('update-status')
+  async updatePassStatus(@Body() model: UpdatePassStatusRequestModel) {
+    return await this._passService.updatePassStatus(model);
   }
 
   @Post('delete')

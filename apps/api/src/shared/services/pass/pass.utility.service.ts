@@ -1,4 +1,4 @@
-import {PassModel, OtherPersonDetails, PassStatusEnum, UpdatePassRequestModel} from "@covid19-helpline/models";
+import {PassModel, OtherPersonDetails, PassStatusEnum, UpdatePassStatusRequestModel} from "@covid19-helpline/models";
 import {aadhaarNoValidator, BadRequest} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 
@@ -80,7 +80,7 @@ export class PassUtilityService {
    * update pass status validations
    * @param model
    */
-  async updatePassStatusValidations(model: UpdatePassRequestModel) {
+  async updatePassStatusValidations(model: UpdatePassStatusRequestModel) {
     if (!model) {
       BadRequest('Pass not found');
     }
