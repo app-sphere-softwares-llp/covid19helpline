@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   @Post('resend-otp')
-  async resendOtp(@Body() mobileNumber: string) {
+  async resendOtp(@Body('mobileNumber') mobileNumber: string) {
     return await this._authService.resendOtp(mobileNumber);
   }
 

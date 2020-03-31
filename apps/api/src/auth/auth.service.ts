@@ -288,6 +288,12 @@ export class AuthService implements OnModuleInit {
     session.startTransaction();
 
     try {
+      const userDetails = await this.getUserByMobileNo(mobileNumber);
+
+      if (!userDetails) {
+        BadRequest('User not found');
+      }
+
       // create otp and send otp
       await this._otpService.createOtp(mobileNumber, session);
       await session.commitTransaction();
