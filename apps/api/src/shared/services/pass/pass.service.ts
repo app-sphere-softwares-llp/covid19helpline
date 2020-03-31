@@ -94,6 +94,22 @@ export class PassService extends BaseService<PassModel & Document> implements On
   }
 
   /**
+   * delete pass
+   * @param id
+   */
+  async deletePass(id: string) {
+    return await this.withRetrySession(async (session: ClientSession) => {
+      // check pass exists
+      await this.getDetails(id);
+
+      // delete pass
+      await this.delete(id, session);
+
+      return 'Pass deleted successfully';
+    });
+  }
+
+  /**
    * get pass details by id
    * @param id
    */

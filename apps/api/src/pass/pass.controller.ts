@@ -19,6 +19,11 @@ export class PassController {
     return await this._passService.addUpdate(model);
   }
 
+  @Post('delete')
+  async deletePass(@Body('id') id: string) {
+    return await this._passService.deletePass(id);
+  }
+
   @Post('get-all')
   async getAllPasses(@Body('term') term: string) {
     return await this._passService.getAllPasses(term);
