@@ -42,7 +42,7 @@ export class PassUtilityService {
 
     // mobile no
     if (!model.mobileNo) {
-      BadRequest(await this.i18n.translate('CREATE_VALIDATIONS.NO_MOBILE_NO'));
+      BadRequest(await this.i18n.translate('pass.CREATE_VALIDATIONS.NO_MOBILE_NO'));
     }
 
     // vehicle no

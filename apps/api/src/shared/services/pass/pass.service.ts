@@ -151,9 +151,10 @@ export class PassService extends BaseService<PassModel & Document> implements On
    * @param term
    */
   async getAllPasses(term: string) {
-
+    // query
     const query = new MongooseQueryModel();
 
+    // create query filters
     query.filter = {
       isDeleted: false,
       $and: [{
