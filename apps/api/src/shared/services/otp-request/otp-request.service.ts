@@ -11,7 +11,7 @@ import {
   SendSmsModel,
   VerifyOtpRequestModel
 } from "@covid19-helpline/models";
-import {BadRequest, generateRandomCode, generateUtcDate} from "../../helpers/helpers";
+import {BadRequest, generateRandomCode, generateUtcDate, isOTPExpired} from "../../helpers/helpers";
 import {SmsService} from "../sms/sms.service";
 
 @Injectable()
@@ -83,6 +83,10 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
 
     if (!otpDetails) {
       BadRequest('Invalid otp');
+    } else {
+      if (isOTPExpired(otpDetails.createdAt)) {
+        BadRequest('This otp is expired please ask for new one');
+      }
     }
 
     otpDetails.id = otpDetails._id;

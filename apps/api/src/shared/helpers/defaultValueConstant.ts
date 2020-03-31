@@ -18,6 +18,9 @@ export const MAX_FILE_UPLOAD_SIZE = 5;
 // max profile pic upload size in mb
 export const MAX_PROFILE_PIC_UPLOAD_SIZE = 2;
 
+// default otp expiry in seconds
+export const DEFAULT_OTP_EXPIRY = 10800;
+
 // max transaction retry timeout in seconds
 export const MAX_TRANSACTION_RETRY_TIMEOUT = 120000;
 

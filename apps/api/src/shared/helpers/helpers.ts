@@ -2,7 +2,7 @@ import * as path from 'path';
 import * as moment from 'moment';
 
 import {
-  DEFAULT_DECIMAL_PLACES, DEFAULT_RESET_PASSWORD_CODE_EXPIRY
+  DEFAULT_DECIMAL_PLACES, DEFAULT_OTP_EXPIRY, DEFAULT_RESET_PASSWORD_CODE_EXPIRY
 } from './defaultValueConstant';
 import {BadRequestException} from '@nestjs/common';
 import {Types} from 'mongoose';
@@ -185,6 +185,15 @@ export const toObjectId = (id: string | number): Types.ObjectId => {
 export const maxLengthValidator = (property: string = '', maxLength: number) => {
   return !(property.length > maxLength);
 };
+
+/**
+ * check whether otp expired or not
+ * @param date
+ */
+export const isOTPExpired = (date: Date): boolean => {
+  return moment.utc(date).add(DEFAULT_OTP_EXPIRY, 's').isBefore(moment.utc());
+};
+
 
 /**
  * check whether reset password code expired or not
