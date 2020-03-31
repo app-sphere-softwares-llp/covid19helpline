@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, PreloadAllModules } from '@angular/router';
 
-import { FullLayoutComponent } from "./layouts/full-layout/full-layout.component";
-import { CommonLayoutComponent } from "./layouts/common-layout/common-layout.component";
-
-import { FullLayout_ROUTES } from "./shared/routes/full-layout.routes";
-import { CommonLayout_ROUTES } from "./shared/routes/common-layout.routes";
 import { MiddlewareComponent } from './middleware.component';
 import { AuthGuard } from './shared/guard/auth.guard';
 
@@ -18,12 +13,12 @@ const appRoutes: Routes = [
   {
     path: 'signup',
     loadChildren: () =>
-      import('./register/register.module').then(m => m.RegisterModule)
+      import('./signup/signup.module').then(m => m.SignupModule)
   },
   {
     path: 'register/:url',
     loadChildren: () =>
-      import('./register/register.module').then(m => m.RegisterModule)
+      import('./signup/signup.module').then(m => m.SignupModule)
   },
   {
     path: 'forgot',

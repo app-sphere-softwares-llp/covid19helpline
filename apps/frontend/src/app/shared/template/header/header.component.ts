@@ -18,8 +18,7 @@ export class HeaderComponent{
       firstName : "Pradeep",
       lastName : "Sharma",
       profilePic:'',
-      mobileNumber:'9716464156',
-      aadhaarNo:'222971644156',
+      mobileNumber:'9716464156'
     };
 
     constructor(private router: Router, private themeService: ThemeConstantService) {}
