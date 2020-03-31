@@ -5,6 +5,7 @@ import { debounceTime } from 'rxjs/operators';
 import { NzNotificationService, UploadFile } from 'ng-zorro-antd';
 import { GeneralService } from '../../shared/services/general.service';
 import { ActivatedRoute } from '@angular/router';
+import { PassService } from '../../shared/services/pass/pass.service';
 
 @Component({
   selector: 'nest-js-boiler-plate-new-pass',
@@ -13,6 +14,9 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class NewPassComponent implements OnInit {
 
+  public isRequestInProcess:boolean;
+
+  public applicationFormData:any;
   public applicationForm: FormGroup;
   public requestId:string;
   public dateFormat = 'MM/dd/yyyy';
@@ -27,11 +31,10 @@ export class NewPassComponent implements OnInit {
   public aadharUrl: string;
 
 
-
   // doc upload
-  public uploadedImages = [];
   public attachementHeader: any;
   public attachementUrl: string;
+  public uploadedImages = [];
   public attachementIds: string[] = [];
   // doc upload end
 
@@ -81,7 +84,8 @@ export class NewPassComponent implements OnInit {
   public modelChangedPurpose = new Subject<string>();
 
   constructor(private FB: FormBuilder, protected notification: NzNotificationService,
-              private _generalService: GeneralService, private _activatedRouter: ActivatedRoute) {
+              private _generalService: GeneralService,
+              private _passService : PassService ,private _activatedRouter: ActivatedRoute) {
     this.notification.config({
       nzPlacement: 'bottomRight'
     });
@@ -102,30 +106,8 @@ export class NewPassComponent implements OnInit {
     };
 
 
-    this.applicationForm = this.FB.group({
-      firstName: [null, [Validators.required]],
-      lastName: [null, [Validators.required]],
-      city: [null, [Validators.required]],
-      state: [null, [Validators.required]],
-      aadhar: [null, [Validators.required]],
-      PIN: [null, [Validators.required]],
-      address: [null, [Validators.required]],
-      mobile: [null, [Validators.required]],
-      passDate: [null, [Validators.required]],
-      purpose: [null, [Validators.required]],
-      vehicleNumber: [null, [Validators.required]],
-      reasonCode: [null, [Validators.required]],
-      reasonDetails: [null, [Validators.required]],
-      destinationPIN: [null, [Validators.required]],
-      destinationAreaAddress: [null, [Validators.required]],
-      personsWithMe :[[]],
-      profilePic :[null, [Validators.required]],
-      aadharPic :[null, [Validators.required]],
-      supportingDocs :[[], [Validators.required]],
-      travellerName :[null],
-      travellerAadhar :[null],
-    });
-
+    // initializing form
+    this.initForm();
 
 
     // search state
@@ -225,8 +207,48 @@ export class NewPassComponent implements OnInit {
   }
 
 
+  // initializing form
+  public initForm() {
+
+    this.applicationForm = this.FB.group({
+      firstName: [null, [Validators.required]],
+      lastName: [null, [Validators.required]],
+      city: [null, [Validators.required]],
+      state: [null, [Validators.required]],
+      aadhar: [null, [Validators.required]],
+      PIN: [null, [Validators.required]],
+      address: [null, [Validators.required]],
+      mobile: [null, [Validators.required]],
+      passDate: [null, [Validators.required]],
+      purpose: [null, [Validators.required]],
+      vehicleNumber: [null, [Validators.required]],
+      reasonCode: [null, [Validators.required]],
+      reasonDetails: [null, [Validators.required]],
+      destinationPIN: [null, [Validators.required]],
+      destinationAreaAddress: [null, [Validators.required]],
+      personsWithMe :[[]],
+      profilePic :[null, [Validators.required]],
+      aadharPic :[null, [Validators.required]],
+      supportingDocs :[[], [Validators.required]],
+      travellerName :[null],
+      travellerAadhar :[null],
+    });
+    this.uploadedImages = [];
+    this.attachementIds = [];
+
+  }
+
+
+  // Getting existing request (view mode)
   public getPassRequest() {
-    // api call for get existing request
+    this.isRequestInProcess = true;
+    const json:any  = {
+      id : this.requestId
+    };
+    this._passService.getRequestById(json).subscribe((data) => {
+      this.isRequestInProcess = false;
+      this.applicationFormData = data.data;
+    });
   }
 
   public selectStateTypeahead(state: any) {
@@ -360,9 +382,57 @@ export class NewPassComponent implements OnInit {
   }
 
 
+  public saveRequest() {
 
-  public saveForm() {
+    this.isRequestInProcess = true;
+
+    const json: any = { ...this.applicationForm.getRawValue() };
+
+    if(this.requestId) {
+      // update
+      this._passService.updateRequest(json).subscribe((data) => {
+        this.isRequestInProcess = false;
+        this.applicationFormData = data.data;
+      });
+
+    } else {
+
+      this._passService.createRequest(json).subscribe((data) => {
+        this.isRequestInProcess = false;
+        this.applicationFormData = data.data;
+      });
+
+    }
 
   }
+
+
+  public rejectRequest() {
+
+    this.isRequestInProcess = true;
+    const json: any = {
+      id : this.requestId
+    };
+    this._passService.rejectRequest(json).subscribe((data) => {
+      this.isRequestInProcess = false;
+      this.applicationFormData = data.data;
+    });
+
+  }
+
+  public approveRequest() {
+
+    this.isRequestInProcess = true;
+    const json: any = {
+      id : this.requestId
+    };
+    this._passService.approveRequest(json).subscribe((data) => {
+      this.isRequestInProcess = false;
+      this.applicationFormData = data.data;
+    });
+
+  }
+
+
 
 }

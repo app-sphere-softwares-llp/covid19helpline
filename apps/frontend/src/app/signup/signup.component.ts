@@ -8,11 +8,11 @@ import { AuthService as SocialAuthService, GoogleLoginProvider } from 'angularx-
 
 
 @Component({
-  templateUrl: 'register.component.html',
-  styleUrls: ['register.component.scss']
+  templateUrl: 'signup.component.html',
+  styleUrls: ['signup.component.scss']
 })
 
-export class RegisterComponent implements OnInit, OnDestroy {
+export class SignupComponent implements OnInit, OnDestroy {
   public signUpForm: FormGroup;
   public otpForm: FormGroup;
 
