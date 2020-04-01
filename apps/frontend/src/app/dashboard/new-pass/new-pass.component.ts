@@ -10,7 +10,7 @@ import {StateQuery} from '../../queries/state/state.query';
 import {cloneDeep} from 'lodash';
 import {
   CityModel,
-  CityRequestModel, OtherPersonDetails, ReasonModel,
+  CityRequestModel, OtherPersonDetails, PassStatusEnum, ReasonModel,
   StateModel
 } from '@covid19-helpline/models';
 import {CityService} from '../../shared/services/state-city/city.service';
@@ -215,6 +215,7 @@ export class NewPassComponent implements OnInit {
     };
     this._passService.getRequestById(json).subscribe((data) => {
       this.isRequestInProcess = false;
+      this.applicationForm.patchValue(data.data);
       this.applicationFormData = data.data;
     });
   }
@@ -438,29 +439,41 @@ export class NewPassComponent implements OnInit {
 
   public rejectRequest() {
 
-    this.isRequestInProcess = true;
-    const json: any = {
-      id: this.requestId,
-      status: 'rejected'
-    };
-    this._passService.updateStatus(json).subscribe((data) => {
+    try {
+
+      this.isRequestInProcess = true;
+
+      const json: any = {
+        id: this.requestId,
+        status: PassStatusEnum.rejected
+      };
+
+      this._passService.updateStatus(json).subscribe((data) => {
+        this.isRequestInProcess = false;
+      });
+
+    }catch (e) {
       this.isRequestInProcess = false;
-      this.applicationFormData = data.data;
-    });
+    }
 
   }
 
   public approveRequest() {
 
-    this.isRequestInProcess = true;
-    const json: any = {
-      id: this.requestId,
-      status: 'approved'
-    };
-    this._passService.updateStatus(json).subscribe((data) => {
+    try {
+
+      this.isRequestInProcess = true;
+      const json: any = {
+        id: this.requestId,
+        status: PassStatusEnum.approved
+      };
+      this._passService.updateStatus(json).subscribe((data) => {
+        this.isRequestInProcess = false;
+      });
+
+    }catch (e) {
       this.isRequestInProcess = false;
-      this.applicationFormData = data.data;
-    });
+    }
 
   }
 

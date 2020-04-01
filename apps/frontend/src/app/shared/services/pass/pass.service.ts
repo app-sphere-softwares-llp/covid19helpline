@@ -21,7 +21,7 @@ export class PassService extends BaseService<UserStore, UserState> {
   }
 
   getRequestById(json: any) {
-    return this._http.post(PassUrls.create, json).pipe(
+    return this._http.post(PassUrls.get, json).pipe(
       map((res: BaseResponseModel<PassModel>) => {
         return res;
       }),
@@ -33,7 +33,7 @@ export class PassService extends BaseService<UserStore, UserState> {
 
   getRequests(json?: any) {
     return this._http.post(PassUrls.get, json).pipe(
-      map((res: BaseResponseModel<PassModel>) => {
+      map((res: BaseResponseModel<PassModel[]>) => {
         return res;
       }),
       catchError(err => {
