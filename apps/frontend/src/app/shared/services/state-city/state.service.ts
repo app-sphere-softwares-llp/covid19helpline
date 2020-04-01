@@ -21,11 +21,11 @@ export class StateService extends BaseService<StateStore, StateState> {
 
   getStates() {
 
-    // this.updateState({ states: [],  getStateInProcess: true, getStateInSuccess: false });
+    this.updateState({ states: [],  getStateInProcess: true, getStateInSuccess: false });
 
     return this._http.post(StateCityUrls.getAllStates, {} ).pipe(
       map((res: BaseResponseModel<StateModel[]>) => {
-        // this.updateState({ states: res.data, getStateInProcess: false, getStateInSuccess: true });
+        this.updateState({ states: res.data, getStateInProcess: false, getStateInSuccess: true });
         return res;
       }),
       catchError(err => {

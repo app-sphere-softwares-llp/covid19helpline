@@ -5,7 +5,7 @@ import { StateModel } from '@covid19-helpline/models';
 export interface StateState {
   getStateInProcess: boolean;
   getStateInSuccess: boolean;
-  states: StateModel;
+  states: StateModel[];
 }
 
 const initialState: StateState = {

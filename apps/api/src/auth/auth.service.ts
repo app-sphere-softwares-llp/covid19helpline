@@ -2,7 +2,7 @@ import {BadRequestException, Injectable, OnModuleInit, UnauthorizedException} fr
 import {JwtService} from '@nestjs/jwt';
 
 import {InjectModel} from '@nestjs/mongoose';
-import {Document, Model} from 'mongoose';
+import {ClientSession, Document, Model} from 'mongoose';
 import {ModuleRef} from '@nestjs/core';
 import {BadRequest} from '../shared/helpers/helpers';
 import {EmailService} from '../shared/services/email/email.service';
@@ -17,18 +17,19 @@ import {
 } from '@covid19-helpline/models';
 import {UsersService} from '../shared/services/users/users.service';
 import {OtpRequestService} from "../shared/services/otp-request/otp-request.service";
+import {BaseService} from "../shared/services/base.service";
 
 @Injectable()
-export class AuthService implements OnModuleInit {
+export class AuthService extends BaseService<User & Document> implements OnModuleInit {
   private _userService: UsersService;
   private _resetPasswordService: ResetPasswordService;
   private _otpService: OtpRequestService;
 
   constructor(
-    private readonly jwtService: JwtService,
-    @InjectModel(DbCollection.users) private readonly _userModel: Model<User & Document>,
-    private _emailService: EmailService, private _moduleRef: ModuleRef
+    @InjectModel(DbCollection.users) protected readonly _userModel: Model<User & Document>,
+    private readonly jwtService: JwtService, private _emailService: EmailService, private _moduleRef: ModuleRef
   ) {
+    super(_userModel);
   }
 
   /**
@@ -45,34 +46,21 @@ export class AuthService implements OnModuleInit {
    * @param req
    */
   async login(req: UserLoginWithPasswordRequest) {
-    // start session
-    const session = await this._userModel.db.startSession();
-    session.startTransaction();
-
-    try {
+    return this.withRetrySession(async (session: ClientSession) => {
       // get user by email id
       const user = await this._userModel.findOne({
         mobileNumber: req.mobileNumber
       }).exec();
 
       if (user) {
-        // user is already login
+        // user is already exists
         // create otp and send otp
         await this._otpService.createOtp(req.mobileNumber, session);
-
-        // commit transaction
-        await session.commitTransaction();
-        session.endSession();
-
         return 'An otp sent to your mobile';
       } else {
         throw new UnauthorizedException('User not found');
       }
-    } catch (e) {
-      await session.abortTransaction();
-      await session.endSession();
-      throw e;
-    }
+    });
   }
 
   /**
@@ -82,25 +70,16 @@ export class AuthService implements OnModuleInit {
    * @param user
    */
   async signUp(user: User) {
-    // validations
-    this.checkSignUpValidations(user);
+    return this.withRetrySession(async (session: ClientSession) => {
+      // validations
+      this.checkSignUpValidations(user);
 
-    // start session
-    const session = await this._userModel.db.startSession();
-    session.startTransaction();
-
-    try {
       // get user details by emailId id
       const userDetails = await this.getUserByMobileNo(user.mobileNumber);
 
       // user exist or not
       if (userDetails) {
-        if (userDetails.status === UserStatus.Active) {
-          BadRequest('Mobile no already in use');
-        } else {
-          // create otp and send otp
-          await this._otpService.createOtp(user.mobileNumber, session);
-        }
+        BadRequest('This Mobile no is already registered');
       } else {
         // create new user
         const model = new User();
@@ -117,15 +96,8 @@ export class AuthService implements OnModuleInit {
         await this._otpService.createOtp(model.mobileNumber, session);
       }
 
-      // commit transaction
-      await session.commitTransaction();
-      session.endSession();
       return 'Otp sent successfully to your Mobile';
-    } catch (e) {
-      await session.abortTransaction();
-      session.endSession();
-      throw e;
-    }
+    });
   }
 
   /**
@@ -133,22 +105,18 @@ export class AuthService implements OnModuleInit {
    * @param model
    */
   async verifyOtp(model: VerifyOtpRequestModel) {
-    // start session
-    const session = await this._userModel.db.startSession();
-    session.startTransaction();
-    try {
+    return this.withRetrySession(async (session: ClientSession) => {
       await this._otpService.verifyOtp(model, session);
+
       const userDetails = await this.getUserByMobileNo(model.mobileNumber);
-
-      // update user and set is active user
-      await this._userService.updateById(userDetails.id, {$set: {status: UserStatus.Active}}, session);
-
       if (!userDetails) {
         BadRequest('User not found');
       }
 
-      const jwtPayload = {sub: '', id: ''};
+      // update user and set is active user
+      await this._userService.updateById(userDetails.id, {$set: {status: UserStatus.Active}}, session);
 
+      const jwtPayload = {sub: '', id: ''};
       jwtPayload.id = userDetails._id;
       jwtPayload.sub = userDetails.mobileNumber;
 
@@ -156,11 +124,7 @@ export class AuthService implements OnModuleInit {
       return {
         access_token: this.jwtService.sign(jwtPayload)
       };
-    } catch (e) {
-      await session.abortTransaction();
-      session.endSession();
-      throw e;
-    }
+    });
   }
 
   /**
@@ -168,11 +132,7 @@ export class AuthService implements OnModuleInit {
    * @param mobileNumber
    */
   async resendOtp(mobileNumber: string) {
-    // start session
-    const session = await this._userModel.db.startSession();
-    session.startTransaction();
-
-    try {
+    return this.withRetrySession(async (session: ClientSession) => {
       const userDetails = await this.getUserByMobileNo(mobileNumber);
 
       if (!userDetails) {
@@ -181,14 +141,8 @@ export class AuthService implements OnModuleInit {
 
       // create otp and send otp
       await this._otpService.createOtp(mobileNumber, session);
-      await session.commitTransaction();
-      session.endSession();
       return 'An otp sent to your mobile';
-    } catch (e) {
-      await session.abortTransaction();
-      session.endSession();
-      throw e;
-    }
+    });
   }
 
   /**

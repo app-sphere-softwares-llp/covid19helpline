@@ -22,11 +22,11 @@ export class CityService extends BaseService<CityStore, CityState> {
 
   getCities(json: CityRequestModel ) {
 
-    // this.updateState({ cities: [],  getStateInProcess: true, getStateInSuccess: false });
+    this.updateState({ cities: [],  getCityInProcess: true, getCityInSuccess: false });
 
     return this._http.post(StateCityUrls.getCities, json ).pipe(
       map((res: BaseResponseModel<CityModel[]>) => {
-        // this.updateState({ cities: res.data,  getStateInProcess: true, getStateInSuccess: false });
+        this.updateState({ cities: res.data,  getCityInProcess: true, getCityInSuccess: false });
         return res;
       }),
       catchError(err => {
