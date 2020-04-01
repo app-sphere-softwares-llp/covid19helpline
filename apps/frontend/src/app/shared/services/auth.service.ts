@@ -67,6 +67,7 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
         return res;
       }),
       catchError((err) => {
+        this.updateState({ isSignupSuccess: false, isSignupInProcess: false });
         this._generalService.token = null;
         this.notification.error('Error', err.error.message);
         return of(err);
