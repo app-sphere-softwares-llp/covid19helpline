@@ -5,12 +5,12 @@
     <ng-template #extraTemplate>
       <div *ngIf="!requestId">
         <button nz-button type="button" nzType="primary" class="m-r-5" (click)="saveRequest()">Submit</button>
-        <button nz-button type="button" nzType="default" (click)="initForm()">Cancel</button>
+        <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
       </div>
 
       <div *ngIf="requestId">
-        <button nz-button type="submit" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
-        <button nz-button type="submit" nzType="danger" (click)="rejectRequest()">Reject</button>
+        <button nz-button type="button" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
+        <button nz-button type="button" nzType="danger" (click)="rejectRequest()">Reject</button>
       </div>
     </ng-template>
 
@@ -485,13 +485,13 @@
       <section class="row m-t-25">
 
         <div *ngIf="!requestId">
-          <button nz-button type="submit" nzType="primary" class="m-r-5">Submit</button>
-          <button nz-button type="submit" nzType="default">Cancel</button>
+          <button nz-button type="submit" nzType="primary" class="m-r-5" [disabled]="applicationForm.invalid">Submit</button>
+          <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
         </div>
 
         <div *ngIf="requestId">
-          <button nz-button type="submit" nzType="primary" class="m-r-5">Approve</button>
-          <button nz-button type="submit" nzType="danger">Reject</button>
+          <button nz-button type="button" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
+          <button nz-button type="button" nzType="danger" (click)="rejectRequest()">Reject</button>
         </div>
 
       </section>

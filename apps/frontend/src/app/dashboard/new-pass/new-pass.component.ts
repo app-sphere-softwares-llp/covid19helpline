@@ -121,9 +121,9 @@ export class NewPassComponent implements OnInit {
           return;
         }
         this.isSearchingCity = true;
-        const json = {
+        const json : CityRequestModel = {
           stateId: this.selectedState.id,
-          query: queryText
+          term: queryText
         }
         this._cityService.searchCity(json).subscribe((data) => {
           this.isSearchingCity = false;
@@ -160,11 +160,12 @@ export class NewPassComponent implements OnInit {
   // initializing form
   public initForm() {
 
+
     this.applicationForm = this.FB.group({
       firstName: [null, [Validators.required]],
       lastName: [null, [Validators.required]],
-      city: [null, [Validators.required]],
-      state: [null, [Validators.required]],
+      city: [null],
+      state: [null],
       cityId: [null, [Validators.required]],
       stateId: [null, [Validators.required]],
       aadhaarNo: [null, [Validators.required]],
@@ -179,19 +180,24 @@ export class NewPassComponent implements OnInit {
       destinationAddress: [null, [Validators.required]],
       picUrl :[null, [Validators.required]],
       aadharPicUrl :[null, [Validators.required]],
-      supportingDocs :[[], [Validators.required]],
-      otherPersonDetails : [null,  new FormArray([])],
-      passStatus:[null, [Validators.required]],
+      passStatus:[null],
       attachments:[null, [Validators.required]],
-      attachmentDetails : [null, [Validators.required]],
+      attachmentDetails : [null],
 
-      travellerAadhaar : [null, [Validators.required]],
-      travellerName : [null, [Validators.required]],
+      otherPersonDetails : new FormArray([this.addOtherPersonDetails()]),
 
     });
     this.uploadedImages = [];
     this.attachementIds = [];
 
+  }
+
+
+  public addOtherPersonDetails () {
+    return this.FB.group({
+      travellerAadhaar: [null, [Validators.required]],
+      travellerName: [null, [Validators.required]],
+    });
   }
 
   public getCities (){
@@ -220,7 +226,6 @@ export class NewPassComponent implements OnInit {
       this.selectedState = state;
       this.applicationForm.get('stateId').patchValue(state.id);
       this.applicationForm.get('state').patchValue(state.name);
-      this.getCities();
     }
     this.modelChangedState.next();
   }
@@ -257,12 +262,13 @@ export class NewPassComponent implements OnInit {
   handleChange({ file, fileList }): void {
     const status = file.status;
     if (status !== 'uploading') {
-      console.log(file, fileList);
+      // console.log(file, fileList);
     }
     if (status === 'done') {
 
       if (file.response && file.response.data.id) {
         this.attachementIds.push(file.response.data.id);
+        this.applicationForm.get('attachments').patchValue(this.attachementIds);
       }
 
       this.notification.success('Success', `${file.name} file uploaded successfully.`);
@@ -314,6 +320,12 @@ export class NewPassComponent implements OnInit {
     }
     if (info.file.status === 'done') {
       // Get this url from response in real world.
+
+      if (info.file.response && info.file.response.data.id) {
+        this.attachementIds.push(info.file.response.data.id);
+        this.applicationForm.get('picUrl').patchValue(info.file.response.data.url);
+      }
+
       this.getBase64(info.file.originFileObj, (img: string) => {
         this.loadingProfilePic = false;
         this.avatarUrl = img;
@@ -321,6 +333,7 @@ export class NewPassComponent implements OnInit {
     }
 
     if (info.file.status === 'error') {
+      this.loadingProfilePic = false;
       this.notification.error('Error', 'Profile pic not uploaded');
     }
 
@@ -334,6 +347,13 @@ export class NewPassComponent implements OnInit {
       return;
     }
     if (info.file.status === 'done') {
+
+      if (info.file.response && info.file.response.data.id) {
+        this.attachementIds.push(info.file.response.data.id);
+        this.applicationForm.get('aadharPicUrl').patchValue(info.file.response.data.url);
+      }
+
+
       // Get this url from response in real world.
       this.getBase64(info.file.originFileObj, (img: string) => {
         this.loadingAadhaarPic = false;
@@ -342,6 +362,7 @@ export class NewPassComponent implements OnInit {
     }
 
     if (info.file.status === 'error') {
+      this.loadingAadhaarPic = false;
       this.notification.error('Error', 'Aadhaar pic not uploaded');
     }
 
@@ -354,6 +375,7 @@ export class NewPassComponent implements OnInit {
 
     const json: any = { ...this.applicationForm.getRawValue() };
 
+    this.applicationForm.get('attachments').patchValue(this.attachementIds);
 
     console.log(JSON.stringify(json));
 

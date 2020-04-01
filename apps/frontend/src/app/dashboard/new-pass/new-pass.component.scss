@@ -16,6 +16,7 @@
     margin-bottom: 10px;
     position:relative;
 
+
     .ant-uploading-text{
       position: absolute;
       bottom: 0px;
@@ -27,9 +28,15 @@
   }
 
   .profile-pic {
-    height: 180px;
     width: 150px;
+    height: 180px;
     background-size: cover;
+
+    img.avatar {
+      max-width: 100%!important;
+      max-height: 150px!important;
+      border-radius: 0.5rem!important;
+    }
 
     .upload-btn {
       width: 100%;
@@ -40,7 +47,7 @@
   }
 
   .ant-upload {
-    background: 0 0;
+    background: #ffffff;
     height: 100%;
     opacity: 0;
   }
@@ -48,8 +55,14 @@
   .aadhar-pic {
     height: auto;
     width: 260px;
-    background: url("../../../assets/images/avatars/aadhaar_placeholder.jpg") no-repeat center center;
+    background: #ffffff;
     background-size: contain;
+
+    img.avatar {
+      max-width: 100%!important;
+      height: 178px!important;
+      border-radius: 0.5rem!important;
+    }
 
     .upload-btn {
       width: 100%;
