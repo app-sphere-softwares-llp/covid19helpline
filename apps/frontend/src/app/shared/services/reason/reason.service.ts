@@ -27,9 +27,7 @@ export class ReasonService extends BaseService<ReasonStore, ReasonState> {
         return res;
       }),
       catchError(err => {
-
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
       })
     );
   }

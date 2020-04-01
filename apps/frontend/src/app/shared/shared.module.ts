@@ -7,6 +7,7 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { ThemeConstantService } from './services/theme-constant.service';
 import { SearchPipe } from './pipes/search.pipe';
+import { NumericDirective } from './directives/numbers-only.directive';
 
 @NgModule({
     exports: [
@@ -15,7 +16,8 @@ import { SearchPipe } from './pipes/search.pipe';
         HttpClientModule,
         NgZorroAntdModule,
         PerfectScrollbarModule,
-        SearchPipe
+        SearchPipe,
+        NumericDirective
     ],
     imports: [
         RouterModule,
@@ -24,7 +26,8 @@ import { SearchPipe } from './pipes/search.pipe';
         PerfectScrollbarModule
     ],
     declarations: [
-        SearchPipe
+        SearchPipe,
+        NumericDirective
     ],
     providers: [
         ThemeConstantService

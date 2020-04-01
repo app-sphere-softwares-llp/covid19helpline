@@ -1,10 +1,10 @@
 <nz-card class="application-form" nzTitle="Application Form" [nzExtra]="extraTemplate">
-
+  <form nz-form [formGroup]="applicationForm" (ngSubmit)="saveRequest()">
   <nz-spin [nzSpinning]="isRequestInProcess" nzTip="Please wait...">
 
     <ng-template #extraTemplate>
       <div *ngIf="!requestId">
-        <button nz-button type="button" nzType="primary" class="m-r-5" (click)="saveRequest()">Submit</button>
+        <button nz-button type="submit" nzType="primary" [disabled]="applicationForm.invalid" class="m-r-5">Submit</button>
         <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
       </div>
 
@@ -14,7 +14,7 @@
       </div>
     </ng-template>
 
-    <form nz-form [formGroup]="applicationForm" (ngSubmit)="saveRequest()">
+
       <section class="row">
         <!--    profile picture-->
         <div class="col-md-2 text-center">
@@ -174,9 +174,10 @@
                 <nz-form-label
                 >Aadhaar (आधार)<span class="text-danger">*</span></nz-form-label
                 >
-                <nz-form-control nzErrorTip="Please enter your Aadhaar Number!">
+                <nz-form-control nzErrorTip="Please enter valid Aadhaar Number!">
                   <input
                     nz-input
+                    numeric numericType="number"
                     formControlName="aadhaarNo"
                     placeholder="eg: 0000 0000 0000"
                     maxlength="12"
@@ -187,14 +188,11 @@
 
             <div class="col-md-4">
               <nz-form-item>
-                <nz-form-label
-                >Mobile (मोबाइल नंबर)<span class="text-danger"
-                >*</span
-                ></nz-form-label
-                >
-                <nz-form-control nzErrorTip="Please enter your Mobile!">
+                <nz-form-label>Mobile (मोबाइल नंबर)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzErrorTip="Please enter valid Mobile!">
                   <input
                     nz-input
+                    numeric numericType="number"
                     formControlName="mobileNo"
                     placeholder="eg: 99999 99999"
                     maxlength="10"
@@ -313,9 +311,10 @@
         <div class="col-md-12">
           <p class="text-black">Add Person who is Travelling with You (अपने साथ यात्रा करने वाले व्यक्ति को जोड़ें)</p>
 
-
           <!-- Traveller Info -->
           <div class="row traveller-row" formArrayName="otherPersonDetails">
+
+            <div class="p-5" *ngIf="showAddPersonBtn"><a href="javascript:void(0)" (click)="addOtherPersonDetails()" *ngIf="applicationForm.get('otherPersonDetails')['controls']">+ Add Other Person Details</a></div>
 
             <ng-container *ngFor="let control of applicationForm.get('otherPersonDetails')['controls']; let i = index" [formGroup]="control">
               <div class="col-md-4">
@@ -335,9 +334,10 @@
               <div class="col-md-3">
                 <nz-form-item>
                   <nz-form-label>Aadhaar (आधार)<span class="text-danger">*</span></nz-form-label>
-                  <nz-form-control nzErrorTip="Please enter Aadhaar!">
+                  <nz-form-control nzErrorTip="Please enter valid Aadhaar number!">
                     <input
                       nz-input
+                      numeric numericType="number"
                       formControlName="aadhaarNo"
                       maxlength="12"
                       placeholder="eg: 0000 0000 0000"/>
@@ -347,7 +347,7 @@
 
               <div class="col-md-5">
                 <button nz-button type="button" nzType="default" (click)="addOtherPersonDetails()">Add</button>
-                <button nz-button type="button" nzType="default" (click)="removeOtherPersonDetails(i)">Remove</button>
+                <button class="m-l-5" nz-button type="button" nzType="default" (click)="removeOtherPersonDetails(i)">Remove</button>
               </div>
 
             </ng-container>
@@ -362,11 +362,7 @@
       <section class="row m-t-25">
         <div class="col-md-4">
           <nz-form-item class="relative">
-            <nz-form-label
-            >Reason Code (कारण कोड)<span class="text-danger"
-            >*</span
-            ></nz-form-label
-            >
+            <nz-form-label>Reason Code (कारण कोड)<span class="text-danger">*</span></nz-form-label>
             <nz-form-control nzErrorTip="Please select Reason Code!">
               <nz-input-group [nzSuffix]="suffixIconSearchReasonCode">
                 <input
@@ -422,9 +418,10 @@
             >*</span
             ></nz-form-label
             >
-            <nz-form-control nzErrorTip="Please enter Destination Area PIN code!">
+            <nz-form-control nzErrorTip="Please enter valid PIN code!">
               <input
                 nz-input
+                numeric numericType="number"
                 formControlName="destinationPinCode"
                 placeholder="eg: 000000"
                 maxlength="6"
@@ -471,7 +468,7 @@
           </nz-form-label>
 
           <nz-form-control>
-            <nz-upload class="upload-list-inline" (nzChange)="handleChange($event)" [nzRemove]="handleRemove"
+            <nz-upload class="upload-list-inline" [nzBeforeUpload]="beforeUploadDocs" (nzChange)="handleChange($event)" [nzRemove]="handleRemove"
                        [nzAction]="attachementUrl" [nzHeaders]="attachementHeader" nzListType="picture"
                        [(nzFileList)]="uploadedImages">
               <button type="button" nz-button
@@ -481,7 +478,7 @@
                   <img src="../../assets/images/icons/cloud_upload.svg" height="33" class="m-b-10">
 
                   <div><strong>drag & drop file</strong> or <strong>click choose</strong></div>
-                  <small class="text-muted">(images & pdf format)</small>
+                  <small class="text-muted">(JPG, PNG & pdf format)</small>
 
                 </div>
               </button>
@@ -507,7 +504,8 @@
 
       </section>
 
-
-    </form>
   </nz-spin>
+
+  </form>
+
 </nz-card>

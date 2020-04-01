@@ -26,8 +26,18 @@ export class PassService extends BaseService<UserStore, UserState> {
         return res;
       }),
       catchError(err => {
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
+      })
+    );
+  }
+
+  getRequests(json?: any) {
+    return this._http.post(PassUrls.get, json).pipe(
+      map((res: BaseResponseModel<PassModel>) => {
+        return res;
+      }),
+      catchError(err => {
+        return this.handleError(err);
       })
     );
   }
@@ -36,11 +46,11 @@ export class PassService extends BaseService<UserStore, UserState> {
   createRequest(json:PassModel) {
     return this._http.post(PassUrls.create, json).pipe(
       map((res: BaseResponseModel<PassModel>) => {
+        this.notification.success('Success', 'Request generated successfully');
         return res;
       }),
       catchError(err => {
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
       })
     );
   }
@@ -49,11 +59,11 @@ export class PassService extends BaseService<UserStore, UserState> {
   updateRequest(json: PassModel) {
     return this._http.post(PassUrls.updateStatus, json).pipe(
       map((res: BaseResponseModel<PassModel>) => {
+        this.notification.success('Success', 'Request updated successfully');
         return res;
       }),
       catchError(err => {
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
       })
     );
   }
@@ -65,8 +75,8 @@ export class PassService extends BaseService<UserStore, UserState> {
          return res;
       }),
       catchError(err => {
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+
+        return this.handleError(err);
       })
     );
   }

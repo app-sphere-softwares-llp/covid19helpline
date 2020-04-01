@@ -9,3 +9,12 @@
 .ant-table-tbody > tr > td {
   padding: 5px 5px;
 }
+
+.ant-table-thead > tr > th {
+  color: #6E829C;
+  font-size: 12px;
+  font-weight: 400;
+  text-transform: uppercase;
+  padding: 8px 5px !important;
+  background: #f9f9f9;
+}

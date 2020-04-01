@@ -10,12 +10,34 @@
 
           <div class="map-box">
 
+            <!-- Coming soon -->
+            <nz-empty
+              class="m-t-50"
+              [nzNotFoundImage]="'../../../assets/images/not-found/coming-soon.svg'"
+              [nzNotFoundContent]="contentTpl">
+              <ng-template #contentTpl>
+                <span class="font-weight-normal font-size-18 text-gray-light-2">Coming soon...</span>
+              </ng-template>
+            </nz-empty>
+            <!-- Coming soon -->
+
           </div>
 
         </div>
         <div class="col-md-8">
           Heat Map
           <div class="map-box">
+
+            <!-- Coming soon -->
+            <nz-empty
+              class="m-t-50"
+              [nzNotFoundImage]="'../../../assets/images/not-found/coming-soon.svg'"
+              [nzNotFoundContent]="contentTpl">
+              <ng-template #contentTpl>
+                <span class="font-weight-normal font-size-18 text-gray-light-2">Coming soon...</span>
+              </ng-template>
+            </nz-empty>
+            <!-- Coming soon -->
 
           </div>
         </div>
@@ -24,9 +46,24 @@
     </nz-tab>
     <!-- tab 1 -->
 
+
+
+
     <nz-tab nzTitle="New Request">
 
-      <nz-table #basicTable [nzData]="listOfData">
+      <!-- if not data-->
+      <nz-empty
+        *ngIf="pendingData?.length===0"
+        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+        [nzNotFoundContent]="contentTpl">
+        <ng-template #contentTpl>
+          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
+        </ng-template>
+      </nz-empty>
+
+      <!-- if data available -->
+
+      <nz-table #basicTable1 [nzData]="pendingData" *ngIf="pendingData?.length>0">
         <thead>
           <tr>
             <th>SN.</th>
@@ -38,7 +75,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of basicTable.data; let i=index;">
+          <tr *ngFor="let data of basicTable1.data; let i=index;">
             <td>{{(i+1)}}.</td>
             <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
             <td>{{data.lastName}}</td>
@@ -56,7 +93,18 @@
 
     <nz-tab nzTitle="Approved Requests">
 
-      <nz-table #basicTable [nzData]="listOfData">
+      <!-- if not data-->
+      <nz-empty
+        *ngIf="approvedData?.length===0"
+        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+        [nzNotFoundContent]="contentTpl">
+        <ng-template #contentTpl>
+          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
+        </ng-template>
+      </nz-empty>
+
+      <!-- if data available -->
+      <nz-table #basicTable2 [nzData]="approvedData" *ngIf="approvedData?.length>0">
         <thead>
           <tr>
             <th>SN.</th>
@@ -68,7 +116,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of basicTable.data; let i=index;">
+          <tr *ngFor="let data of basicTable2.data; let i=index;">
             <td>{{(i+1)}}.</td>
             <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
             <td>{{data.lastName}}</td>
@@ -86,7 +134,19 @@
 
     <nz-tab nzTitle="Rejected Requests">
 
-      <nz-table #basicTable [nzData]="listOfData">
+      <!-- if not data-->
+      <nz-empty
+        *ngIf="rejectedData?.length===0"
+        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+        [nzNotFoundContent]="contentTpl">
+        <ng-template #contentTpl>
+          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
+        </ng-template>
+      </nz-empty>
+
+      <!-- if data available -->
+
+      <nz-table #basicTable3 [nzData]="rejectedData" *ngIf="rejectedData?.length>0">
         <thead>
           <tr>
             <th>SN.</th>
@@ -98,11 +158,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of basicTable.data; let i=index;">
+          <tr *ngFor="let data of basicTable3.data; let i=index;">
             <td>{{(i+1)}}.</td>
             <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
             <td>{{data.lastName}}</td>
-            <td>{{data.destinationAddress}}</td>
+            <td>{{data.destinationAddress }}</td>
             <td>{{data.passDate | date : 'medium'}}</td>
             <td>
               <a routerLink="./pass-request/{{data.id}}">View Request</a>

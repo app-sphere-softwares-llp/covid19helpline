@@ -30,8 +30,8 @@ export class StateService extends BaseService<StateStore, StateState> {
       }),
       catchError(err => {
 
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
+
       })
     );
   }

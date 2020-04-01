@@ -31,8 +31,8 @@ export class CityService extends BaseService<CityStore, CityState> {
       }),
       catchError(err => {
 
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
+
       })
     );
   }
@@ -46,8 +46,8 @@ export class CityService extends BaseService<CityStore, CityState> {
       }),
       catchError(err => {
 
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
+
       })
     );
   }

@@ -51,8 +51,8 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
           token: null
         });
 
-
         this._generalService.token = null;
+
         return this.handleError(err);
       })
     );
@@ -69,8 +69,8 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
       catchError((err) => {
         this.updateState({ isSignupSuccess: false, isSignupInProcess: false });
         this._generalService.token = null;
-        this.notification.error('Error', err.error.message);
-        return of(err);
+
+        return this.handleError(err);
       })
     );
   }
@@ -88,6 +88,7 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
 
         this._generalService.token = res.data.access_token;
         this.router.navigate(['dashboard']);
+
         return res;
       }),
       catchError((err) => {
@@ -98,8 +99,8 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
         });
 
         this._generalService.token = null;
-        this.notification.error('Error', err.error.message);
-        return of(err);
+
+        return this.handleError(err);
       })
     );
   }
@@ -117,13 +118,14 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
         return res;
       }),
       catchError((err) => {
-        this.notification.error('Error', err.error.message);
+
         this.updateState({
           isResendInProcess: false,
           isResendInSuccess: false,
           token: null
         });
-        return of(err);
+
+        return this.handleError(err);
       })
     );
   }

@@ -10,7 +10,7 @@ import {StateQuery} from '../../queries/state/state.query';
 import {cloneDeep} from 'lodash';
 import {
   CityModel,
-  CityRequestModel, ReasonModel,
+  CityRequestModel, OtherPersonDetails, ReasonModel,
   StateModel
 } from '@covid19-helpline/models';
 import {CityService} from '../../shared/services/state-city/city.service';
@@ -65,6 +65,8 @@ export class NewPassComponent implements OnInit {
   public isSearchingState: boolean;
   public isSearchingCity: boolean;
   public isSearchingReason: boolean;
+
+  public showAddPersonBtn: boolean;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -165,15 +167,15 @@ export class NewPassComponent implements OnInit {
       state: [null],
       cityId: [null, [Validators.required]],
       stateId: [null, [Validators.required]],
-      aadhaarNo: [null, [Validators.required]],
+      aadhaarNo: [null, [Validators.required, Validators.pattern('^[0-9]{12}$')]],
       address: [null, [Validators.required]],
-      mobileNo: [null, [Validators.required]],
+      mobileNo: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       passDate: [null, [Validators.required]],
       vehicleNo: [null, [Validators.required]],
       reasonId: [null, [Validators.required]],
       reason: [null, [Validators.required]],
       reasonDetails: [null, [Validators.required]],
-      destinationPinCode: [null, [Validators.required]],
+      destinationPinCode: [null, [Validators.required, Validators.pattern('^[0-9]{6}$')]],
       destinationAddress: [null, [Validators.required]],
       picUrl: [null, [Validators.required]],
       aadharPicUrl: [null, [Validators.required]],
@@ -192,7 +194,7 @@ export class NewPassComponent implements OnInit {
   public initOtherPersonDetails() {
     return this.FB.group({
       fullName: [null, [Validators.required]],
-      aadhaarNo: [null, [Validators.required]],
+      aadhaarNo: [null, [Validators.required, Validators.pattern('^[0-9]{12}$')]],
     });
   }
 
@@ -284,6 +286,17 @@ export class NewPassComponent implements OnInit {
     obs.next(false);
   });
 
+  beforeUploadDocs = (file: File) => {
+    const isAllow = file.type === 'image/jpeg' || 'image/png' || 'application/pdf';
+    if (!isAllow) {
+      this.notification.error('Error', 'You can only upload JPG file!');
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      this.notification.error('Error', 'Image must smaller than 2MB!');
+    }
+    return isAllow && isLt2M;
+  }
 
   // profile pic upload
 
@@ -364,40 +377,60 @@ export class NewPassComponent implements OnInit {
 
   }
 
-  public addOtherPersonDetails() {
+  public addOtherPersonDetails(group: FormGroup) {
     const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
     otherDetailsForm.controls.push(this.initOtherPersonDetails());
+
+    this.showAddPersonBtn = otherDetailsForm.controls.length > 0 ? false : true;
+
   }
 
   public removeOtherPersonDetails(index: number) {
     const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
     otherDetailsForm.removeAt(index);
+
+    this.showAddPersonBtn = otherDetailsForm.controls.length > 0 ? false : true;
+
   }
 
 
   public saveRequest() {
-    this.isRequestInProcess = true;
 
-    const json: any = {...this.applicationForm.getRawValue()};
+    try {
 
-    this.applicationForm.get('attachments').patchValue(this.attachementIds);
+      const json: any = { ...this.applicationForm.getRawValue() };
 
-    console.log(JSON.stringify(json));
+      this.applicationForm.get('attachments').patchValue(this.attachementIds); // uploaded attachments
 
-    if (this.requestId) {
-      // update
-      this._passService.updateRequest(json).subscribe((data) => {
-        this.isRequestInProcess = false;
-        this.applicationFormData = data.data;
-      });
+      // in case empty row submitted
+      if (json.otherPersonDetails && json.otherPersonDetails.length>0){
+        json.otherPersonDetails = json.otherPersonDetails.filter(ele => ele.fullName &&  ele.aadhaarNo );
+      }
 
-    } else {
-      // create
-      this._passService.createRequest(json).subscribe((data) => {
-        this.isRequestInProcess = false;
-        this.applicationFormData = data.data;
-      });
+      console.log(JSON.stringify(json));
 
+      this.isRequestInProcess = true;
+
+      if (this.requestId) {
+        // update
+        this._passService.updateRequest(json).subscribe((data) => {
+          this.isRequestInProcess = false;
+          this.initForm();
+          // this.applicationFormData = data.data;
+        });
+
+      } else {
+        // create
+        this._passService.createRequest(json).subscribe((data) => {
+          this.isRequestInProcess = false;
+          this.initForm();
+          // this.applicationFormData = data.data;
+        });
+
+      }
+
+    }catch (e) {
+      this.isRequestInProcess = false;
     }
 
   }

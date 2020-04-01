@@ -36,8 +36,7 @@ export class UserService extends BaseService<UserStore, UserState> {
           getUserProfileInProcess: false,
           user: null,
         });
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
+        return this.handleError(err);
       })
     );
   }
