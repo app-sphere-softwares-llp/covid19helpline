@@ -37,5 +37,20 @@ export class CityService extends BaseService<CityStore, CityState> {
     );
   }
 
+  searchCity(json: CityRequestModel ) {
+
+    return this._http.post(StateCityUrls.getCities, json ).pipe(
+      map((res: BaseResponseModel<CityModel[]>) => {
+
+        return res;
+      }),
+      catchError(err => {
+
+        this.notification.error('Error', err.error.error.message);
+        return of(err);
+      })
+    );
+  }
+
 
 }

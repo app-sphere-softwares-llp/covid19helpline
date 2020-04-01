@@ -9,6 +9,7 @@ import { UserService } from './user/user.service';
 import { PassService } from './pass/pass.service';
 import { CityService } from './state-city/city.service';
 import { StateService } from './state-city/state.service';
+import { ReasonService } from './reason/reason.service';
 
 
 @NgModule()
@@ -27,7 +28,8 @@ export class ServiceModule {
         UserService,
         PassService,
         StateService,
-        CityService
+        CityService,
+        ReasonService
       ]
     };
   }

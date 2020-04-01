@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseResponseModel, User } from '@covid19-helpline/models';
+import { BaseResponseModel, PassModel, User } from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
 import { catchError, map } from 'rxjs/operators';
@@ -22,7 +22,7 @@ export class PassService extends BaseService<UserStore, UserState> {
 
   getRequestById(json: any) {
     return this._http.post(PassUrls.create, json).pipe(
-      map((res: BaseResponseModel<User>) => {
+      map((res: BaseResponseModel<PassModel>) => {
         return res;
       }),
       catchError(err => {
@@ -33,9 +33,9 @@ export class PassService extends BaseService<UserStore, UserState> {
   }
 
 
-  createRequest(json:any) {
+  createRequest(json:PassModel) {
     return this._http.post(PassUrls.create, json).pipe(
-      map((res: BaseResponseModel<User>) => {
+      map((res: BaseResponseModel<PassModel>) => {
         return res;
       }),
       catchError(err => {
@@ -45,9 +45,10 @@ export class PassService extends BaseService<UserStore, UserState> {
     );
   }
 
-  updateRequest(json: any) {
-    return this._http.post(PassUrls.update, json).pipe(
-      map((res: BaseResponseModel<User>) => {
+
+  updateRequest(json: PassModel) {
+    return this._http.post(PassUrls.updateStatus, json).pipe(
+      map((res: BaseResponseModel<PassModel>) => {
         return res;
       }),
       catchError(err => {
@@ -57,20 +58,9 @@ export class PassService extends BaseService<UserStore, UserState> {
     );
   }
 
-  rejectRequest(json: any) {
-    return this._http.post(PassUrls.reject, json).pipe(
-      map((res: BaseResponseModel<User>) => {
-        return res;
-      }),
-      catchError(err => {
-        this.notification.error('Error', err.error.error.message);
-        return of(err);
-      })
-    );
-  }
 
-  approveRequest(json: any) {
-    return this._http.post(PassUrls.approve, json).pipe(
+  updateStatus(json: any) {
+    return this._http.post(PassUrls.updateStatus, json).pipe(
       map((res: BaseResponseModel<User>) => {
          return res;
       }),

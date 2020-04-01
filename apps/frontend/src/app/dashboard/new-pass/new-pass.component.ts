@@ -1,11 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { NzNotificationService, UploadFile } from 'ng-zorro-antd';
 import { GeneralService } from '../../shared/services/general.service';
 import { ActivatedRoute } from '@angular/router';
 import { PassService } from '../../shared/services/pass/pass.service';
+import { StateQuery } from '../../queries/state/state.query';
+import { cloneDeep } from 'lodash';
+import {
+  CityModel,
+  CityRequestModel, ReasonModel,
+  StateModel
+} from '@covid19-helpline/models';
+import { CityService } from '../../shared/services/state-city/city.service';
+import { CityQuery } from '../../queries/city/city.query';
+import { StateService } from '../../shared/services/state-city/state.service';
+import { ReasonService } from '../../shared/services/reason/reason.service';
+import { PassUrls } from '../../shared/services/pass/pass.url';
 
 @Component({
   selector: 'nest-js-boiler-plate-new-pass',
@@ -26,9 +38,9 @@ export class NewPassComponent implements OnInit {
   public avatarUrl: string;
 
 
-  // upload aadhar
-  public loadingAadharPic = false;
-  public aadharUrl: string;
+  // upload aadhaar
+  public loadingAadhaarPic = false;
+  public aadhaarUrl: string;
 
 
   // doc upload
@@ -39,44 +51,20 @@ export class NewPassComponent implements OnInit {
   // doc upload end
 
 
-  public selectedReason:any;
-  public selectedState:any;
-  public selectedCity:any;
+  public selectedReason:ReasonModel;
+  public selectedState:StateModel;
+  public selectedCity:ReasonModel;
   public selectedPurpose:any;
 
-  public cityDataSource: any[] = [{
-    name:'Indore',
-    id:'10',
-  }];
+  public cityDataSource: CityModel[] = [];
 
-  public stateDataSource: any[] = [{
-    name:'Madhya Pradesh',
-    id:'23',
-  }];
+  public stateDataSource: StateModel[] = [];
 
-  public reasonDataReason: any[] = [{
-    name:'Medical',
-    id:'23',
-  }];
-
-  public purposeDataReason: any[] = [
-    {
-      name:'Medical emergency',
-      id:'1',
-    },
-    {
-    name:'Police complaint',
-    id:'2',
-    },
-    {
-      name:'Doctors appointment',
-      id:'3',
-    }];
+  public reasonDataSource: ReasonModel[] = [];
 
   public isSearchingState: boolean;
   public isSearchingCity: boolean;
   public isSearchingReason:boolean;
-  public isSearchingPurpose: boolean;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -85,7 +73,10 @@ export class NewPassComponent implements OnInit {
 
   constructor(private FB: FormBuilder, protected notification: NzNotificationService,
               private _generalService: GeneralService,
-              private _passService : PassService ,private _activatedRouter: ActivatedRoute) {
+              private _passService : PassService ,private _activatedRouter: ActivatedRoute,
+              private _stateQuery : StateQuery, private _cityQuery : CityQuery,
+              private _reasonService : ReasonService,
+              private _cityService : CityService, private _stateService : StateService) {
     this.notification.config({
       nzPlacement: 'bottomRight'
     });
@@ -99,7 +90,7 @@ export class NewPassComponent implements OnInit {
       this.getPassRequest();
     }
 
-    this.attachementUrl = '';
+    this.attachementUrl = PassUrls.attachment;
 
     this.attachementHeader = {
       Authorization: 'Bearer ' + this._generalService.token
@@ -109,29 +100,15 @@ export class NewPassComponent implements OnInit {
     // initializing form
     this.initForm();
 
+    // listen for states from store
+    this._stateQuery.states$.subscribe(res => {
+      if(!res) {
+        this._stateService.getStates().subscribe();
+      } else {
+        this.stateDataSource = cloneDeep(res);
+      }
 
-    // search state
-    this.modelChangedState
-      .pipe(
-        debounceTime(500))
-      .subscribe(() => {
-        const queryText = this.applicationForm.get('state').value;
-        const name = this.selectedState.name
-        if (!queryText || this.applicationForm.get('state').value === name) {
-          return;
-        }
-        this.isSearchingState = true;
-        const json = {
-          stateId: this.selectedState.id,
-          query : queryText
-        }
-        // this._locationService.searchState(json).subscribe((data) => {
-        //   this.isSearchingState = false;
-        //   this.stateDataSource = data.data;
-        // });
-
-      });
-    // end search state
+    });
 
     // search city
     this.modelChangedCity
@@ -139,70 +116,43 @@ export class NewPassComponent implements OnInit {
         debounceTime(500))
       .subscribe(() => {
         const queryText = this.applicationForm.get('city').value;
-        const name = this.selectedState.name
+        const name = this.selectedCity && this.selectedCity.name ? this.selectedCity.name : null;
         if (!queryText || this.applicationForm.get('city').value === name) {
           return;
         }
         this.isSearchingCity = true;
         const json = {
-          stateId: this.selectedCity.id,
-          query : queryText
+          stateId: this.selectedState.id,
+          query: queryText
         }
-        // this._locationService.searchState(json).subscribe((data) => {
-        //   this.isSearchingState = false;
-        //   this.cityDataSource = data.data;
-        // });
-
+        this._cityService.searchCity(json).subscribe((data) => {
+          this.isSearchingCity = false;
+          this.cityDataSource = data.data;
+        });
       });
-    // end search city
 
-
-    // search state
+    // search reason
     this.modelChangedReason
       .pipe(
         debounceTime(500))
       .subscribe(() => {
-        const queryText = this.applicationForm.get('reasonCode').value;
-        const name = this.selectedReason.name
-        if (!queryText || this.applicationForm.get('reasonCode').value === name) {
+        const queryText = this.applicationForm.get('reason').value;
+        const name = this.selectedReason && this.selectedReason.name ? this.selectedReason.name : null;
+
+        if (!queryText || this.applicationForm.get('reason').value === name) {
           return;
         }
         this.isSearchingReason = true;
         const json = {
-          stateId: this.selectedReason.id,
           query : queryText
         }
-        // this._locationService.searchState(json).subscribe((data) => {
-        //   this.isSearchingReason = false;
-        //   this.reasonDataSource = data.data;
-        // });
+        this._reasonService.searchReason(json).subscribe((data) => {
+          this.isSearchingReason = false;
+          this.reasonDataSource = data.data;
+        });
 
       });
-    // end search state
-
-    // search state
-    this.modelChangedPurpose
-      .pipe(
-        debounceTime(500))
-      .subscribe(() => {
-        const queryText = this.applicationForm.get('purpose').value;
-        const name = this.selectedReason.name
-        if (!queryText || this.applicationForm.get('purpose').value === name) {
-          return;
-        }
-        this.isSearchingPurpose = true;
-        const json = {
-          stateId: this.selectedPurpose.id,
-          query : queryText
-        }
-        // this._locationService.searchState(json).subscribe((data) => {
-        //   this.isSearchingPurpose = false;
-        //   this.purposeDataSource = data.data;
-        // });
-
-      });
-    // end search purpose
-
+    // end search reason
 
   }
 
@@ -215,29 +165,43 @@ export class NewPassComponent implements OnInit {
       lastName: [null, [Validators.required]],
       city: [null, [Validators.required]],
       state: [null, [Validators.required]],
-      aadhar: [null, [Validators.required]],
-      PIN: [null, [Validators.required]],
+      cityId: [null, [Validators.required]],
+      stateId: [null, [Validators.required]],
+      aadhaarNo: [null, [Validators.required]],
       address: [null, [Validators.required]],
-      mobile: [null, [Validators.required]],
+      mobileNo: [null, [Validators.required]],
       passDate: [null, [Validators.required]],
-      purpose: [null, [Validators.required]],
-      vehicleNumber: [null, [Validators.required]],
-      reasonCode: [null, [Validators.required]],
+      vehicleNo: [null, [Validators.required]],
+      reasonId: [null, [Validators.required]],
+      reason: [null, [Validators.required]],
       reasonDetails: [null, [Validators.required]],
-      destinationPIN: [null, [Validators.required]],
-      destinationAreaAddress: [null, [Validators.required]],
-      personsWithMe :[[]],
-      profilePic :[null, [Validators.required]],
-      aadharPic :[null, [Validators.required]],
+      destinationPinCode: [null, [Validators.required]],
+      destinationAddress: [null, [Validators.required]],
+      picUrl :[null, [Validators.required]],
+      aadharPicUrl :[null, [Validators.required]],
       supportingDocs :[[], [Validators.required]],
-      travellerName :[null],
-      travellerAadhar :[null],
+      otherPersonDetails : [null,  new FormArray([])],
+      passStatus:[null, [Validators.required]],
+      attachments:[null, [Validators.required]],
+      attachmentDetails : [null, [Validators.required]],
+
+      travellerAadhaar : [null, [Validators.required]],
+      travellerName : [null, [Validators.required]],
+
     });
     this.uploadedImages = [];
     this.attachementIds = [];
 
   }
 
+  public getCities (){
+    const json: CityRequestModel = {
+      stateId : this.selectedState.id
+    }
+    console.log(json);
+    this.isSearchingCity = true;
+    this._cityService.getCities(json).subscribe();
+  }
 
   // Getting existing request (view mode)
   public getPassRequest() {
@@ -251,27 +215,31 @@ export class NewPassComponent implements OnInit {
     });
   }
 
-  public selectStateTypeahead(state: any) {
+  public selectStateTypeahead(state: StateModel) {
     if (state && state.id) {
       this.selectedState = state;
+      this.applicationForm.get('stateId').patchValue(state.id);
       this.applicationForm.get('state').patchValue(state.name);
+      this.getCities();
     }
     this.modelChangedState.next();
   }
 
 
-  public selectCityTypeahead(city: any) {
+  public selectCityTypeahead(city: CityModel) {
     if (city && city.id) {
       this.selectedCity = city;
+      this.applicationForm.get('cityId').patchValue(city.id);
       this.applicationForm.get('city').patchValue(city.name);
     }
     this.modelChangedCity.next();
   }
 
-  public selectReasonTypeahead(reason: any) {
+  public selectReasonTypeahead(reason: ReasonModel) {
     if (reason && reason.id) {
       this.selectedCity = reason;
-      this.applicationForm.get('reasonCode').patchValue(reason.name);
+      this.applicationForm.get('reasonId').patchValue(reason.id);
+      this.applicationForm.get('reason').patchValue(reason.name);
     }
     this.modelChangedReason.next();
   }
@@ -283,8 +251,6 @@ export class NewPassComponent implements OnInit {
     }
     this.modelChangedPurpose.next();
   }
-
-
 
 
   // document uploads
@@ -361,22 +327,22 @@ export class NewPassComponent implements OnInit {
   }
 
 
-  // aadhar
-  handleAadharChange(info: { file: UploadFile }): void {
+  // aadhaar
+  handleAadhaarChange(info: { file: UploadFile }): void {
     if (info.file.status === 'uploading') {
-      this.loadingAadharPic = true;
+      this.loadingAadhaarPic = true;
       return;
     }
     if (info.file.status === 'done') {
       // Get this url from response in real world.
       this.getBase64(info.file.originFileObj, (img: string) => {
-        this.loadingAadharPic = false;
-        this.aadharUrl = img;
+        this.loadingAadhaarPic = false;
+        this.aadhaarUrl = img;
       });
     }
 
     if (info.file.status === 'error') {
-      this.notification.error('Error', 'Aadhar pic not uploaded');
+      this.notification.error('Error', 'Aadhaar pic not uploaded');
     }
 
   }
@@ -388,6 +354,9 @@ export class NewPassComponent implements OnInit {
 
     const json: any = { ...this.applicationForm.getRawValue() };
 
+
+    console.log(JSON.stringify(json));
+
     if(this.requestId) {
       // update
       this._passService.updateRequest(json).subscribe((data) => {
@@ -396,7 +365,7 @@ export class NewPassComponent implements OnInit {
       });
 
     } else {
-
+      // create
       this._passService.createRequest(json).subscribe((data) => {
         this.isRequestInProcess = false;
         this.applicationFormData = data.data;
@@ -411,9 +380,10 @@ export class NewPassComponent implements OnInit {
 
     this.isRequestInProcess = true;
     const json: any = {
-      id : this.requestId
+      id : this.requestId,
+      status : 'rejected'
     };
-    this._passService.rejectRequest(json).subscribe((data) => {
+    this._passService.updateStatus(json).subscribe((data) => {
       this.isRequestInProcess = false;
       this.applicationFormData = data.data;
     });
@@ -424,15 +394,15 @@ export class NewPassComponent implements OnInit {
 
     this.isRequestInProcess = true;
     const json: any = {
-      id : this.requestId
+      id : this.requestId,
+      status : 'approved'
     };
-    this._passService.approveRequest(json).subscribe((data) => {
+    this._passService.updateStatus(json).subscribe((data) => {
       this.isRequestInProcess = false;
       this.applicationFormData = data.data;
     });
 
   }
-
 
 
 }

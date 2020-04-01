@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor(private _stateCityService : StateService) {
+  constructor(private _stateService : StateService) {
   }
 
   ngOnInit(): void {
@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
 
 
   public getInitialData() {
-    this._stateCityService.getStates().subscribe();
+    this._stateService.getStates().subscribe();
   }
 
 }

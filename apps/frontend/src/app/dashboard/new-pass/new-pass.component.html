@@ -106,6 +106,7 @@
                     <input
                       placeholder="Search"
                       formControlName="state"
+                      class="p-r-30"
                       nz-input
                       (ngModelChange)="selectStateTypeahead($event)"
                       nzSize="small"
@@ -137,11 +138,13 @@
                 <nz-form-control nzErrorTip="Please enter your City!">
                   <nz-input-group [nzSuffix]="suffixIconSearchCity">
                     <input
+                      [disabled]="!selectedState?.id"
                       placeholder="Search"
                       formControlName="city"
                       nz-input
                       (ngModelChange)="selectCityTypeahead($event)"
                       nzSize="small"
+                      class="p-r-30"
                       [nzAutocomplete]="autoCity"
                     />
                   </nz-input-group>
@@ -168,12 +171,12 @@
             <div class="col-md-4">
               <nz-form-item>
                 <nz-form-label
-                  >Aadhar (आधार)<span class="text-danger">*</span></nz-form-label
+                  >Aadhaar (आधार)<span class="text-danger">*</span></nz-form-label
                 >
-                <nz-form-control nzErrorTip="Please enter your Aadhar Number!">
+                <nz-form-control nzErrorTip="Please enter your Aadhaar Number!">
                   <input
                     nz-input
-                    formControlName="aadhar"
+                    formControlName="aadhaarNo"
                     placeholder="eg: 0000 0000 0000"
                     maxlength="12"
                   />
@@ -191,7 +194,7 @@
                 <nz-form-control nzErrorTip="Please enter your Mobile!">
                   <input
                     nz-input
-                    formControlName="mobile"
+                    formControlName="mobileNo"
                     placeholder="eg: 99999 99999"
                     maxlength="10"
                   />
@@ -209,7 +212,7 @@
                 <nz-form-control nzErrorTip="Please enter your Vehicle Number!">
                   <input
                     nz-input
-                    formControlName="vehicleNumber"
+                    formControlName="vehicleNo"
                     placeholder="eg: MP 01 AB 0000"
                     maxlength="15"
                   />
@@ -233,37 +236,6 @@
 
               </nz-form-item>
 
-  <!--            <nz-form-item>-->
-  <!--              <nz-form-label>Purpose? (उद्देश्य?)<span class="text-danger">*</span></nz-form-label>-->
-  <!--              <nz-form-control nzErrorTip="Please select Purpose!">-->
-
-  <!--                <nz-input-group [nzSuffix]="suffixIconSearchPurpose">-->
-  <!--                  <input-->
-  <!--                    placeholder="Search"-->
-  <!--                    formControlName="purpose"-->
-  <!--                    nz-input-->
-  <!--                    (ngModelChange)="selectPurposeTypeahead($event)"-->
-  <!--                    nzSize="small"-->
-  <!--                    [nzAutocomplete]="autoPurpose"/>-->
-  <!--                </nz-input-group>-->
-
-  <!--                <nz-autocomplete #autoPurpose>-->
-  <!--                  <nz-auto-option-->
-  <!--                    *ngFor="let option of purposeDataReason"-->
-  <!--                    [nzLabel]="option && option.name"-->
-  <!--                    [nzValue]="option">-->
-  <!--                    <span>{{ option && option.name }}</span>-->
-
-  <!--                  </nz-auto-option>-->
-  <!--                </nz-autocomplete>-->
-
-  <!--              </nz-form-control>-->
-  <!--              <ng-template #suffixIconSearchPurpose>-->
-  <!--                <i nz-icon nzType="search" *ngIf="!isSearchingPurpose"></i>-->
-  <!--                <i class="fas fa-spin fa-spinner" *ngIf="isSearchingPurpose"></i>-->
-  <!--              </ng-template>-->
-
-  <!--            </nz-form-item>-->
 
 
             </div>
@@ -289,7 +261,7 @@
 
           </div>
         </div>
-        <!--    Aadhar card upload -->
+        <!--    Aadhaar card upload -->
         <div class="col-md-3 text-center">
 
 
@@ -300,14 +272,14 @@
                        [nzHeaders]="attachementHeader"
                        [nzShowUploadList]="false"
                        [nzBeforeUpload]="beforeUpload"
-                       (nzChange)="handleAadharChange($event)">
+                       (nzChange)="handleAadhaarChange($event)">
 
-              <ng-container *ngIf="!aadharUrl">
+              <ng-container *ngIf="!aadhaarUrl">
 
                 <button type="button" nz-button class="upload-btn">
                   <div>
 
-                    <img src="../../assets/images/avatars/aadhar_placeholder.jpg" height="60" class="border-radius-round m-b-10">
+                    <img src="../../assets/images/avatars/aadhaar_placeholder.jpg" height="60" class="border-radius-round m-b-10">
 
                     <div><strong>drag & drop file</strong>
                       <br>or <br>
@@ -319,15 +291,15 @@
 
               </ng-container>
 
-              <img *ngIf="aadharUrl" [src]="aadharUrl" class="avatar">
+              <img *ngIf="aadhaarUrl" [src]="aadhaarUrl" class="avatar">
             </nz-upload>
 
-            <div class="ant-upload-text ant-uploading-text" *ngIf="loadingAadharPic">Uploading Aadhar Pic...</div>
+            <div class="ant-upload-text ant-uploading-text" *ngIf="loadingAadhaarPic">Uploading Aadhaar Pic...</div>
 
 
           </div>
 
-          <p>Upload Aadhar (अपलोड आधार)<span class="text-danger">*</span></p>
+          <p>Upload Aadhaar (अपलोड आधार)<span class="text-danger">*</span></p>
 
         </div>
 
@@ -337,7 +309,7 @@
       <section class="row m-t-25">
 
         <div class="col-md-12">
-          <p class="text-black">Add Person who is Travelling with You (अपने साथ यात्रा करने वाले व्यक्ति को जोड़ें )</p>
+          <p class="text-black">Add Person who is Travelling with You (अपने साथ यात्रा करने वाले व्यक्ति को जोड़ें)</p>
 
 
         <!-- Traveller Info -->
@@ -358,11 +330,11 @@
 
             <div class="col-md-3">
               <nz-form-item>
-                <nz-form-label>Aadhar (आधार)<span class="text-danger">*</span></nz-form-label>
-                <nz-form-control nzErrorTip="Please enter Aadhar!">
+                <nz-form-label>Aadhaar (आधार)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzErrorTip="Please enter Aadhaar!">
                   <input
                     nz-input
-                    formControlName="travellerAadhar"
+                    formControlName="travellerAadhaar"
                     maxlength="12"
                     placeholder="eg: 0000 0000 0000"/>
                 </nz-form-control>
@@ -392,7 +364,8 @@
               <nz-input-group [nzSuffix]="suffixIconSearchReasonCode">
                 <input
                   placeholder="Search"
-                  formControlName="reasonCode"
+                  formControlName="reason"
+                  class="p-r-30"
                   nz-input
                   (ngModelChange)="selectReasonTypeahead($event)"
                   nzSize="small"
@@ -402,7 +375,7 @@
 
               <nz-autocomplete #autoReason>
                 <nz-auto-option
-                  *ngFor="let option of reasonDataReason"
+                  *ngFor="let option of reasonDataSource"
                   [nzLabel]="option && option.name"
                   [nzValue]="option">
                   <span>{{ option && option.name }}</span>
@@ -445,7 +418,7 @@
             <nz-form-control nzErrorTip="Please enter Destination Area PIN code!">
               <input
                 nz-input
-                formControlName="firstName"
+                formControlName="destinationPinCode"
                 placeholder="eg: 000000"
                 maxlength="6"
               />
@@ -457,7 +430,7 @@
             <nz-form-control nzErrorTip="Please enter Destination Area Address!">
               <textarea
                 nz-input
-                formControlName="address"
+                formControlName="destinationAddress"
                 placeholder="eg: Flat, Street, Village, etc..."
                 maxlength="500"
                 rows="3"
@@ -472,7 +445,7 @@
             Please enter the complete details about your destination.<br />
             Any <strong>false</strong> information will lead to cancellation of
             Pass.
-            Please carry your Aadhar card while travelling.
+            Please carry your Aadhaar card while travelling.
           </p>
 
           <p>
