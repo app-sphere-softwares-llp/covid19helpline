@@ -21,7 +21,7 @@ export class PassService extends BaseService<UserStore, UserState> {
   }
 
   getRequestById(json: any) {
-    return this._http.post(PassUrls.get, json).pipe(
+    return this._http.post(PassUrls.passDetails, json).pipe(
       map((res: BaseResponseModel<PassModel>) => {
         return res;
       }),
@@ -72,6 +72,7 @@ export class PassService extends BaseService<UserStore, UserState> {
   updateStatus(json: any) {
     return this._http.post(PassUrls.updateStatus, json).pipe(
       map((res: BaseResponseModel<User>) => {
+        this.notification.success('Success', 'Request updated successfully');
          return res;
       }),
       catchError(err => {

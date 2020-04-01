@@ -209,15 +209,24 @@ export class NewPassComponent implements OnInit {
 
   // Getting existing request (view mode)
   public getPassRequest() {
-    this.isRequestInProcess = true;
-    const json: any = {
-      id: this.requestId
-    };
-    this._passService.getRequestById(json).subscribe((data) => {
+    try {
+
+      this.isRequestInProcess = true;
+      const json: any = {
+        id: this.requestId
+      };
+
+      this._passService.getRequestById(json).subscribe((data) => {
+        this.isRequestInProcess = false;
+
+        //pre populate here
+        // this.applicationForm.patchValue(data.data);
+
+      });
+
+    }catch (e) {
       this.isRequestInProcess = false;
-      this.applicationForm.patchValue(data.data);
-      this.applicationFormData = data.data;
-    });
+    }
   }
 
   public selectStateTypeahead(state: StateModel) {
