@@ -1,5 +1,5 @@
 import {PassModel, OtherPersonDetails, PassStatusEnum, UpdatePassStatusRequestModel} from "@covid19-helpline/models";
-import {aadhaarNoValidator, BadRequest} from "../../helpers/helpers";
+import {aadhaarNoValidator, BadRequest, isValidMobileNo} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 
 export class PassUtilityService {
@@ -43,6 +43,10 @@ export class PassUtilityService {
     // mobile no
     if (!model.mobileNo) {
       BadRequest(await this.i18n.translate('pass.CREATE_VALIDATIONS.NO_MOBILE_NO'));
+    } else {
+      if (!isValidMobileNo(model.mobileNo)) {
+        BadRequest(await this.i18n.translate('pass.GENERAL.INVALID_MOBILE_NO'));
+      }
     }
 
     // vehicle no

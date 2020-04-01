@@ -210,6 +210,14 @@ export const isResetPasswordCodeExpired = (date: Date): boolean => {
 export const aggregateConvert_idToId = {$addFields: {id: '$_id'}};
 
 /**
+ * check whether given mobile no is valid
+ * @param mobileNo
+ */
+export const isValidMobileNo = (mobileNo: string) => {
+  return /^\d{10}$/.test(mobileNo);
+};
+
+/**
  * addhaar no validator
  * @param aadhaarNo
  */

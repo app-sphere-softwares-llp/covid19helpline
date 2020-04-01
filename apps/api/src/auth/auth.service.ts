@@ -4,7 +4,7 @@ import {JwtService} from '@nestjs/jwt';
 import {InjectModel} from '@nestjs/mongoose';
 import {ClientSession, Document, Model} from 'mongoose';
 import {ModuleRef} from '@nestjs/core';
-import {BadRequest} from '../shared/helpers/helpers';
+import {BadRequest, isValidMobileNo} from '../shared/helpers/helpers';
 import {EmailService} from '../shared/services/email/email.service';
 import {ResetPasswordService} from '../shared/services/reset-password/reset-password.service';
 import {
@@ -153,6 +153,10 @@ export class AuthService extends BaseService<User & Document> implements OnModul
     // check first name
     if (!user.mobileNumber) {
       throw new BadRequestException('Mobile Number is mandatory');
+    } else {
+      if (!isValidMobileNo(user.mobileNumber)) {
+        throw new BadRequestException('Invalid mobile no');
+      }
     }
 
     // check first name

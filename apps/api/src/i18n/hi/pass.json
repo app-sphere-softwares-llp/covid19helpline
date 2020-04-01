@@ -1,4 +1,7 @@
 {
+  "GENERAL": {
+    "INVALID_MOBILE_NO" : "Invalid mobile no"
+  },
   "CREATE_VALIDATIONS": {
     "NO_MOBILE_NO": "कृपया मोबाइल नंबर दर्ज करें"
   },
