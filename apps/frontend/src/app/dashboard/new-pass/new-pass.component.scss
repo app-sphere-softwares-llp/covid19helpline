@@ -1,6 +1,10 @@
 .application-form {
   min-height: 550px;
 
+  input.p-r-30 {
+    padding-right: 30px!important;
+  }
+
   .ant-btn.ant-btn-default {
     background: #f4f4f4 !important;
   }

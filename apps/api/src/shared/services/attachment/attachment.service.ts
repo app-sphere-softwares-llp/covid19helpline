@@ -56,7 +56,7 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
     const mimeType = file.mimetype.split('/')[0];
 
     // check valid mime type
-    if (mimeType.includes('image')) {
+    if (!mimeType.includes('image')) {
       BadRequest('Only images are allowed to upload');
     }
 

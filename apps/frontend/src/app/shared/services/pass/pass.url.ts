@@ -6,6 +6,6 @@ export const PassUrls = {
   updateStatus: `${createUrl('pass/update-status')}`,
   delete: `${createUrl('pass/delete')}`,
   update: `${createUrl('pass/update')}`,
-  attachment: `${createUrl('attachment/profilepic')}`,
+  attachment: `${createUrl('attachment/add')}`,
 
 };
