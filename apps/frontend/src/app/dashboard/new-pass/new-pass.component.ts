@@ -1,23 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
-import { NzNotificationService, UploadFile } from 'ng-zorro-antd';
-import { GeneralService } from '../../shared/services/general.service';
-import { ActivatedRoute } from '@angular/router';
-import { PassService } from '../../shared/services/pass/pass.service';
-import { StateQuery } from '../../queries/state/state.query';
-import { cloneDeep } from 'lodash';
+import {Component, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Observable, Subject} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
+import {NzNotificationService, UploadFile} from 'ng-zorro-antd';
+import {GeneralService} from '../../shared/services/general.service';
+import {ActivatedRoute} from '@angular/router';
+import {PassService} from '../../shared/services/pass/pass.service';
+import {StateQuery} from '../../queries/state/state.query';
+import {cloneDeep} from 'lodash';
 import {
   CityModel,
   CityRequestModel, ReasonModel,
   StateModel
 } from '@covid19-helpline/models';
-import { CityService } from '../../shared/services/state-city/city.service';
-import { CityQuery } from '../../queries/city/city.query';
-import { StateService } from '../../shared/services/state-city/state.service';
-import { ReasonService } from '../../shared/services/reason/reason.service';
-import { PassUrls } from '../../shared/services/pass/pass.url';
+import {CityService} from '../../shared/services/state-city/city.service';
+import {CityQuery} from '../../queries/city/city.query';
+import {StateService} from '../../shared/services/state-city/state.service';
+import {ReasonService} from '../../shared/services/reason/reason.service';
+import {PassUrls} from '../../shared/services/pass/pass.url';
 
 @Component({
   selector: 'nest-js-boiler-plate-new-pass',
@@ -26,11 +26,11 @@ import { PassUrls } from '../../shared/services/pass/pass.url';
 })
 export class NewPassComponent implements OnInit {
 
-  public isRequestInProcess:boolean;
+  public isRequestInProcess: boolean;
 
-  public applicationFormData:any;
+  public applicationFormData: any;
   public applicationForm: FormGroup;
-  public requestId:string;
+  public requestId: string;
   public dateFormat = 'MM/dd/yyyy';
 
   // upload profile pic
@@ -51,10 +51,10 @@ export class NewPassComponent implements OnInit {
   // doc upload end
 
 
-  public selectedReason:ReasonModel;
-  public selectedState:StateModel;
-  public selectedCity:ReasonModel;
-  public selectedPurpose:any;
+  public selectedReason: ReasonModel;
+  public selectedState: StateModel;
+  public selectedCity: ReasonModel;
+  public selectedPurpose: any;
 
   public cityDataSource: CityModel[] = [];
 
@@ -64,7 +64,7 @@ export class NewPassComponent implements OnInit {
 
   public isSearchingState: boolean;
   public isSearchingCity: boolean;
-  public isSearchingReason:boolean;
+  public isSearchingReason: boolean;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -73,16 +73,19 @@ export class NewPassComponent implements OnInit {
 
   constructor(private FB: FormBuilder, protected notification: NzNotificationService,
               private _generalService: GeneralService,
-              private _passService : PassService ,private _activatedRouter: ActivatedRoute,
-              private _stateQuery : StateQuery, private _cityQuery : CityQuery,
-              private _reasonService : ReasonService,
-              private _cityService : CityService, private _stateService : StateService) {
+              private _passService: PassService, private _activatedRouter: ActivatedRoute,
+              private _stateQuery: StateQuery, private _cityQuery: CityQuery,
+              private _reasonService: ReasonService,
+              private _cityService: CityService, private _stateService: StateService) {
     this.notification.config({
       nzPlacement: 'bottomRight'
     });
   }
 
   ngOnInit() {
+
+    // initializing form
+    this.initForm();
 
     this.requestId = this._activatedRouter.snapshot.params.requestId;
 
@@ -96,13 +99,9 @@ export class NewPassComponent implements OnInit {
       Authorization: 'Bearer ' + this._generalService.token
     };
 
-
-    // initializing form
-    this.initForm();
-
     // listen for states from store
     this._stateQuery.states$.subscribe(res => {
-      if(!res) {
+      if (!res) {
         this._stateService.getStates().subscribe();
       } else {
         this.stateDataSource = cloneDeep(res);
@@ -121,7 +120,7 @@ export class NewPassComponent implements OnInit {
           return;
         }
         this.isSearchingCity = true;
-        const json : CityRequestModel = {
+        const json: CityRequestModel = {
           stateId: this.selectedState.id,
           term: queryText
         }
@@ -144,7 +143,7 @@ export class NewPassComponent implements OnInit {
         }
         this.isSearchingReason = true;
         const json = {
-          query : queryText
+          query: queryText
         }
         this._reasonService.searchReason(json).subscribe((data) => {
           this.isSearchingReason = false;
@@ -159,8 +158,6 @@ export class NewPassComponent implements OnInit {
 
   // initializing form
   public initForm() {
-
-
     this.applicationForm = this.FB.group({
       firstName: [null, [Validators.required]],
       lastName: [null, [Validators.required]],
@@ -178,31 +175,30 @@ export class NewPassComponent implements OnInit {
       reasonDetails: [null, [Validators.required]],
       destinationPinCode: [null, [Validators.required]],
       destinationAddress: [null, [Validators.required]],
-      picUrl :[null, [Validators.required]],
-      aadharPicUrl :[null, [Validators.required]],
-      passStatus:[null],
-      attachments:[null, [Validators.required]],
-      attachmentDetails : [null],
+      picUrl: [null, [Validators.required]],
+      aadharPicUrl: [null, [Validators.required]],
+      passStatus: [null],
+      attachments: [null, [Validators.required]],
+      attachmentDetails: [null],
 
-      otherPersonDetails : new FormArray([this.addOtherPersonDetails()]),
+      otherPersonDetails: new FormArray([this.initOtherPersonDetails()]),
 
     });
     this.uploadedImages = [];
     this.attachementIds = [];
-
   }
 
 
-  public addOtherPersonDetails () {
+  public initOtherPersonDetails() {
     return this.FB.group({
-      travellerAadhaar: [null, [Validators.required]],
-      travellerName: [null, [Validators.required]],
+      fullName: [null, [Validators.required]],
+      aadhaarNo: [null, [Validators.required]],
     });
   }
 
-  public getCities (){
+  public getCities() {
     const json: CityRequestModel = {
-      stateId : this.selectedState.id
+      stateId: this.selectedState.id
     }
     console.log(json);
     this.isSearchingCity = true;
@@ -212,8 +208,8 @@ export class NewPassComponent implements OnInit {
   // Getting existing request (view mode)
   public getPassRequest() {
     this.isRequestInProcess = true;
-    const json:any  = {
-      id : this.requestId
+    const json: any = {
+      id: this.requestId
     };
     this._passService.getRequestById(json).subscribe((data) => {
       this.isRequestInProcess = false;
@@ -259,7 +255,7 @@ export class NewPassComponent implements OnInit {
 
 
   // document uploads
-  handleChange({ file, fileList }): void {
+  handleChange({file, fileList}): void {
     const status = file.status;
     if (status !== 'uploading') {
       // console.log(file, fileList);
@@ -368,18 +364,27 @@ export class NewPassComponent implements OnInit {
 
   }
 
+  public addOtherPersonDetails() {
+    const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
+    otherDetailsForm.controls.push(this.initOtherPersonDetails());
+  }
+
+  public removeOtherPersonDetails(index: number) {
+    const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
+    otherDetailsForm.removeAt(index);
+  }
+
 
   public saveRequest() {
-
     this.isRequestInProcess = true;
 
-    const json: any = { ...this.applicationForm.getRawValue() };
+    const json: any = {...this.applicationForm.getRawValue()};
 
     this.applicationForm.get('attachments').patchValue(this.attachementIds);
 
     console.log(JSON.stringify(json));
 
-    if(this.requestId) {
+    if (this.requestId) {
       // update
       this._passService.updateRequest(json).subscribe((data) => {
         this.isRequestInProcess = false;
@@ -402,8 +407,8 @@ export class NewPassComponent implements OnInit {
 
     this.isRequestInProcess = true;
     const json: any = {
-      id : this.requestId,
-      status : 'rejected'
+      id: this.requestId,
+      status: 'rejected'
     };
     this._passService.updateStatus(json).subscribe((data) => {
       this.isRequestInProcess = false;
@@ -416,8 +421,8 @@ export class NewPassComponent implements OnInit {
 
     this.isRequestInProcess = true;
     const json: any = {
-      id : this.requestId,
-      status : 'approved'
+      id: this.requestId,
+      status: 'approved'
     };
     this._passService.updateStatus(json).subscribe((data) => {
       this.isRequestInProcess = false;
