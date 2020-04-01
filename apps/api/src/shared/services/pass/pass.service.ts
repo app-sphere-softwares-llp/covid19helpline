@@ -109,7 +109,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
     });
 
     // get pass details
-    return await this.getDetails(result.id);
+    return await this.getDetails(result.id, true);
   }
 
   /**
