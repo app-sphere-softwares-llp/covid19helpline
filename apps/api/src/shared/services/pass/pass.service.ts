@@ -8,12 +8,14 @@ import {
   DbCollection,
   MongooseQueryModel,
   PassModel,
-  PassStatusEnum,
+  PassStatusEnum, SendSmsModel,
   UpdatePassStatusRequestModel
 } from "@covid19-helpline/models";
 import {BadRequest, generateUtcDate} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 import {PassUtilityService} from "./pass.utility.service";
+import {SmsService} from "../sms/sms.service";
+import {DEFAULT_SMS_SENDING_OPTIONS} from "../../helpers/defaultValueConstant";
 
 const COMMON_POPULATION = [{
   path: 'reason',
@@ -44,7 +46,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
   constructor(
     @InjectModel(DbCollection.pass) private readonly passModel: Model<PassModel & Document>,
     private _moduleRef: ModuleRef, private readonly _generalService: GeneralService,
-    protected readonly i18n: I18nRequestScopeService
+    protected readonly i18n: I18nRequestScopeService, private readonly _smsService: SmsService
   ) {
     super(passModel);
 
@@ -87,7 +89,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
       pass.reasonDetails = model.reasonDetails;
       pass.destinationPinCode = model.destinationPinCode;
       pass.destinationAddress = model.destinationAddress;
-      pass.otherPersonDetails = model.otherPersonDetails;
+      pass.otherPersonDetails = model.otherPersonDetails || [];
       pass.attachments = model.attachments;
 
       // if id is not there than create new pass
@@ -118,7 +120,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
   async updatePassStatus(model: UpdatePassStatusRequestModel) {
     await this._utilityService.updatePassStatusValidations(model);
 
-    return await this.withRetrySession(async (session: ClientSession) => {
+    return this.withRetrySession(async (session: ClientSession) => {
       // check pass exists
       const passDetails: PassModel = await this.getDetails(model.id);
 
@@ -138,7 +140,21 @@ export class PassService extends BaseService<PassModel & Document> implements On
       };
 
       // update pass by id
-      await this.updateById(model.id, {$set: updateStatusDoc}, session);
+      await this.updateById(model.id, {$set: {passStatus: updateStatusDoc}}, session);
+
+      const smsTemplate = PassStatusEnum.approved ? `Your Pass has been Approved
+         Please Carry your Aadhaar Card` : `Your Pass has been Rejected, Please try again`;
+
+      // send sms that for status is updated
+      const smsModel = new SendSmsModel();
+      smsModel.route = DEFAULT_SMS_SENDING_OPTIONS.route;
+      smsModel.sender = DEFAULT_SMS_SENDING_OPTIONS.sender;
+      smsModel.sms = [{
+        to: [passDetails.mobileNo],
+        message: smsTemplate
+      }];
+
+      this._smsService.sendSms(smsModel);
 
       // return
       return await this.i18n.translate('pass.RESPONSES.STATUS_UPDATED');
