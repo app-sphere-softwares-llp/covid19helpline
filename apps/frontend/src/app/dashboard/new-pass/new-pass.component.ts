@@ -7,7 +7,7 @@ import {GeneralService} from '../../shared/services/general.service';
 import {ActivatedRoute} from '@angular/router';
 import {PassService} from '../../shared/services/pass/pass.service';
 import {StateQuery} from '../../queries/state/state.query';
-import {cloneDeep} from 'lodash';
+
 import {
   CityModel,
   CityRequestModel, PassStatusEnum, ReasonModel,
@@ -30,7 +30,6 @@ export class NewPassComponent implements OnInit {
 
   public isRequestInProcess: boolean;
 
-  public applicationFormData: any;
   public applicationForm: FormGroup;
   public requestId: string;
   public dateFormat = 'MM/dd/yyyy';
@@ -198,6 +197,11 @@ export class NewPassComponent implements OnInit {
     });
     this.uploadedImages = [];
     this.attachementIds = [];
+    this.avatarUrl = null;
+    this.aadhaarUrl = null;
+    this.showAddPersonBtn = true;
+    this.cityDataSource = [];
+
   }
 
 

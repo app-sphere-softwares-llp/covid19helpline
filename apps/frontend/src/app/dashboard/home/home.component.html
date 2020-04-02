@@ -1,8 +1,15 @@
-<nz-card [nzSize]="'small'">
+<nz-card [nzSize]="'small'" class="home-tabs">
 
   <nz-tabset>
 
-    <nz-tab nzTitle="Dashboard">
+    <nz-tab [nzTitle]="titleTemplate1">
+
+        <ng-template #titleTemplate1>
+          <div class="tab-title" (click)="currentTab('dashboard')">
+            Dashboard
+          </div>
+        </ng-template>
+
 
       <div class="row">
         <div class="col-md-4">
@@ -46,10 +53,13 @@
     </nz-tab>
     <!-- tab 1 -->
 
+    <nz-tab [nzTitle]="titleTemplate2">
 
-
-
-    <nz-tab nzTitle="New Request">
+      <ng-template #titleTemplate2>
+        <div class="tab-title" (click)="currentTab('pending')">
+          New Request
+        </div>
+      </ng-template>
 
       <!-- if not data-->
       <nz-empty
@@ -63,7 +73,18 @@
 
       <!-- if data available -->
 
-      <nz-table #basicTable1 [nzData]="pendingData" *ngIf="pendingData?.length>0">
+      <nz-table #basicTable1
+                [nzData]="pendingData"
+                [nzFrontPagination]="false"
+                [nzTotal]="filterRequest.totalItems"
+                [nzPageIndex]="filterRequest.page"
+                [nzPageSize]="filterRequest.count"
+                [nzShowPagination]="true"
+                (nzPageIndexChange)="pageChanged($event, 'pending')"
+                [nzSize]="'small'"
+                [nzLoading]="gettingDataInProcess"
+                [nzPaginationPosition]="'bottom'"
+                >
         <thead>
           <tr>
             <th>SN.</th>
@@ -91,7 +112,13 @@
     </nz-tab>
     <!-- tab 2 -->
 
-    <nz-tab nzTitle="Approved Requests">
+    <nz-tab [nzTitle]="titleTemplate3">
+
+      <ng-template #titleTemplate3>
+        <div class="tab-title" (click)="currentTab('approved')">
+          Approved Requests
+        </div>
+      </ng-template>
 
       <!-- if not data-->
       <nz-empty
@@ -104,7 +131,18 @@
       </nz-empty>
 
       <!-- if data available -->
-      <nz-table #basicTable2 [nzData]="approvedData" *ngIf="approvedData?.length>0">
+      <nz-table #basicTable2 *ngIf="approvedData?.length>0"
+                [nzData]="approvedData"
+                [nzFrontPagination]="false"
+                [nzTotal]="filterRequest.totalItems"
+                [nzPageIndex]="filterRequest.page"
+                [nzPageSize]="filterRequest.count"
+                [nzShowPagination]="true"
+                (nzPageIndexChange)="pageChanged($event, 'approved')"
+                [nzSize]="'small'"
+                [nzLoading]="gettingDataInProcess"
+                [nzPaginationPosition]="'bottom'"
+                >
         <thead>
           <tr>
             <th>SN.</th>
@@ -132,7 +170,13 @@
     </nz-tab>
     <!-- tab 3 -->
 
-    <nz-tab nzTitle="Rejected Requests">
+    <nz-tab [nzTitle]="titleTemplate4">
+
+        <ng-template #titleTemplate4>
+          <div class="tab-title" (click)="currentTab('rejected')">
+            Rejected Requests
+          </div>
+        </ng-template>
 
       <!-- if not data-->
       <nz-empty
@@ -146,7 +190,17 @@
 
       <!-- if data available -->
 
-      <nz-table #basicTable3 [nzData]="rejectedData" *ngIf="rejectedData?.length>0">
+      <nz-table #basicTable3 *ngIf="rejectedData?.length>0"
+                [nzData]="rejectedData"
+                [nzFrontPagination]="false"
+                [nzTotal]="filterRequest.totalItems"
+                [nzPageIndex]="filterRequest.page"
+                [nzPageSize]="filterRequest.count"
+                [nzShowPagination]="true"
+                (nzPageIndexChange)="pageChanged($event, 'rejected')"
+                [nzSize]="'small'"
+                [nzLoading]="gettingDataInProcess"
+                [nzPaginationPosition]="'bottom'">
         <thead>
           <tr>
             <th>SN.</th>

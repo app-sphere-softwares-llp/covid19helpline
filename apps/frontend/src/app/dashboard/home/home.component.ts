@@ -12,6 +12,14 @@ export class HomeComponent implements OnInit {
   public pendingData: PassModel[] = [];
   public approvedData: PassModel[] = [];
   public rejectedData: PassModel[] = [];
+  public gettingDataInProcess:boolean;
+
+  public filterRequest: GetAllPassesRequestModel = {
+    count : 15,
+    page: 1,
+    query : '',
+    status : PassStatusEnum.pending
+  }
 
   constructor(private _stateService : StateService,
               private _passServive : PassService) {
@@ -19,26 +27,30 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.getInitialData();
+    // commented because applied search facility on state fileds on new pass form
+    // this.getInitialData();
 
     this.getAllRequest(PassStatusEnum.pending);
 
-    // looking tab change event then will replace both line
-    this.getAllRequest(PassStatusEnum.approved);
-    this.getAllRequest(PassStatusEnum.rejected);
+  }
 
+  public currentTab(status?: string) {
+    if(status==='dashboard'){ // will apply dashboard api later
+      return;
+    }
+    this.filterRequest.page = 1;
+    this.filterRequest.totalItems = 0;
+    this.getAllRequest(status as PassStatusEnum);
   }
 
 
   public getAllRequest(status?: PassStatusEnum) {
 
-    const json: GetAllPassesRequestModel = {
-      status : status,
-      query: '',
-      count: 10
-    }
+    this.filterRequest.status = status;
 
-    this._passServive.getRequests(json).subscribe((data) => {
+    this._passServive.getRequests(this.filterRequest).subscribe((data) => {
+
+      this.filterRequest.totalItems = data.data.totalItems;
 
       if(status===PassStatusEnum.pending) {
         this.pendingData = data.data.items;
@@ -51,6 +63,12 @@ export class HomeComponent implements OnInit {
     });
 
   }
+
+  public pageChanged(index: number, status: string) {
+      this.filterRequest.page = index;
+      this.getAllRequest(status as PassStatusEnum);
+  }
+
 
   public getInitialData() {
 

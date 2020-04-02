@@ -10,6 +10,9 @@
   padding: 5px 5px;
 }
 
+ant-card-body {
+  min-height: 400px;
+}
 .ant-table-thead > tr > th {
   color: #6E829C;
   font-size: 12px;
@@ -22,3 +25,8 @@
 .ant-empty-image {
   height: 100%;
 }
+
+.tab-title {
+  padding: 0.75rem 1.25rem;;
+}
+
