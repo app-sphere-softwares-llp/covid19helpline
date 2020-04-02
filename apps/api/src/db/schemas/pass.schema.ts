@@ -52,6 +52,21 @@ passSchema
   });
 
 passSchema
+  .virtual('state', {
+    ref: DbCollection.state,
+    localField: 'stateId',
+    foreignField: '_id'
+  });
+
+passSchema
+  .virtual('city', {
+    ref: DbCollection.city,
+    localField: 'cityId',
+    foreignField: '_id'
+  });
+
+
+passSchema
   .virtual('createdBy', {
   ref: DbCollection.users,
   localField: 'createdById',

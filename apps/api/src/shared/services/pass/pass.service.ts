@@ -22,6 +22,14 @@ const COMMON_POPULATION = [{
   select: 'name',
   justOne: true
 }, {
+  path: 'state',
+  select: 'name',
+  justOne: true
+}, {
+  path: 'city',
+  select: 'name',
+  justOne: true
+}, {
   path: 'createdBy',
   select: 'mobileNumber userName firstName lastName profilePic -_id',
   justOne: true
