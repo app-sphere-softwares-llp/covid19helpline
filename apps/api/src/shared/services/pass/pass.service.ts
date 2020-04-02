@@ -17,6 +17,9 @@ import {PassUtilityService} from "./pass.utility.service";
 import {SmsService} from "../sms/sms.service";
 import {DEFAULT_SMS_SENDING_OPTIONS} from "../../helpers/defaultValueConstant";
 
+/**
+ * common population constant
+ */
 const COMMON_POPULATION = [{
   path: 'reason',
   select: 'name',
@@ -39,6 +42,9 @@ const COMMON_POPULATION = [{
   justOne: true
 }];
 
+/**
+ * Detailed population constant
+ */
 const DETAILED_POPULATION = [...COMMON_POPULATION, {
   path: 'attachmentsDetails'
 }, {
@@ -47,6 +53,9 @@ const DETAILED_POPULATION = [...COMMON_POPULATION, {
   justOne: true
 }];
 
+/**
+ * pass sorting key mapper constant
+ */
 const PASS_SORTING_MAPPER = new Map<string, string>([
   ['firstName', 'firstName'],
   ['lastName', 'lastName'],
