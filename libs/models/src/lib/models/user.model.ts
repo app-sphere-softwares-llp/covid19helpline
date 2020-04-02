@@ -1,4 +1,4 @@
-import {MemberTypes, OneTimeMessagesDismissed} from '../general';
+import {MemberTypes} from '../general';
 import {UserLoginProviderEnum, UserStatus} from '../enums';
 
 

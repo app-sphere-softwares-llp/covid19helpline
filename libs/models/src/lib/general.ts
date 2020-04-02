@@ -1,12 +1,9 @@
 import {User} from "./models";
 
-export interface OneTimeMessagesDismissed {
-  showTour: boolean;
-}
-
 export enum MemberTypes {
-  'alien' = 'alien',
-  'normal' = 'normal'
+  normal = 'normal',
+  admin = 'admin',
+  superAdmin = 'super-admin'
 }
 
 export class BaseDbModel {

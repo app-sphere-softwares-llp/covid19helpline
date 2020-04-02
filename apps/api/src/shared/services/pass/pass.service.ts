@@ -5,7 +5,7 @@ import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import {GeneralService} from '../general.service';
 import {
-  DbCollection,
+  DbCollection, GetAllPassesRequestModel,
   MongooseQueryModel,
   PassModel,
   PassStatusEnum, SendSmsModel,
@@ -164,24 +164,79 @@ export class PassService extends BaseService<PassModel & Document> implements On
   /**
    * get all cities
    * search by name
-   * @param term
+   * @param model
    */
-  async getAllPasses(term: string) {
+  async getAllPasses(model: GetAllPassesRequestModel) {
     // query
-    const query = new MongooseQueryModel();
-
-    // create query filters
-    query.filter = {
-      isDeleted: false,
+    const queryFilter = {
       $and: [{
-        $or: [
-          {mobileNo: {$regex: new RegExp(term), $options: 'i'}},
-          {aadhaarNo: {$regex: new RegExp(term), $options: 'i'}},
-          {vehicleNo: {$regex: new RegExp(term), $options: 'i'}},
-        ]
+        'passStatus.status': model.status
+      }, {
+        $or: [{
+          firstName: {$regex: new RegExp(model.query.toString()), $options: 'i'},
+          lastName: {$regex: new RegExp(model.query.toString()), $options: 'i'},
+          aadhaarNo: {$regex: new RegExp(model.query.toString()), $options: 'i'},
+          mobileNo: {$regex: new RegExp(model.query.toString()), $options: 'i'},
+          vehicleNo: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+        }]
       }]
     };
-    return this.find(query);
+
+    const passes = await this.dbModel
+      .aggregate()
+      .match(queryFilter)
+      .lookup({
+        from: DbCollection.reason,
+        let: {reasonId: '$reasonId'},
+        pipeline: [
+          {$match: {$expr: {$eq: ['$_id', '$$reasonId']}}},
+          {$project: {name: 1}},
+          {$addFields: {id: '$_id'}}
+        ],
+        as: 'reason'
+      })
+      .unwind({path: '$reason', preserveNullAndEmptyArrays: true})
+      .lookup({
+        from: DbCollection.state,
+        let: {stateId: '$stateId'},
+        pipeline: [
+          {$match: {$expr: {$eq: ['$_id', '$$stateId']}}},
+          {$project: {name: 1}},
+          {$addFields: {id: '$_id'}}
+        ],
+        as: 'state'
+      })
+      .unwind({path: '$state', preserveNullAndEmptyArrays: true})
+      .lookup({
+        from: DbCollection.city,
+        let: {cityId: '$cityId'},
+        pipeline: [
+          {$match: {$expr: {$eq: ['$_id', '$$cityId']}}},
+          {$project: {name: 1}},
+          {$addFields: {id: '$_id'}}
+        ],
+        as: 'city'
+      })
+      .unwind({path: '$city', preserveNullAndEmptyArrays: true})
+      .sort({[model.sort]: model.sortBy === 'asc' ? 1 : -1})
+      .skip((model.count * model.page) - model.count)
+      .limit(model.count);
+
+    // query for all counting all matched tasks
+    const countQuery = await this.dbModel.aggregate().match(queryFilter).count('totalRecords');
+    let totalRecordsCount = 0;
+    if (countQuery && countQuery[0]) {
+      totalRecordsCount = countQuery[0].totalRecords;
+    }
+
+    // return paginated response
+    return {
+      page: model.page,
+      totalItems: totalRecordsCount,
+      totalPages: Math.ceil(totalRecordsCount / model.count),
+      count: model.count,
+      items: passes
+    };
   }
 
   /**

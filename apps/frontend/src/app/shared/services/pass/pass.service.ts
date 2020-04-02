@@ -1,5 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BaseResponseModel, PassModel, User, StatusUpdateRequestModel } from '@covid19-helpline/models';
+import {
+  BaseResponseModel,
+  PassModel,
+  User,
+  UpdatePassStatusRequestModel
+} from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
 import { catchError, map } from 'rxjs/operators';
@@ -68,7 +73,7 @@ export class PassService extends BaseService<UserStore, UserState> {
   }
 
 
-  updateStatus(json: StatusUpdateRequestModel ) {
+  updateStatus(json: UpdatePassStatusRequestModel ) {
     return this._http.post(PassUrls.updateStatus, json).pipe(
       map((res: BaseResponseModel<User>) => {
         this.notification.success('Success', 'Request '+ json.status +' successfully');
