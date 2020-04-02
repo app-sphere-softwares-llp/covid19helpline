@@ -301,6 +301,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
         BadRequest('Pass not found...');
       } else {
         passDetails.id = passDetails._id;
+        passDetails.attachmentDetails = passDetails.attachmentDetails || [];
       }
 
       return passDetails;
