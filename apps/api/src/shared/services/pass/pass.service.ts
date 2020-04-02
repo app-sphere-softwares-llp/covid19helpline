@@ -193,13 +193,21 @@ export class PassService extends BaseService<PassModel & Document> implements On
       $and: [{
         'passStatus.status': model.status
       }, {
+        // set searching columns
         $or: [{
-          firstName: {$regex: new RegExp(model.query.toString()), $options: 'i'},
-          lastName: {$regex: new RegExp(model.query.toString()), $options: 'i'},
-          aadhaarNo: {$regex: new RegExp(model.query.toString()), $options: 'i'},
-          mobileNo: {$regex: new RegExp(model.query.toString()), $options: 'i'},
-          vehicleNo: {$regex: new RegExp(model.query.toString()), $options: 'i'}
-        }]
+          firstName: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+        }, {
+          lastName: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+        },
+          {
+            aadhaarNo: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+          },
+          {
+            mobileNo: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+          },
+          {
+            vehicleNo: {$regex: new RegExp(model.query.toString()), $options: 'i'}
+          }]
       }]
     };
 
