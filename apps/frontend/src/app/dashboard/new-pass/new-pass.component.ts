@@ -242,9 +242,15 @@ export class NewPassComponent implements OnInit {
 
       this.applicationForm.patchValue(data.data);
 
+      this.selectedCity = data.data.city;
+      this.selectedState = data.data.state;
+
+      this.applicationForm.get('cityId').patchValue(data.data.city.id);
       this.applicationForm.get('city').patchValue(data.data.city.name);
       this.applicationForm.get('state').patchValue(data.data.state.name);
+      this.applicationForm.get('stateId').patchValue(data.data.state.id);
       this.applicationForm.get('reason').patchValue(data.data.reason.name);
+      this.applicationForm.get('reasonId').patchValue(data.data.reason.id);
 
 
       this.aadhaarUrl = data.data.aadharPicUrl;
