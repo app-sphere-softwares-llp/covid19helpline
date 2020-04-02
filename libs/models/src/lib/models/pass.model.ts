@@ -4,6 +4,9 @@ import {AttachmentModel} from './attachment.model';
 import {StateModel} from "./state.model";
 import {PassStatusEnum} from "../enums";
 import {User} from "./user.model";
+import {MongoosePaginateQuery} from "../queryOptions";
+import {DescribeScheduledInstanceAvailabilityMaxResults} from "aws-sdk/clients/ec2";
+import {Schema} from 'mongoose';
 
 export class PassModel extends BaseDbModel {
   picUrl: string;
@@ -35,14 +38,25 @@ export class PassModel extends BaseDbModel {
   }
 }
 
-
 export class OtherPersonDetails {
   fullName: string;
   aadhaarNo: string;
 }
 
-
 export class UpdatePassStatusRequestModel {
   id: string;
   status: PassStatusEnum;
+}
+
+export class GetAllPassesRequestModel extends MongoosePaginateQuery {
+  stateId?: string | Schema.Types.ObjectId;
+  cityId?: string | Schema.Types.ObjectId;
+  status: PassStatusEnum;
+  reasonId?: string[] | Schema.Types.ObjectId[];
+  query?: string;
+
+  constructor() {
+    super();
+    this.query = '';
+  }
 }

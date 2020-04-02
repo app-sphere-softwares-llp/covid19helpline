@@ -142,7 +142,7 @@ export class StateService extends BaseService<StateModel & Document> implements 
     });
 
     return this.withRetrySession(async (session) => {
-      return this.create(states, session);
+      return await this.create(states, session);
     });
   }
 

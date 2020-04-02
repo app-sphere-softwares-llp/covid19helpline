@@ -159,7 +159,7 @@ export class CityService extends BaseService<CityModel & Document> implements On
     });
 
     return this.withRetrySession(async (session) => {
-      return this.create(cities, session);
+      return await this.create(cities, session);
     });
   }
 

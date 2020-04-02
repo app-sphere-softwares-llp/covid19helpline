@@ -9,4 +9,3 @@ export * from './city.model';
 export * from './state.model';
 export * from './reason.model';
 export * from './otp-request.model';
-export * from './status-update-request.model';

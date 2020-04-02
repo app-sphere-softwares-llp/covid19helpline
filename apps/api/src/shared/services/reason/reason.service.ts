@@ -142,8 +142,8 @@ export class ReasonService extends BaseService<ReasonModel & Document> implement
       return m;
     });
 
-    return this.withRetrySession(async (session) => {
-      return this.create(reason, session);
+    return this.withRetrySession(async (session: ClientSession) => {
+      return await this.create(reason, session);
     });
   }
 
