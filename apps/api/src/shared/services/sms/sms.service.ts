@@ -1,10 +1,12 @@
 import {SendSmsModel} from '@covid19-helpline/models';
 import {post, Response,} from 'request';
+import {Injectable} from "@nestjs/common";
 
 const urls = {
   sendSms: 'https://api.msg91.com/api/v2/sendsms',
 };
 
+@Injectable()
 export class SmsService {
   constructor() {
   }

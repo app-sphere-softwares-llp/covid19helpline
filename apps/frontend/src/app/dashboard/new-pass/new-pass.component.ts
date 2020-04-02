@@ -11,7 +11,7 @@ import {cloneDeep} from 'lodash';
 import {
   CityModel,
   CityRequestModel, PassStatusEnum, ReasonModel,
-  StateModel, StatusUpdateRequestModel
+  StateModel, UpdatePassStatusRequestModel
 } from '@covid19-helpline/models';
 import {CityService} from '../../shared/services/state-city/city.service';
 import {CityQuery} from '../../queries/city/city.query';
@@ -180,11 +180,8 @@ export class NewPassComponent implements OnInit {
       picUrl: [null, [Validators.required]],
       aadharPicUrl: [null, [Validators.required]],
       passStatus: [null],
-      attachments: [null, [Validators.required]],
-      attachmentDetails: [null],
-
-      otherPersonDetails: new FormArray([this.initOtherPersonDetails()]),
-
+      attachments: [null],
+      otherPersonDetails: new FormArray([]),
     });
     this.uploadedImages = [];
     this.attachementIds = [];
@@ -221,11 +218,11 @@ export class NewPassComponent implements OnInit {
 
         //pre populate here
 
-        if(!data.data.otherPersonDetails) {
+        if (!data.data.otherPersonDetails) {
           data.data.otherPersonDetails = [];
         }
 
-        if(!data.data.attachmentDetails) {
+        if (!data.data.attachmentDetails) {
           data.data.attachmentDetails = [];
         }
 
@@ -236,7 +233,7 @@ export class NewPassComponent implements OnInit {
 
       });
 
-    }catch (e) {
+    } catch (e) {
       this.isRequestInProcess = false;
     }
   }
@@ -420,13 +417,13 @@ export class NewPassComponent implements OnInit {
 
     try {
 
-      const json: any = { ...this.applicationForm.getRawValue() };
+      const json: any = {...this.applicationForm.getRawValue()};
 
       this.applicationForm.get('attachments').patchValue(this.attachementIds); // uploaded attachments
 
       // in case empty row submitted
-      if (json.otherPersonDetails && json.otherPersonDetails.length>0){
-        json.otherPersonDetails = json.otherPersonDetails.filter(ele => ele.fullName &&  ele.aadhaarNo );
+      if (json.otherPersonDetails && json.otherPersonDetails.length > 0) {
+        json.otherPersonDetails = json.otherPersonDetails.filter(ele => ele.fullName && ele.aadhaarNo);
       }
 
       console.log(JSON.stringify(json));
@@ -451,7 +448,7 @@ export class NewPassComponent implements OnInit {
 
       }
 
-    }catch (e) {
+    } catch (e) {
       this.isRequestInProcess = false;
     }
 
@@ -464,7 +461,7 @@ export class NewPassComponent implements OnInit {
 
       this.isRequestInProcess = true;
 
-      const json: StatusUpdateRequestModel = {
+      const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.rejected
       };
@@ -473,7 +470,7 @@ export class NewPassComponent implements OnInit {
         this.isRequestInProcess = false;
       });
 
-    }catch (e) {
+    } catch (e) {
       this.isRequestInProcess = false;
     }
 
@@ -484,7 +481,7 @@ export class NewPassComponent implements OnInit {
     try {
 
       this.isRequestInProcess = true;
-      const json: StatusUpdateRequestModel = {
+      const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.approved
       };
@@ -492,7 +489,7 @@ export class NewPassComponent implements OnInit {
         this.isRequestInProcess = false;
       });
 
-    }catch (e) {
+    } catch (e) {
       this.isRequestInProcess = false;
     }
 

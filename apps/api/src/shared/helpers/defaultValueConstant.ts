@@ -32,3 +32,9 @@ export const DEFAULT_EMAIL_TEMPLATE_PATH = 'shared/email-templates/';
 
 // default reset password code expiry in seconds
 export const DEFAULT_RESET_PASSWORD_CODE_EXPIRY = 10800;
+
+// default sms sending options
+export const DEFAULT_SMS_SENDING_OPTIONS = {
+  sender: 'SOCKET',
+  route: 4
+};
