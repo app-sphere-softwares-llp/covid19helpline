@@ -66,7 +66,7 @@ export class NewPassComponent implements OnInit {
   public isSearchingCity: boolean;
   public isSearchingReason: boolean;
 
-  public showAddPersonBtn: boolean;
+  public showAddPersonBtn: boolean = true;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();

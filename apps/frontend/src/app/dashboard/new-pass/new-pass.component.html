@@ -316,7 +316,7 @@
 
             <div class="p-5" *ngIf="showAddPersonBtn"><a href="javascript:void(0)" (click)="addOtherPersonDetails()" *ngIf="applicationForm.get('otherPersonDetails')['controls']">+ Add Travellers Details (यात्री विवरण जोड़ें)</a></div>
 
-            <ng-container *ngFor="let control of applicationForm.get('otherPersonDetails')['controls']; let i = index" [formGroup]="control">
+              <ng-container *ngFor="let control of applicationForm.get('otherPersonDetails')['controls']; let i = index" [formGroup]="control">
               <div class="col-md-4">
                 <nz-form-item>
                   <nz-form-label>Full Name (पूरा नाम)<span class="text-danger">*</span></nz-form-label>
@@ -351,6 +351,7 @@
               </div>
 
             </ng-container>
+
           </div>
 
 

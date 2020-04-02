@@ -24,11 +24,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   public verificationInProcess: boolean;
   public resendInProcess: boolean;
   public resendInProcessWaitTime: number;
-
+  public interval: any;
   public loginInProcess: boolean;
   public isSubmitted: boolean;
   public isLoginSuccess: boolean;
-  public interval: any;
 
   constructor(
     private _authService: AuthService,
@@ -144,7 +143,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   public checkField() {
     if (this.otpForm.get('code').value.length > 0) {
       this.resendInProcessWaitTime = 0;
-      console.log('clearInterval/stopped: ', this.resendInProcessWaitTime);
       clearInterval(this.interval); // stop interval tick
     }
   }
@@ -153,12 +151,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.resendInProcessWaitTime = durationInSec;
 
     this.interval = setInterval(() => {
-      console.log(this.resendInProcessWaitTime);
 
       this.resendInProcessWaitTime--;
 
       if (this.resendInProcessWaitTime === 0) {
-        console.log('clearInterval/stopped: ', this.resendInProcessWaitTime);
         clearInterval(this.interval); // stop interval tick
       }
     }, 1000);
