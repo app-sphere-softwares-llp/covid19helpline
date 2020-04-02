@@ -252,7 +252,7 @@ export class PassService extends BaseService<PassModel & Document> implements On
       model.sortBy = 'asc';
     }
 
-    const passes = await this.dbModel
+    let passes = await this.dbModel
       .aggregate()
       .match(queryFilter)
       .lookup({
@@ -297,6 +297,14 @@ export class PassService extends BaseService<PassModel & Document> implements On
     let totalRecordsCount = 0;
     if (countQuery && countQuery[0]) {
       totalRecordsCount = countQuery[0].totalRecords;
+    }
+
+    // map over passes
+    if (passes && passes.length) {
+      passes = passes.map(pass => {
+        pass.id = pass._id;
+        return pass;
+      });
     }
 
     // return paginated response

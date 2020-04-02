@@ -57,5 +57,6 @@ export class GetAllPassesRequestModel extends MongoosePaginateQuery {
   constructor() {
     super();
     this.query = '';
+    this.count = 10;
   }
 }
