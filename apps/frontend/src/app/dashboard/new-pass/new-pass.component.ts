@@ -26,6 +26,8 @@ import {PassUrls} from '../../shared/services/pass/pass.url';
 })
 export class NewPassComponent implements OnInit {
 
+  public showPassNotFoundView: boolean;
+
   public isRequestInProcess: boolean;
 
   public applicationFormData: any;
@@ -216,7 +218,7 @@ export class NewPassComponent implements OnInit {
   }
 
   // Getting existing request (view mode)
-  public getPassRequest() {
+  async getPassRequest() {
     try {
 
       this.isRequestInProcess = true;
@@ -224,28 +226,35 @@ export class NewPassComponent implements OnInit {
         id: this.requestId
       };
 
-      this._passService.getRequestById(json).subscribe((data) => {
-        this.isRequestInProcess = false;
+      let data = await this._passService.getRequestById(json).toPromise();
 
-        //pre populate here
+      this.isRequestInProcess = false;
+      this.showPassNotFoundView = false;
+      //pre populate here
 
-        if (!data.data.otherPersonDetails) {
-          data.data.otherPersonDetails = [];
-        }
+      if (!data.data.otherPersonDetails) {
+        data.data.otherPersonDetails = [];
+      }
 
-        if (!data.data.attachmentDetails) {
-          data.data.attachmentDetails = [];
-        }
+      if (!data.data.attachmentDetails) {
+        data.data.attachmentDetails = [];
+      }
 
-        this.applicationForm.patchValue(data.data);
+      this.applicationForm.patchValue(data.data);
 
-        this.aadhaarUrl = data.data.aadharPicUrl;
-        this.avatarUrl = data.data.picUrl;
+      this.applicationForm.get('city').patchValue(data.data.city.name);
+      this.applicationForm.get('state').patchValue(data.data.state.name);
+      this.applicationForm.get('reason').patchValue(data.data.reason.name);
 
-      });
+
+      this.aadhaarUrl = data.data.aadharPicUrl;
+      this.avatarUrl = data.data.picUrl;
 
     } catch (e) {
       this.isRequestInProcess = false;
+      if (!e.data) {
+        this.showPassNotFoundView = true;
+      }
     }
   }
 

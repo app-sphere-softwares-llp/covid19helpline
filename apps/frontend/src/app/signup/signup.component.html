@@ -128,7 +128,7 @@
             </nz-form-item>
 
             <nz-form-item>
-              <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="resendInProcessWaitTime>0" href="javascript:void(0);">You will receive OTP SMS in <b>{{resendInProcessWaitTime}}</b> seconds</a>
+              <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="resendInProcessWaitTime>0" href="javascript:void(0);">Resend in <b>{{resendInProcessWaitTime}}</b> seconds</a>
               <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="!resendInProcess && resendInProcessWaitTime===0" (click)="resendOtp()" href="javascript:void(0);">Resend OTP</a>
               <a class="float-right font-size-12 m-t-5 text-primary" *ngIf="resendInProcess" href="javascript:void(0);">Resending...</a>
             </nz-form-item>

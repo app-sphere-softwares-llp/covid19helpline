@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StateService } from '../../shared/services/state-city/state.service';
 import { PassService } from '../../shared/services/pass/pass.service';
-import { PassModel, PassStatusEnum } from '@covid19-helpline/models';
+import { GetAllPassesRequestModel, PassModel, PassStatusEnum } from '@covid19-helpline/models';
 
 @Component({
   templateUrl: './home.component.html',
@@ -30,19 +30,22 @@ export class HomeComponent implements OnInit {
   }
 
 
-  public getAllRequest(status?: string) {
+  public getAllRequest(status?: PassStatusEnum) {
 
-    const json = {
-      status :status
+    const json: GetAllPassesRequestModel = {
+      status : status,
+      query: '',
+      count: 10
     }
+
     this._passServive.getRequests(json).subscribe((data) => {
 
       if(status===PassStatusEnum.pending) {
-        this.pendingData = data.data;
+        this.pendingData = data.data.items;
       } else if(status===PassStatusEnum.approved) {
-        this.approvedData = data.data;
+        this.approvedData = data.data.items;
       } else if(status===PassStatusEnum.rejected) {
-        this.rejectedData = data.data;
+        this.rejectedData = data.data.items;
       }
 
     });

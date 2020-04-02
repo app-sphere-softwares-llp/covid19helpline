@@ -3,7 +3,7 @@ import {
   BaseResponseModel,
   PassModel,
   User,
-  UpdatePassStatusRequestModel
+  UpdatePassStatusRequestModel, GetAllPassesRequestModel, BasePaginatedResponse
 } from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
@@ -35,9 +35,9 @@ export class PassService extends BaseService<UserStore, UserState> {
     );
   }
 
-  getRequests(json?: any) {
+  getRequests(json?: GetAllPassesRequestModel) {
     return this._http.post(PassUrls.get, json).pipe(
-      map((res: BaseResponseModel<PassModel[]>) => {
+      map((res: BaseResponseModel<BasePaginatedResponse<PassModel>>) => {
         return res;
       }),
       catchError(err => {

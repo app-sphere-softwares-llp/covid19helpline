@@ -14,7 +14,7 @@ export class PassModel extends BaseDbModel {
   stateId: string;
   state?: StateModel;
   cityId: string;
-  city?: CityModel[];
+  city?: CityModel;
   aadhaarNo: string;
   aadharPicUrl: string;
   address: string;

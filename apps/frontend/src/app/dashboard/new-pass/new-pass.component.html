@@ -1,20 +1,23 @@
 <nz-card class="application-form" nzTitle="Application Form" [nzExtra]="extraTemplate">
+
   <form nz-form [formGroup]="applicationForm" (ngSubmit)="saveRequest()">
+
   <nz-spin [nzSpinning]="isRequestInProcess" nzTip="Please wait...">
 
     <ng-template #extraTemplate>
-      <div *ngIf="!requestId">
+      <div *ngIf="!requestId && !showPassNotFoundView">
         <button nz-button type="submit" nzType="primary" [disabled]="applicationForm.invalid" class="m-r-5">Submit</button>
         <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
       </div>
 
-      <div *ngIf="requestId">
+      <div *ngIf="requestId && !showPassNotFoundView">
         <button nz-button type="button" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
         <button nz-button type="button" nzType="danger" (click)="rejectRequest()">Reject</button>
       </div>
     </ng-template>
 
 
+    <section *ngIf="!showPassNotFoundView" >
       <section class="row">
         <!--    profile picture-->
         <div class="col-md-2 text-center">
@@ -521,6 +524,25 @@
         </div>
 
       </section>
+
+    </section>
+    <!-- form container-->
+
+
+    <section *ngIf="showPassNotFoundView" class="m-t-70">
+      <nz-empty
+        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+        [nzNotFoundContent]="contentTpl"
+        [nzNotFoundFooter]="footerTpl">
+        <ng-template #contentTpl>
+          <div class="m-b-20"><span>Task Not Found</span></div>
+        </ng-template>
+        <ng-template #footerTpl>
+          <a routerLink="../../" nz-button nzType="link">Dashboard</a>
+        </ng-template>
+      </nz-empty>
+    </section>
+
 
   </nz-spin>
 
