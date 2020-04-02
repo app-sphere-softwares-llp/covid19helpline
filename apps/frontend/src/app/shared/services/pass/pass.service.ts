@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BaseResponseModel, PassModel, User } from '@covid19-helpline/models';
+import { BaseResponseModel, PassModel, User, StatusUpdateRequestModel } from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
 import { catchError, map } from 'rxjs/operators';
-import { GeneralService } from '../general.service';
 import { NzNotificationService } from 'ng-zorro-antd';
-import { of } from 'rxjs';
 import { UserState, UserStore } from '../../../store/user/user.store';
 import { PassUrls } from './pass.url';
+
 
 @Injectable()
 export class PassService extends BaseService<UserStore, UserState> {
@@ -69,10 +68,10 @@ export class PassService extends BaseService<UserStore, UserState> {
   }
 
 
-  updateStatus(json: any) {
+  updateStatus(json: StatusUpdateRequestModel ) {
     return this._http.post(PassUrls.updateStatus, json).pipe(
       map((res: BaseResponseModel<User>) => {
-        this.notification.success('Success', 'Request updated successfully');
+        this.notification.success('Success', 'Request '+ json.status +' successfully');
          return res;
       }),
       catchError(err => {

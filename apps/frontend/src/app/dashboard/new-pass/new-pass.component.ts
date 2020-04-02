@@ -10,8 +10,8 @@ import {StateQuery} from '../../queries/state/state.query';
 import {cloneDeep} from 'lodash';
 import {
   CityModel,
-  CityRequestModel, OtherPersonDetails, PassStatusEnum, ReasonModel,
-  StateModel
+  CityRequestModel, PassStatusEnum, ReasonModel,
+  StateModel, StatusUpdateRequestModel
 } from '@covid19-helpline/models';
 import {CityService} from '../../shared/services/state-city/city.service';
 import {CityQuery} from '../../queries/city/city.query';
@@ -220,7 +220,19 @@ export class NewPassComponent implements OnInit {
         this.isRequestInProcess = false;
 
         //pre populate here
-        // this.applicationForm.patchValue(data.data);
+
+        if(!data.data.otherPersonDetails) {
+          data.data.otherPersonDetails = [];
+        }
+
+        if(!data.data.attachmentDetails) {
+          data.data.attachmentDetails = [];
+        }
+
+        this.applicationForm.patchValue(data.data);
+
+        this.aadhaarUrl = data.data.aadharPicUrl;
+        this.avatarUrl = data.data.picUrl;
 
       });
 
@@ -387,7 +399,7 @@ export class NewPassComponent implements OnInit {
 
   }
 
-  public addOtherPersonDetails(group: FormGroup) {
+  public addOtherPersonDetails(group?: FormGroup) {
     const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
     otherDetailsForm.controls.push(this.initOtherPersonDetails());
 
@@ -452,7 +464,7 @@ export class NewPassComponent implements OnInit {
 
       this.isRequestInProcess = true;
 
-      const json: any = {
+      const json: StatusUpdateRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.rejected
       };
@@ -472,7 +484,7 @@ export class NewPassComponent implements OnInit {
     try {
 
       this.isRequestInProcess = true;
-      const json: any = {
+      const json: StatusUpdateRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.approved
       };

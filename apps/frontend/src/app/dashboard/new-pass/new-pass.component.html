@@ -312,9 +312,9 @@
           <p class="text-black">Add Person who is Travelling with You (अपने साथ यात्रा करने वाले व्यक्ति को जोड़ें)</p>
 
           <!-- Traveller Info -->
-          <div class="row traveller-row" formArrayName="otherPersonDetails">
+          <div class="row traveller-row m-l-0 m-r-0" formArrayName="otherPersonDetails">
 
-            <div class="p-5" *ngIf="showAddPersonBtn"><a href="javascript:void(0)" (click)="addOtherPersonDetails()" *ngIf="applicationForm.get('otherPersonDetails')['controls']">+ Add Other Person Details</a></div>
+            <div class="p-5" *ngIf="showAddPersonBtn"><a href="javascript:void(0)" (click)="addOtherPersonDetails()" *ngIf="applicationForm.get('otherPersonDetails')['controls']">+ Add Travellers Details (यात्री विवरण जोड़ें)</a></div>
 
             <ng-container *ngFor="let control of applicationForm.get('otherPersonDetails')['controls']; let i = index" [formGroup]="control">
               <div class="col-md-4">
