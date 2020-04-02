@@ -11,7 +11,7 @@ import {
   PassStatusEnum, SendSmsModel,
   UpdatePassStatusRequestModel
 } from "@covid19-helpline/models";
-import {BadRequest, generateUtcDate} from "../../helpers/helpers";
+import {BadRequest, generateUtcDate, toObjectId} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
 import {PassUtilityService} from "./pass.utility.service";
 import {SmsService} from "../sms/sms.service";
@@ -46,6 +46,19 @@ const DETAILED_POPULATION = [...COMMON_POPULATION, {
   select: 'mobileNumber userName firstName lastName profilePic -_id',
   justOne: true
 }];
+
+const PASS_SORTING_MAPPER = new Map<string, string>([
+  ['firstName', 'firstName'],
+  ['lastName', 'lastName'],
+  ['stateId', 'state.name'],
+  ['state', 'state.name'],
+  ['cityId', 'city.name'],
+  ['city', 'city.name'],
+  ['passDate', 'passDate'],
+  ['reasonId', 'reason.name'],
+  ['reason', 'reason.name'],
+  ['status', 'passStatus.status']
+]);
 
 @Injectable()
 export class PassService extends BaseService<PassModel & Document> implements OnModuleInit {
@@ -175,8 +188,8 @@ export class PassService extends BaseService<PassModel & Document> implements On
    * @param model
    */
   async getAllPasses(model: GetAllPassesRequestModel) {
-    // query
-    const queryFilter = {
+    // set query filter
+    const queryFilter: any = {
       $and: [{
         'passStatus.status': model.status
       }, {
@@ -189,6 +202,36 @@ export class PassService extends BaseService<PassModel & Document> implements On
         }]
       }]
     };
+
+    // check if state id there, than add it to query filter
+    if (model.stateId) {
+      queryFilter.$and.push(
+        {stateId: {$in: [toObjectId(model.stateId)]}}
+      );
+    }
+
+    // check if city id there, than add it to query filter
+    if (model.cityId) {
+      queryFilter.$and.push(
+        {cityId: {$in: [toObjectId(model.cityId)]}}
+      );
+    }
+
+    // check if reasonId there, than add it to query filter
+    if (model.reasonId && model.reasonId.length) {
+      model.reasonId = model.reasonId.map(reasonId => toObjectId(reasonId));
+      queryFilter.$and.push(
+        {reasonId: {$in: model.reasonId}}
+      );
+    }
+
+    // check is valid key for sorting...
+    if (model.sort) {
+      model.sort = PASS_SORTING_MAPPER.get(model.sort);
+    } else {
+      model.sort = 'passStatus.status';
+      model.sortBy = 'asc';
+    }
 
     const passes = await this.dbModel
       .aggregate()

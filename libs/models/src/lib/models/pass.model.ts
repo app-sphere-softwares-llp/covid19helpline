@@ -48,10 +48,10 @@ export class UpdatePassStatusRequestModel {
 }
 
 export class GetAllPassesRequestModel extends MongoosePaginateQuery {
-  stateId?: string | Schema.Types.ObjectId;
-  cityId?: string | Schema.Types.ObjectId;
+  stateId?: string;
+  cityId?: string;
   status: PassStatusEnum;
-  reasonId?: string[] | Schema.Types.ObjectId[];
+  reasonId?: any[];
   query?: string;
 
   constructor() {

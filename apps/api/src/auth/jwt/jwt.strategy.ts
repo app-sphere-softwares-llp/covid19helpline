@@ -18,12 +18,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const userDetails = await this._userModel.findById(payload.id).select('_id');
+    const userDetails = await this._userModel.findById(payload.id).select('_id memberType');
     if (!userDetails) {
       this._generalService.userId = null;
+      this._generalService.userType = null;
       throw new UnauthorizedException();
     }
     this._generalService.userId = payload.id;
+    this._generalService.userType = userDetails.memberType;
     return {mobileNumber: payload.sub, id: payload.id};
   }
 }
