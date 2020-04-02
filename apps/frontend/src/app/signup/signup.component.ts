@@ -20,6 +20,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   public mobileNumber:string;
 
   public resendInProcess: boolean;
+  public resendInProcessWaitTime: number;
+  public interval: any;
   public signupInProcess: boolean;
   public signupIsSuccess: boolean;
   public verificationInProcess: boolean;
@@ -57,12 +59,20 @@ export class SignupComponent implements OnInit, OnDestroy {
     this._authQuery.isSignupSuccess$.pipe(untilDestroyed(this)).subscribe(res => {
       if (this.isSubmitted && res) {
         this.signupIsSuccess = true;
+        this.startTimer(60);
       }
     });
 
     this._authQuery.isResendInProcess$.pipe(untilDestroyed(this)).subscribe(res => {
       this.resendInProcess = res;
     });
+
+    this._authQuery.isResendInSuccess$.pipe(untilDestroyed(this)).subscribe(res => {
+        if (res) {
+          this.startTimer(60);
+        }
+    });
+
 
     // auth state subscriber if user and user token found then verify that token and re-login user
     // this.socialAuthService.authState.pipe(untilDestroyed(this)).subscribe((user) => {
@@ -122,6 +132,31 @@ export class SignupComponent implements OnInit, OnDestroy {
     }catch (e) {
       this.otpSendingInProcess =false;
     }
+  }
+
+
+  // if otp fields start filling the sms message will hide
+  public checkField() {
+    if (this.otpForm.get('code').value.length > 0) {
+      this.resendInProcessWaitTime = 0;
+      console.log('clearInterval/stopped: ', this.resendInProcessWaitTime);
+      clearInterval(this.interval); // stop interval tick
+    }
+  }
+
+  public startTimer(durationInSec: number) {
+    this.resendInProcessWaitTime = durationInSec;
+
+    this.interval = setInterval(() => {
+      console.log(this.resendInProcessWaitTime);
+
+      this.resendInProcessWaitTime--;
+
+      if (this.resendInProcessWaitTime === 0) {
+        console.log('clearInterval/stopped: ', this.resendInProcessWaitTime);
+        clearInterval(this.interval); // stop interval tick
+      }
+    }, 1000);
   }
 
   ngOnDestroy(): void {

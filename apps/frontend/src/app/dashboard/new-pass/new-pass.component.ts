@@ -66,7 +66,7 @@ export class NewPassComponent implements OnInit {
   public isSearchingCity: boolean;
   public isSearchingReason: boolean;
 
-  public showAddPersonBtn: boolean;
+  public showAddPersonBtn: boolean = true;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -101,15 +101,26 @@ export class NewPassComponent implements OnInit {
       Authorization: 'Bearer ' + this._generalService.token
     };
 
-    // listen for states from store
-    this._stateQuery.states$.subscribe(res => {
-      if (!res) {
-        this._stateService.getStates().subscribe();
-      } else {
-        this.stateDataSource = cloneDeep(res);
-      }
+    // search state
+    this.modelChangedState
+      .pipe(
+        debounceTime(500))
+      .subscribe(() => {
+        const queryText = this.applicationForm.get('state').value;
+        const name = this.selectedState && this.selectedState.name ? this.selectedState.name : null;
+        if (!queryText || this.applicationForm.get('state').value === name) {
+          return;
+        }
+        this.isSearchingState = true;
+        const json = {
+          term: queryText
+        }
+        this._stateService.searchState(json).subscribe((data) => {
+          this.isSearchingState = false;
+          this.stateDataSource = data.data;
+        });
+      });
 
-    });
 
     // search city
     this.modelChangedCity

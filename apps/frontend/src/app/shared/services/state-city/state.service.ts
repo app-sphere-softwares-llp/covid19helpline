@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseResponseModel, StateModel } from '@covid19-helpline/models';
+import { BaseResponseModel, CityModel, CityRequestModel, StateModel } from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
 import { catchError, map } from 'rxjs/operators';
@@ -36,5 +36,19 @@ export class StateService extends BaseService<StateStore, StateState> {
     );
   }
 
+  searchState(json: any ) {
+
+    return this._http.post(StateCityUrls.getAllStates, json ).pipe(
+      map((res: BaseResponseModel<StateModel[]>) => {
+
+        return res;
+      }),
+      catchError(err => {
+
+        return this.handleError(err);
+
+      })
+    );
+  }
 
 }

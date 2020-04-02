@@ -112,7 +112,7 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
         this.notification.success('Success', res.data);
         this.updateState({
           isResendInProcess: false,
-          isResendInSuccess: false,
+          isResendInSuccess: true,
           token: null
         });
         return res;
