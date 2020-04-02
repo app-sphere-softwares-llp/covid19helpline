@@ -221,16 +221,18 @@ export class PassService extends BaseService<PassModel & Document> implements On
     };
 
     // check if state id there, than add it to query filter
-    if (model.stateId) {
+    if (model.stateId && model.stateId.length) {
+      model.stateId = model.stateId.map(stateId => toObjectId(stateId));
       queryFilter.$and.push(
-        {stateId: {$in: [toObjectId(model.stateId)]}}
+        {stateId: {$in: model.stateId}}
       );
     }
 
     // check if city id there, than add it to query filter
-    if (model.cityId) {
+    if (model.cityId && model.cityId.length) {
+      model.cityId = model.cityId.map(cityId => toObjectId(cityId));
       queryFilter.$and.push(
-        {cityId: {$in: [toObjectId(model.cityId)]}}
+        {cityId: {$in: model.cityId}}
       );
     }
 
