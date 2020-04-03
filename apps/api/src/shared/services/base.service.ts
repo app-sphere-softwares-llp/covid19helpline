@@ -1,10 +1,10 @@
-import { ClientSession, Document, DocumentQuery, Model, Types } from 'mongoose';
+import {ClientSession, Document, DocumentQuery, Model, Types} from 'mongoose';
 import {
   DEFAULT_PAGINATED_ITEMS_COUNT,
   DEFAULT_QUERY_FILTER,
   MAX_TRANSACTION_RETRY_TIMEOUT
 } from '../helpers/defaultValueConstant';
-import { BasePaginatedResponse, MongoosePaginateQuery, MongooseQueryModel } from '@covid19-helpline/models';
+import {BasePaginatedResponse, MongoosePaginateQuery, MongooseQueryModel} from '@covid19-helpline/models';
 
 export class BaseService<T extends Document> {
   constructor(private model: Model<T>) {
@@ -22,7 +22,7 @@ export class BaseService<T extends Document> {
    * @param model
    */
   public async find(model: MongooseQueryModel): Promise<T[]> {
-    const query = this.model.find({ ...model.filter, ...DEFAULT_QUERY_FILTER });
+    const query = this.model.find({...model.filter, ...DEFAULT_QUERY_FILTER});
     this.queryBuilder(model, query);
 
     return query.exec();
@@ -31,20 +31,12 @@ export class BaseService<T extends Document> {
   /**
    * find single doc by id
    * @param id
-   * @param populate
-   * @param select
-   * @param isLean
+   * @param model
    */
-  public async findById(id: string, populate: Array<any> = [], select?: string, isLean = false): Promise<T> {
-    const query = this.model.findById(this.toObjectId(id)).where(DEFAULT_QUERY_FILTER);
-
-    if (populate && populate.length) {
-      query.populate(populate);
-    }
-
-    if (isLean) {
-      query.lean();
-    }
+  public async findById(id: string, model: MongooseQueryModel): Promise<T> {
+    model.filter = {_id: id};
+    const query = this.model.findOne({...model.filter, ...DEFAULT_QUERY_FILTER});
+    this.queryBuilder(model, query);
 
     return query.exec();
   }
@@ -54,7 +46,7 @@ export class BaseService<T extends Document> {
    * @param model
    */
   public async findOne(model: MongooseQueryModel): Promise<T> {
-    const query = this.model.findOne({ ...model.filter, ...DEFAULT_QUERY_FILTER });
+    const query = this.model.findOne({...model.filter, ...DEFAULT_QUERY_FILTER});
     this.queryBuilder(model, query);
 
     return query.exec();
@@ -66,7 +58,7 @@ export class BaseService<T extends Document> {
    * @param session
    */
   public async create(doc: T | T[] | Partial<T> | Partial<T[]>, session: ClientSession): Promise<T | T[]> {
-    return await this.model.create(doc, { session });
+    return await this.model.create(doc, {session});
   }
 
   /**
@@ -77,7 +69,7 @@ export class BaseService<T extends Document> {
    */
   public async updateById(id: string, updatedDoc: any, session: ClientSession): Promise<T> {
     return await this.model
-      .updateOne({ _id: id } as any, updatedDoc, { session }).exec();
+      .updateOne({_id: id} as any, updatedDoc, {session}).exec();
   }
 
   /**
@@ -88,7 +80,7 @@ export class BaseService<T extends Document> {
    */
   public async update(condition: any, updatedDoc: any, session: ClientSession): Promise<T> {
     return await this.model
-      .updateOne(condition, updatedDoc, { session }).exec();
+      .updateOne(condition, updatedDoc, {session}).exec();
   }
 
   /**
@@ -99,7 +91,7 @@ export class BaseService<T extends Document> {
    */
   public async bulkUpdate(filter: any, updatedDoc: any, session: ClientSession) {
     return this.model
-      .update(filter, updatedDoc, { session, multi: true });
+      .update(filter, updatedDoc, {session, multi: true});
   }
 
   /**
@@ -112,7 +104,7 @@ export class BaseService<T extends Document> {
     options.page = options.page || 1;
 
     const query = this.model
-      .find({ ...filter, ...DEFAULT_QUERY_FILTER })
+      .find({...filter, ...DEFAULT_QUERY_FILTER})
       .skip((options.count * options.page) - options.count)
       .limit(options.count);
 
@@ -125,14 +117,14 @@ export class BaseService<T extends Document> {
     }
 
     if (options.sort) {
-      query.sort({ [options.sort]: options.sortBy || 'asc' });
+      query.sort({[options.sort]: options.sortBy || 'asc'});
     }
 
     const result = await query.lean().exec();
     result.forEach((doc: any) => {
       doc.id = String(doc._id);
     });
-    const numberOfDocs = await this.model.countDocuments({ ...filter, ...DEFAULT_QUERY_FILTER });
+    const numberOfDocs = await this.model.countDocuments({...filter, ...DEFAULT_QUERY_FILTER});
 
     return {
       page: options.page,
@@ -149,7 +141,7 @@ export class BaseService<T extends Document> {
    * @param populate
    */
   public async getAll(filter: any = {}, populate: Array<any> = []) {
-    const query = this.model.find({ ...filter, ...DEFAULT_QUERY_FILTER });
+    const query = this.model.find({...filter, ...DEFAULT_QUERY_FILTER});
     if (populate && populate.length) {
       query.populate(populate);
     }
@@ -171,7 +163,7 @@ export class BaseService<T extends Document> {
    */
   public async delete(id: string, session: ClientSession): Promise<T> {
     return this.model
-      .update({ id: this.toObjectId(id) } as any, { isDeleted: true })
+      .update({id: this.toObjectId(id)} as any, {isDeleted: true})
       .exec();
   }
 
@@ -291,7 +283,7 @@ export class BaseService<T extends Document> {
     }
 
     if (model.sort) {
-      query.sort({ [model.sort]: model.sortBy || 'asc' });
+      query.sort({[model.sort]: model.sortBy || 'asc'});
     }
   }
 

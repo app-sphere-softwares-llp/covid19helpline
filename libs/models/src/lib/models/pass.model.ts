@@ -5,7 +5,6 @@ import {StateModel} from "./state.model";
 import {PassStatusEnum} from "../enums";
 import {User} from "./user.model";
 import {MongoosePaginateQuery} from "../queryOptions";
-import {Schema} from 'mongoose';
 
 export class PassModel extends BaseDbModel {
   picUrl: string;
@@ -48,8 +47,8 @@ export class UpdatePassStatusRequestModel {
 }
 
 export class GetAllPassesRequestModel extends MongoosePaginateQuery {
-  stateId?: any[];
-  cityId?: any[];
+  stateId?: string;
+  cityId?: string;
   status: PassStatusEnum;
   reasonId?: any[];
   query?: string;

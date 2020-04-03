@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Put, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Post, Put, Request, UseGuards} from '@nestjs/common';
 import {UsersService} from '../shared/services/users/users.service';
 import {AuthGuard} from '@nestjs/passport';
 import {User} from '@covid19-helpline/models';
@@ -13,6 +13,11 @@ export class UserController {
   @Get('profile')
   async getUser(@Request() req) {
     return await this._userService.getUserProfile(req.user.id);
+  }
+
+  @Post('create-admin-user')
+  async createAdminUser(@Body() model: User) {
+    return await this._userService.createAdminUser(model);
   }
 
   @Put('profile')

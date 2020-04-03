@@ -5,10 +5,13 @@ import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import {GeneralService} from '../general.service';
 import {
-  DbCollection, GetAllPassesRequestModel,
+  DbCollection,
+  GetAllPassesRequestModel,
+  MemberTypes,
   MongooseQueryModel,
   PassModel,
-  PassStatusEnum, SendSmsModel,
+  PassStatusEnum,
+  SendSmsModel,
   UpdatePassStatusRequestModel
 } from "@covid19-helpline/models";
 import {BadRequest, generateUtcDate, toObjectId} from "../../helpers/helpers";
@@ -150,9 +153,15 @@ export class PassService extends BaseService<PassModel & Document> implements On
   async updatePassStatus(model: UpdatePassStatusRequestModel) {
     await this._utilityService.updatePassStatusValidations(model);
 
+    // check if user type is normal than restrict him from updating status
+    if (this._generalService.userType === MemberTypes.normal) {
+      BadRequest('You don\'t have permission to Approve/Reject a Pass');
+    }
+
     return this.withRetrySession(async (session: ClientSession) => {
       // check pass exists
       const passDetails: PassModel = await this.getDetails(model.id);
+
 
       // check if pass is already approved or not
       if (passDetails.passStatus.status === PassStatusEnum.approved) {
@@ -220,19 +229,31 @@ export class PassService extends BaseService<PassModel & Document> implements On
       }]
     };
 
-    // check if state id there, than add it to query filter
-    if (model.stateId && model.stateId.length) {
-      model.stateId = model.stateId.map(stateId => toObjectId(stateId));
+    /**
+     * add user role based condition
+     * 1. normal user :- can only view passes which created by him
+     * 2. admin user :- can view all the passes
+     * 3. super admin user :- can view all the passes
+     */
+
+    // normal user
+    if (this._generalService.userType === MemberTypes.normal) {
       queryFilter.$and.push(
-        {stateId: {$in: model.stateId}}
+        {createdById: toObjectId(this._generalService.userId)}
+      )
+    }
+
+    // check if state id there, than add it to query filter
+    if (model.stateId) {
+      queryFilter.$and.push(
+        {stateId: {$in: [toObjectId(model.stateId)]}}
       );
     }
 
     // check if city id there, than add it to query filter
-    if (model.cityId && model.cityId.length) {
-      model.cityId = model.cityId.map(cityId => toObjectId(cityId));
+    if (model.cityId) {
       queryFilter.$and.push(
-        {cityId: {$in: model.cityId}}
+        {cityId: {$in: [toObjectId(model.cityId)]}}
       );
     }
 

@@ -1,5 +1,7 @@
 import {MemberTypes} from '../general';
 import {UserLoginProviderEnum, UserStatus} from '../enums';
+import {StateModel} from "./state.model";
+import {CityModel} from "./city.model";
 
 
 export class UserLoginWithPasswordRequest {
@@ -40,5 +42,9 @@ export class User {
   locale?: string;
   mobileNumber: string;
   memberType?: MemberTypes;
+  stateId?: string;
+  state?: StateModel;
+  cityId?: string;
+  city: CityModel;
 }
 

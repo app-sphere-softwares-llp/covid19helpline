@@ -16,18 +16,22 @@ import {
   VerifyOtpRequestModel
 } from '@covid19-helpline/models';
 import {UsersService} from '../shared/services/users/users.service';
-import {OtpRequestService} from "../shared/services/otp-request/otp-request.service";
-import {BaseService} from "../shared/services/base.service";
+import {OtpRequestService} from '../shared/services/otp-request/otp-request.service';
+import {BaseService} from '../shared/services/base.service';
 
 @Injectable()
-export class AuthService extends BaseService<User & Document> implements OnModuleInit {
+export class AuthService extends BaseService<User & Document>
+  implements OnModuleInit {
   private _userService: UsersService;
   private _resetPasswordService: ResetPasswordService;
   private _otpService: OtpRequestService;
 
   constructor(
-    @InjectModel(DbCollection.users) protected readonly _userModel: Model<User & Document>,
-    private readonly jwtService: JwtService, private _emailService: EmailService, private _moduleRef: ModuleRef
+    @InjectModel(DbCollection.users)
+    protected readonly _userModel: Model<User & Document>,
+    private readonly jwtService: JwtService,
+    private _emailService: EmailService,
+    private _moduleRef: ModuleRef
   ) {
     super(_userModel);
   }
@@ -37,8 +41,12 @@ export class AuthService extends BaseService<User & Document> implements OnModul
    */
   onModuleInit(): void {
     this._userService = this._moduleRef.get('UsersService', {strict: false});
-    this._resetPasswordService = this._moduleRef.get('ResetPasswordService', {strict: false});
-    this._otpService = this._moduleRef.get('OtpRequestService', {strict: false});
+    this._resetPasswordService = this._moduleRef.get('ResetPasswordService', {
+      strict: false
+    });
+    this._otpService = this._moduleRef.get('OtpRequestService', {
+      strict: false
+    });
   }
 
   /**
@@ -47,10 +55,11 @@ export class AuthService extends BaseService<User & Document> implements OnModul
    */
   async login(req: UserLoginWithPasswordRequest) {
     return this.withRetrySession(async (session: ClientSession) => {
-      // get user by email id
-      const user = await this._userModel.findOne({
-        mobileNumber: req.mobileNumber
-      }).exec();
+      // get user by mobile no
+      const user = await this.findOne({
+        filter: {mobileNumber: req.mobileNumber},
+        lean: true
+      });
 
       if (user) {
         // user is already exists
@@ -82,18 +91,10 @@ export class AuthService extends BaseService<User & Document> implements OnModul
         BadRequest('This Mobile no is already registered');
       } else {
         // create new user
-        const model = new User();
-        model.mobileNumber = user.mobileNumber;
-        model.username = model.mobileNumber;
-        model.firstName = user.firstName;
-        model.lastName = user.lastName;
-        model.status = UserStatus.NotConfirmed;
-
-        // create new user
-        await this._userService.create([model], session);
+        await this._userService.createUser(user, session);
 
         // create otp and send otp
-        await this._otpService.createOtp(model.mobileNumber, session);
+        await this._otpService.createOtp(user.mobileNumber, session);
       }
 
       return 'Otp sent successfully to your Mobile';
@@ -114,7 +115,15 @@ export class AuthService extends BaseService<User & Document> implements OnModul
       }
 
       // update user and set is active user
-      await this._userService.updateById(userDetails.id, {$set: {status: UserStatus.Active}}, session);
+      await this._userService.updateById(
+        userDetails.id,
+        {
+          $set: {
+            status: UserStatus.Active
+          }
+        },
+        session
+      );
 
       const jwtPayload = {sub: '', id: ''};
       jwtPayload.id = userDetails._id;
@@ -189,4 +198,3 @@ export class AuthService extends BaseService<User & Document> implements OnModul
     return userDetails;
   }
 }
-
