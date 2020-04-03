@@ -140,9 +140,15 @@ $color-gray-light: #6E829C;
 }
 .ant-btn.ant-btn-primary {
   background: $theme-blue; //linear-gradient(to top left, $orange-dark  0%, $orange-light 100%)!important;
+  border: 1px solid #2680eb;
   &:hover{
     background: $theme-blue-hover; //linear-gradient(to top left, $orange-dark 30%, $orange-light 100%)!important;
   }
+}
+
+.ant-btn.ant-btn-danger {
+  border: 1px solid #de4436;
+
 }
 
 .ant-btn.ant-btn-default{
@@ -583,6 +589,10 @@ $color-gray-light: #6E829C;
 
   .ant-tabs-nav .ant-tabs-tab {
     padding: 0px!important;
+  }
+
+  .ant-card-body {
+    //min-height: 600px!important;
   }
 
 }

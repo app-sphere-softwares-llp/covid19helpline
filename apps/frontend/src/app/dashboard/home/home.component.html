@@ -53,6 +53,8 @@
     </nz-tab>
     <!-- tab 1 -->
 
+
+
     <nz-tab [nzTitle]="titleTemplate2">
 
       <ng-template #titleTemplate2>
@@ -61,53 +63,49 @@
         </div>
       </ng-template>
 
-      <!-- if not data-->
-      <nz-empty
-        *ngIf="pendingData?.length===0"
-        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
-        [nzNotFoundContent]="contentTpl">
-        <ng-template #contentTpl>
-          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
-        </ng-template>
-      </nz-empty>
+      <!-- Search template defined in footer of this page-->
+      <div class="m-b-10">
+        <ng-container  *ngTemplateOutlet="searchTemplate"></ng-container>
+      </div>
 
       <!-- if data available -->
-
       <nz-table #basicTable1
-                [nzData]="pendingData"
-                [nzFrontPagination]="false"
-                [nzTotal]="filterRequest.totalItems"
-                [nzPageIndex]="filterRequest.page"
-                [nzPageSize]="filterRequest.count"
-                [nzShowPagination]="true"
-                (nzPageIndexChange)="pageChanged($event, 'pending')"
-                [nzSize]="'small'"
-                [nzLoading]="gettingDataInProcess"
-                [nzPaginationPosition]="'bottom'"
-                >
-        <thead>
-          <tr>
-            <th>SN.</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Destination Address</th>
-            <th>Pass Date & Time</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of basicTable1.data; let i=index;">
-            <td>{{(i+1)}}.</td>
-            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
-            <td>{{data.lastName}}</td>
-            <td>{{data.destinationAddress}}</td>
-            <td>{{data.passDate | date : 'medium'}}</td>
-            <td>
-              <a routerLink="./pass-request/{{data.id}}">View Request</a>
-            </td>
-          </tr>
-        </tbody>
-      </nz-table>
+                  [nzNoResult]="emptyTemplate"
+                  [nzData]="pendingData"
+                  [nzFrontPagination]="false"
+                  [nzTotal]="filterRequest.totalItems"
+                  [nzPageIndex]="filterRequest.page"
+                  [nzPageSize]="filterRequest.count"
+                  [nzShowPagination]="true"
+                  (nzPageIndexChange)="pageChanged($event, 'pending')"
+                  [nzSize]="'small'"
+                  [nzLoading]="gettingDataInProcess"
+                  [nzPaginationPosition]="'bottom'"
+                  >
+          <thead>
+            <tr>
+              <th>SN.</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Destination Address</th>
+              <th>Pass Date & Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of basicTable1.data; let i=index;">
+              <td data-label="#">{{(i+1)}}.</td>
+              <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+              <td data-label="Last Name">{{data.lastName}}</td>
+              <td data-label="Destination Address">{{data.destinationAddress}}</td>
+              <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
+              <td data-label="Action">
+                <a routerLink="./pass-request/{{data.id}}">View Request</a>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+
 
     </nz-tab>
     <!-- tab 2 -->
@@ -120,18 +118,15 @@
         </div>
       </ng-template>
 
-      <!-- if not data-->
-      <nz-empty
-        *ngIf="approvedData?.length===0"
-        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
-        [nzNotFoundContent]="contentTpl">
-        <ng-template #contentTpl>
-          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
-        </ng-template>
-      </nz-empty>
+
+      <!-- Search template defined in footer of this page-->
+      <div class="m-b-10">
+        <ng-container  *ngTemplateOutlet="searchTemplate"></ng-container>
+      </div>
 
       <!-- if data available -->
-      <nz-table #basicTable2 *ngIf="approvedData?.length>0"
+      <nz-table #basicTable2
+                [nzNoResult]="emptyTemplate"
                 [nzData]="approvedData"
                 [nzFrontPagination]="false"
                 [nzTotal]="filterRequest.totalItems"
@@ -155,12 +150,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of basicTable2.data; let i=index;">
-            <td>{{(i+1)}}.</td>
-            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
-            <td>{{data.lastName}}</td>
-            <td>{{data.destinationAddress}}</td>
-            <td>{{data.passDate | date : 'medium'}}</td>
-            <td>
+            <td data-label="#">{{(i+1)}}.</td>
+            <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+            <td data-label="Last Name">{{data.lastName}}</td>
+            <td data-label="Destination Address">{{data.destinationAddress}}</td>
+            <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
+            <td data-label="Action">
               <a routerLink="./pass-request/{{data.id}}">View Request</a>
             </td>
           </tr>
@@ -172,25 +167,20 @@
 
     <nz-tab [nzTitle]="titleTemplate4">
 
-        <ng-template #titleTemplate4>
-          <div class="tab-title" (click)="currentTab('rejected')">
-            Rejected Requests
-          </div>
-        </ng-template>
-
-      <!-- if not data-->
-      <nz-empty
-        *ngIf="rejectedData?.length===0"
-        [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
-        [nzNotFoundContent]="contentTpl">
-        <ng-template #contentTpl>
-          <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
-        </ng-template>
-      </nz-empty>
+      <ng-template #titleTemplate4>
+        <div class="tab-title" (click)="currentTab('rejected')">
+          Rejected Requests
+        </div>
+      </ng-template>
 
       <!-- if data available -->
+      <!-- Search template defined in footer of this page-->
+      <div class="m-b-10">
+        <ng-container  *ngTemplateOutlet="searchTemplate"></ng-container>
+      </div>
 
-      <nz-table #basicTable3 *ngIf="rejectedData?.length>0"
+      <nz-table #basicTable3
+                [nzNoResult]="emptyTemplate"
                 [nzData]="rejectedData"
                 [nzFrontPagination]="false"
                 [nzTotal]="filterRequest.totalItems"
@@ -213,12 +203,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of basicTable3.data; let i=index;">
-            <td>{{(i+1)}}.</td>
-            <td><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
-            <td>{{data.lastName}}</td>
-            <td>{{data.destinationAddress }}</td>
-            <td>{{data.passDate | date : 'medium'}}</td>
-            <td>
+            <td data-label="#">{{(i+1)}}.</td>
+            <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
+            <td data-label="Last Name">{{data.lastName}}</td>
+            <td data-label="Destination Address">{{data.destinationAddress}}</td>
+            <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
+            <td data-label="Action">
               <a routerLink="./pass-request/{{data.id}}">View Request</a>
             </td>
           </tr>
@@ -231,4 +221,46 @@
 
 
   </nz-tabset>
+
+
+
+  <!-- region search template -->
+  <ng-template #searchTemplate>
+
+    <div class="row">
+
+        <div class="col-md-9"></div>
+
+        <div class="col-md-3">
+
+          <nz-input-group [nzSuffix]="suffixIcon">
+            <input placeholder="Search..." nzSize="small" nz-input
+                   style="height:32px;" [(ngModel)]="filterRequest.query" (ngModelChange)="modelChangedSearchPass.next($event)"/>
+          </nz-input-group>
+
+          <ng-template #suffixIcon>
+            <i nz-icon nzType="search" *ngIf="!isSearchingPass"></i>
+            <i class="fas fa-spin fa-spinner" *ngIf="isSearchingPass"></i>
+          </ng-template>
+
+        </div>
+
+    </div>
+
+  </ng-template>
+  <!-- endregion -->
+
+  <!-- region empty template -->
+  <ng-template #emptyTemplate>
+    <nz-empty
+      [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+      [nzNotFoundContent]="contentTpl">
+      <ng-template #contentTpl>
+        <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
+      </ng-template>
+    </nz-empty>
+  </ng-template>
+  <!-- endregion -->
+
+
 </nz-card>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { StateService } from '../../shared/services/state-city/state.service';
 import { PassService } from '../../shared/services/pass/pass.service';
 import { GetAllPassesRequestModel, PassModel, PassStatusEnum } from '@covid19-helpline/models';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   templateUrl: './home.component.html',
@@ -13,6 +15,7 @@ export class HomeComponent implements OnInit {
   public approvedData: PassModel[] = [];
   public rejectedData: PassModel[] = [];
   public gettingDataInProcess:boolean;
+  public isSearchingPass: boolean;
 
   public filterRequest: GetAllPassesRequestModel = {
     count : 15,
@@ -20,6 +23,8 @@ export class HomeComponent implements OnInit {
     query : '',
     status : PassStatusEnum.pending
   }
+
+  public modelChangedSearchPass = new Subject<string>();
 
   constructor(private _stateService : StateService,
               private _passServive : PassService) {
@@ -32,6 +37,26 @@ export class HomeComponent implements OnInit {
 
     this.getAllRequest(PassStatusEnum.pending);
 
+    // search state
+    this.modelChangedSearchPass
+      .pipe(
+        debounceTime(500))
+      .subscribe(() => {
+
+        if (!this.filterRequest.query) {
+          this.getAllRequest();
+          return;
+        }
+
+        this.isSearchingPass = true;
+
+        this.filterRequest.page = 1;
+
+        this.getAllRequest();
+
+      });
+
+
   }
 
   public currentTab(status?: string) {
@@ -39,6 +64,7 @@ export class HomeComponent implements OnInit {
       return;
     }
     this.filterRequest.page = 1;
+    this.filterRequest.query = '';
     this.filterRequest.totalItems = 0;
     this.getAllRequest(status as PassStatusEnum);
   }
@@ -46,21 +72,35 @@ export class HomeComponent implements OnInit {
 
   public getAllRequest(status?: PassStatusEnum) {
 
-    this.filterRequest.status = status;
+    try {
 
-    this._passServive.getRequests(this.filterRequest).subscribe((data) => {
-
-      this.filterRequest.totalItems = data.data.totalItems;
-
-      if(status===PassStatusEnum.pending) {
-        this.pendingData = data.data.items;
-      } else if(status===PassStatusEnum.approved) {
-        this.approvedData = data.data.items;
-      } else if(status===PassStatusEnum.rejected) {
-        this.rejectedData = data.data.items;
+      if (status) {
+        this.filterRequest.status = status;
       }
 
-    });
+      console.log(this.filterRequest);
+
+      this._passServive.getRequests(this.filterRequest).subscribe((data) => {
+
+        this.gettingDataInProcess = false;
+        this.isSearchingPass = false;
+
+        this.filterRequest.totalItems = data.data.totalItems;
+
+        if (this.filterRequest.status === PassStatusEnum.pending) {
+          this.pendingData = data.data.items;
+        } else if (this.filterRequest.status === PassStatusEnum.approved) {
+          this.approvedData = data.data.items;
+        } else if (this.filterRequest.status === PassStatusEnum.rejected) {
+          this.rejectedData = data.data.items;
+        }
+
+      });
+
+    }catch (e) {
+      this.gettingDataInProcess = false;
+      this.isSearchingPass = false;
+    }
 
   }
 
