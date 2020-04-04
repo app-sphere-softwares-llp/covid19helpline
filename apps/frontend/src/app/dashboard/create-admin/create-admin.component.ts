@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  CityModel,
-  CityRequestModel, PassModel, PassStatusEnum,
-  StateModel,
-  User
-} from '@covid19-helpline/models';
+import { CityModel, CityRequestModel, MemberTypes, StateModel, User } from '@covid19-helpline/models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { Subject } from 'rxjs';
@@ -13,6 +8,7 @@ import { StateService } from '../../shared/services/state-city/state.service';
 import { CityService } from '../../shared/services/state-city/city.service';
 import { GeneralService } from '../../shared/services/general.service';
 import { UserService } from '../../shared/services/user/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'covid19-helpline-create-admin',
@@ -44,10 +40,14 @@ export class CreateAdminComponent implements OnInit {
               private _cityService: CityService,
               private _authService: AuthService,
               private _generalService: GeneralService,
-              private _userService: UserService) { }
+              private _userService: UserService,
+              private _router: Router) { }
 
   ngOnInit() {
 
+    if(this._generalService.user.memberType !== MemberTypes.superAdmin) {
+      this._router.navigate(['']);
+    }
 
     this.getAllAdmin();
 
