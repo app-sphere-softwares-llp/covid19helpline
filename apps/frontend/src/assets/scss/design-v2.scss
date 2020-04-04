@@ -16,6 +16,14 @@ $color-gray-light: #6E829C;
   //padding: calc(70px + 10px) 25px 10px 25px;
 }
 
+.ant-input {
+  padding: 0.25rem 0.5rem !important;
+}
+
+.ant-form-item-label {
+  text-align: left;
+}
+
 .ant-input-affix-wrapper .ant-input-prefix {
   left: 17px;
   opacity: 0.6;
@@ -153,6 +161,7 @@ $color-gray-light: #6E829C;
 
 .ant-btn.ant-btn-default{
   background: $brand-default-btn!important;
+  border: 1px solid $brand-default-btn;
 }
 
 .ant-btn.ant-btn-link{
@@ -180,16 +189,6 @@ $color-gray-light: #6E829C;
   text-align: left;
 }
 
-.ant-form-item{
-  .ant-btn.ant-btn-default{
-    background: $white!important;
-    border:1px solid $border;
-    padding: 0.35rem 1.6rem 0.35rem 0.5rem !important;
-    &:hover {
-      box-shadow: initial;
-    }
-  }
-}
 .ant-form-item-label>label::after {
   content: '';
 }

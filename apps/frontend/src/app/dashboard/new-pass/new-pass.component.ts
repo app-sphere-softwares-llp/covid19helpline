@@ -10,8 +10,8 @@ import {StateQuery} from '../../queries/state/state.query';
 
 import {
   CityModel,
-  CityRequestModel, PassStatusEnum, ReasonModel,
-  StateModel, UpdatePassStatusRequestModel
+  CityRequestModel, PassModel, PassStatusEnum, ReasonModel,
+  StateModel, UpdatePassStatusRequestModel, User
 } from '@covid19-helpline/models';
 import {CityService} from '../../shared/services/state-city/city.service';
 import {CityQuery} from '../../queries/city/city.query';
@@ -25,6 +25,8 @@ import {PassUrls} from '../../shared/services/pass/pass.url';
   styleUrls: ['./new-pass.component.scss']
 })
 export class NewPassComponent implements OnInit {
+
+  public currentUser: User;
 
   public showPassNotFoundView: boolean;
 
@@ -86,6 +88,10 @@ export class NewPassComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
+    this.currentUser =  this._generalService.user;
+
 
     // initializing form
     this.initForm();

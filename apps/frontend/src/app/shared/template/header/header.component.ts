@@ -15,12 +15,7 @@ export class HeaderComponent{
     // quickViewVisible : boolean = false;
     isFolded : boolean;
     isExpand : boolean;
-    currentUser: User = {
-      firstName : null,
-      lastName : null,
-      profilePic: null,
-      mobileNumber: null
-    };
+    public currentUser: User;
 
     constructor(private router: Router, private themeService: ThemeConstantService,
                 private _generalService: GeneralService) {}

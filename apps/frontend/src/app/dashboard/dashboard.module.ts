@@ -9,6 +9,7 @@ import { TemplateModule } from '../shared/template/template.module';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NewPassComponent } from './new-pass/new-pass.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CreateAdminComponent } from './create-admin/create-admin.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,8 @@ import { ReactiveFormsModule } from '@angular/forms';
   declarations: [
     DashboardComponent,
     HomeComponent,
-    NewPassComponent
+    NewPassComponent,
+    CreateAdminComponent
   ],
   providers: [
     ThemeConstantService

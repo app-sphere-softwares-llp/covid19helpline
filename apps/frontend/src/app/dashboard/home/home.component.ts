@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { StateService } from '../../shared/services/state-city/state.service';
 import { PassService } from '../../shared/services/pass/pass.service';
-import { GetAllPassesRequestModel, PassModel, PassStatusEnum } from '@covid19-helpline/models';
+import { GetAllPassesRequestModel, PassModel, PassStatusEnum, User } from '@covid19-helpline/models';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { GeneralService } from '../../shared/services/general.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -27,7 +28,8 @@ export class HomeComponent implements OnInit {
   public modelChangedSearchPass = new Subject<string>();
 
   constructor(private _stateService : StateService,
-              private _passServive : PassService) {
+              private _passServive : PassService,
+              private _generalService: GeneralService) {
   }
 
   ngOnInit(): void {

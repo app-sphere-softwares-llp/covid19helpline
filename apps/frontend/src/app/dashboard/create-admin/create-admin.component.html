@@ -1,0 +1,242 @@
+<nz-card [nzSize]="'small'" nzTitle="Admin" class="create-admin">
+
+
+      <div class="row">
+
+        <aside class="col-md-4">
+
+          <div class="text-black-dark p-l-10 m-b-5 font-size-16">Create Admin</div>
+
+          <div class="form-box p-15">
+
+            <form
+              nz-form
+              [formGroup]="adminForm"
+              class="login-form"
+              (ngSubmit)="createAdmin()">
+
+
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="emailId">First Name (पहला नाम)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzValidatingTip="Please enter First Name!">
+
+                    <input
+                      type="text"
+                      nz-input
+                      nzSize="small"
+                      maxlength="20"
+                      formControlName="firstName"
+                      required="true"
+                      placeholder="First Name"/>
+
+                </nz-form-control>
+              </nz-form-item>
+
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="emailId">Last Name (उपनाम)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzValidatingTip="Please enter Last Name!">
+
+                    <input
+                      type="text"
+                      nz-input
+                      nzSize="small"
+                      maxlength="30"
+                      formControlName="lastName"
+                      required="true"
+                      placeholder="Last Name"/>
+
+                </nz-form-control>
+              </nz-form-item>
+
+
+              <nz-form-item>
+                <nz-form-label nzRequired nzFor="emailId">Email (ईमेल)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzValidatingTip="Please enter Email!">
+
+                    <input
+                      type="text"
+                      nz-input
+                      nzSize="small"
+                      maxlength="50"
+                      formControlName="emailId"
+                      required="true"
+                      placeholder="Email"/>
+
+                </nz-form-control>
+              </nz-form-item>
+
+
+              <nz-form-item>
+                <nz-form-label class="m-b-5" nzRequired nzFor="emailId">Mobile Number (मोबाइल नंबर)<span class="text-danger">*</span>
+                  <br>(Preferable WhatsApp number)</nz-form-label>
+
+                <nz-form-control nzValidatingTip="Please enter Mobile number!">
+
+                    <input
+                      type="text"
+                      nz-input
+                      nzSize="small"
+                      maxlength="10"
+                      formControlName="mobileNumber"
+                      required="true"
+                      placeholder="Mobile"/>
+
+                </nz-form-control>
+              </nz-form-item>
+
+
+              <nz-form-item class="relative">
+                <nz-form-label nzFor="taskType"
+                >State (राज्य)<span class="text-danger">*</span></nz-form-label
+                >
+                <nz-form-control nzErrorTip="Please enter your State!">
+                  <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input
+                      placeholder="Search"
+                      formControlName="state"
+                      class="p-r-30"
+                      nz-input
+                      (ngModelChange)="selectStateTypeahead($event)"
+                      nzSize="small"
+                      [nzAutocomplete]="autoState"
+                    />
+                  </nz-input-group>
+
+                  <nz-autocomplete #autoState>
+                    <nz-auto-option
+                      *ngFor="let option of stateDataSource"
+                      [nzLabel]="option && option.name"
+                      [nzValue]="option">
+                      <span>{{ option && option.name }}</span>
+                    </nz-auto-option>
+                  </nz-autocomplete>
+                </nz-form-control>
+                <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search" *ngIf="!isSearchingState"></i>
+                  <i class="fas fa-spin fa-spinner" *ngIf="isSearchingState"></i>
+                </ng-template>
+              </nz-form-item>
+
+
+              <nz-form-item>
+                <nz-form-label
+                >City (शहर)<span class="text-danger">*</span></nz-form-label>
+                <nz-form-control nzErrorTip="Please enter your City!">
+                  <nz-input-group [nzSuffix]="suffixIconSearchCity">
+                    <input
+                      [disabled]="!selectedState?.id"
+                      placeholder="Search"
+                      formControlName="city"
+                      nz-input
+                      (ngModelChange)="selectCityTypeahead($event)"
+                      nzSize="small"
+                      class="p-r-30"
+                      [nzAutocomplete]="autoCity"
+                    />
+                  </nz-input-group>
+
+                  <nz-autocomplete #autoCity>
+                    <nz-auto-option
+                      *ngFor="let option of cityDataSource"
+                      [nzLabel]="option && option.name"
+                      [nzValue]="option">
+                      <span>{{ option && option.name }}</span>
+                    </nz-auto-option>
+                  </nz-autocomplete>
+                </nz-form-control>
+                <ng-template #suffixIconSearchCity>
+                  <i nz-icon nzType="search" *ngIf="!isSearchingCity"></i>
+                  <i class="fas fa-spin fa-spinner" *ngIf="isSearchingCity"></i>
+                </ng-template>
+              </nz-form-item>
+
+
+              <nz-form-item>
+                <nz-form-control>
+
+                    <button nz-button type="submit" nzType="primary" class="m-r-5"
+                            [disabled]="adminForm.invalid"
+                            [nzLoading]="isRequestInProcess">Create</button>
+
+
+                    <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
+
+                </nz-form-control>
+              </nz-form-item>
+
+              <br>
+            </form>
+
+          </div>
+
+        </aside>
+
+
+
+        <aside class="col-md-8">
+
+          <div class="admin-table-container">
+
+            <div class="text-black-dark m-b-5 font-size-16">All Admins</div>
+
+            <nz-table #basicTable
+                      [nzNoResult]="emptyTemplate"
+                      [nzData]="allData"
+                      [nzShowPagination]="false"
+                      [nzSize]="'small'"
+                      [nzLoading]="isGettingDataInProcess">
+              <thead>
+              <tr>
+                <th>SN.</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile Number</th>
+                <th>Email</th>
+                <th>State</th>
+                <th>City</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let data of basicTable.data; let i=index;">
+                <td data-label="#">{{(i+1)}}.</td>
+                <td data-label="First Name"><a href="javascript:void(0);">{{data.firstName}}</a></td>
+                <td data-label="Last Name">{{data.lastName}}</td>
+                <td data-label="Mobile Number">{{data.mobileNumber}}</td>
+                <td data-label="State">{{data.state}}</td>
+                <td data-label="City">{{data.city}}</td>
+                <td data-label="Action">
+                  <a href="javascript:void(0);">Edit</a>
+                </td>
+              </tr>
+              </tbody>
+            </nz-table>
+
+          </div>
+
+        </aside>
+
+      <!-- right section-->
+
+      </div>
+
+
+  <!-- region empty template -->
+  <ng-template #emptyTemplate>
+    <nz-empty
+      [nzNotFoundImage]="'../../../assets/images/not-found/no-data-found.svg'"
+      [nzNotFoundContent]="contentTpl">
+      <ng-template #contentTpl>
+        <span class="font-weight-normal font-size-13 text-gray-light-2">No Data Found</span>
+        <div class="m-t-25">
+
+          <button nz-button nzType="link" routerLink="pass-request">+ New Admin</button>
+
+        </div>
+      </ng-template>
+    </nz-empty>
+  </ng-template>
+  <!-- endregion -->
+
+
+</nz-card>

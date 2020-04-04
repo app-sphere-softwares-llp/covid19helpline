@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { DashboardComponent } from './dashboard.component';
 import { DashboardDataResolver } from '../resolver/dashboardData.resolver';
 import { NewPassComponent } from './new-pass/new-pass.component';
+import { CreateAdminComponent } from './create-admin/create-admin.component';
 
 const routes: Routes = [
   {
@@ -26,6 +27,11 @@ const routes: Routes = [
       },
       {
         path: 'pass-request/:requestId', component: NewPassComponent
+      },
+
+      // super admin
+      {
+        path: 'create-admin', component: CreateAdminComponent
       }
     ]
   }

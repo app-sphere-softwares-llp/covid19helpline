@@ -1,0 +1,12 @@
+.form-box {
+  border:1px solid #dedfe2;
+  border-radius: 4px;
+  margin-right: 30px;
+}
+
+
+@media only screen and (max-width: 767px) {
+  .form-box {
+    margin-right: 0px;
+  }
+}

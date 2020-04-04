@@ -41,5 +41,20 @@ export class UserService extends BaseService<UserStore, UserState> {
     );
   }
 
+  getAllAdmin() {
+
+    return this._http.get(UserUrls.getAllAdmin).pipe(
+      map((res: BaseResponseModel<User[]>) => {
+
+        return res;
+      }),
+      catchError(err => {
+        return this.handleError(err);
+      })
+    );
+  }
+
+
+
 
 }

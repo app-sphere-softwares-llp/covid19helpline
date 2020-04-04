@@ -7,4 +7,8 @@ export const AuthUrls = {
   resendOtp: `${createUrl('auth/resend-otp')}`,
   googleUriRequest: `${createUrl('auth/google/uri')}`,
   googleSignIn: `${createUrl('auth/google/validate-token')}`,
+
+  createAdmin: `${createUrl('user/create-admin-user')}`,
+
+
 };

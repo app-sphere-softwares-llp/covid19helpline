@@ -131,6 +131,18 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
   }
 
 
+  createAdmin(json: User) {
+    return this._http.post(AuthUrls.createAdmin, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.notification.success('Success', res.data);
+        return res;
+      }),
+      catchError((err) => {
+        return this.handleError(err);
+      })
+    );
+  }
+
 
   logOut() {
     // if login from social user then please logout from social platforms
