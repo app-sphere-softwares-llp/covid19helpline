@@ -16,14 +16,6 @@ $color-gray-light: #6E829C;
   //padding: calc(70px + 10px) 25px 10px 25px;
 }
 
-.ant-input {
-  padding: 0.25rem 0.5rem !important;
-}
-
-.ant-form-item-label {
-  text-align: left;
-}
-
 .ant-input-affix-wrapper .ant-input-prefix {
   left: 17px;
   opacity: 0.6;
@@ -110,7 +102,7 @@ $color-gray-light: #6E829C;
   }
 }
 .ant-menu-inline-collapsed { // collapsed width
-  width: 70px;
+  width: 70px!important;
   padding-top: 30px;
 }
 .ant-menu-root.ant-menu-inline{ // full width

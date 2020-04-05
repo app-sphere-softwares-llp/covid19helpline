@@ -10,3 +10,11 @@
     margin-right: 0px;
   }
 }
+
+.ant-input {
+  padding: 0.25rem 0.5rem !important;
+}
+
+.ant-form-item-label {
+  text-align: left;
+}
