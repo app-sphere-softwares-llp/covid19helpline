@@ -86,6 +86,13 @@ export class UsersService extends BaseService<User & Document>
     // check validations
     await this._userUtilityService.createAdminUserValidations(user);
 
+    // get user details
+    const userDetails = await this.findOne({filter: {mobileNumber: user.mobileNumber}});
+    // check if mobile number is already registered or not
+    if (userDetails) {
+      BadRequest('This mobile number is already registered');
+    }
+
     // create admin process
     return this.withRetrySession(async (session: ClientSession) => {
       return await this.createUser(user, session, true);
@@ -180,27 +187,27 @@ export class UsersService extends BaseService<User & Document>
       .aggregate(queryFilter)
       .lookup({
         from: DbCollection.state,
-        let: { stateId: '$stateId' },
+        let: {stateId: '$stateId'},
         pipeline: [
-          { $match: { $expr: { $eq: ['$_id', '$$stateId'] } } },
-          { $project: { name: 1 } },
-          { $addFields: { id: '$_id' } }
+          {$match: {$expr: {$eq: ['$_id', '$$stateId']}}},
+          {$project: {name: 1}},
+          {$addFields: {id: '$_id'}}
         ],
         as: 'state'
       })
-      .unwind({ path: '$state', preserveNullAndEmptyArrays: true })
+      .unwind({path: '$state', preserveNullAndEmptyArrays: true})
       .lookup({
         from: DbCollection.city,
-        let: { cityId: '$cityId' },
+        let: {cityId: '$cityId'},
         pipeline: [
-          { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
-          { $project: { name: 1 } },
-          { $addFields: { id: '$_id' } }
+          {$match: {$expr: {$eq: ['$_id', '$$cityId']}}},
+          {$project: {name: 1}},
+          {$addFields: {id: '$_id'}}
         ],
         as: 'city'
       })
-      .unwind({ path: '$city', preserveNullAndEmptyArrays: true })
-      .sort({ [model.sort]: model.sortBy === 'asc' ? 1 : -1 })
+      .unwind({path: '$city', preserveNullAndEmptyArrays: true})
+      .sort({[model.sort]: model.sortBy === 'asc' ? 1 : -1})
       .skip(model.count * model.page - model.count)
       .limit(model.count);
 

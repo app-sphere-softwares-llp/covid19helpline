@@ -33,12 +33,12 @@ export class UsersUtilityService {
 
     // check state is available
     if (!user.stateId) {
-      throw new BadRequestException('State Name is mandatory');
+      throw new BadRequestException('Please select State');
     }
 
     // check city is available
     if (!user.cityId) {
-      throw new BadRequestException('City Name is mandatory');
+      throw new BadRequestException('Please select City');
     }
   }
 
