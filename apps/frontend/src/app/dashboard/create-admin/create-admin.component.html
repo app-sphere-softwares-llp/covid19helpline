@@ -5,7 +5,7 @@
 
         <aside class="col-md-4">
 
-          <div class="text-black-dark p-l-10 m-b-5 font-size-16">Create Admin</div>
+          <div class="text-black-dark p-l-10 m-b-5 font-size-16">{{formTitle}} Form</div>
 
           <div class="form-box p-15">
 
@@ -50,23 +50,6 @@
 
 
               <nz-form-item>
-                <nz-form-label nzRequired nzFor="emailId">Email (ईमेल)<span class="text-danger">*</span></nz-form-label>
-                <nz-form-control nzValidatingTip="Please enter Email!">
-
-                    <input
-                      type="text"
-                      nz-input
-                      nzSize="small"
-                      maxlength="50"
-                      formControlName="emailId"
-                      required="true"
-                      placeholder="Email"/>
-
-                </nz-form-control>
-              </nz-form-item>
-
-
-              <nz-form-item>
                 <nz-form-label class="m-b-5" nzRequired nzFor="emailId">Mobile Number (मोबाइल नंबर)<span class="text-danger">*</span>
                   <br>(Preferable WhatsApp number)</nz-form-label>
 
@@ -93,6 +76,7 @@
                   <nz-input-group [nzSuffix]="suffixIconSearch">
                     <input
                       placeholder="Search"
+                      [disabled]="true"
                       formControlName="state"
                       class="p-r-30"
                       nz-input
@@ -124,7 +108,6 @@
                 <nz-form-control nzErrorTip="Please enter your City!">
                   <nz-input-group [nzSuffix]="suffixIconSearchCity">
                     <input
-                      [disabled]="!selectedState?.id"
                       placeholder="Search"
                       formControlName="city"
                       nz-input
@@ -156,10 +139,10 @@
 
                     <button nz-button type="submit" nzType="primary" class="m-r-5"
                             [disabled]="adminForm.invalid"
-                            [nzLoading]="isRequestInProcess">Create</button>
+                            [nzLoading]="isRequestInProcess">Save</button>
 
 
-                    <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
+                    <button nz-button type="button" nzType="default" (click)="initForm(true)">Cancel</button>
 
                 </nz-form-control>
               </nz-form-item>
@@ -182,9 +165,15 @@
             <nz-table #basicTable
                       [nzNoResult]="emptyTemplate"
                       [nzData]="allData"
-                      [nzShowPagination]="false"
+                      [nzFrontPagination]="false"
+                      [nzTotal]="filterRequest.totalItems"
+                      [nzPageIndex]="filterRequest.page"
+                      [nzPageSize]="filterRequest.count"
+                      [nzShowPagination]="true"
+                      (nzPageIndexChange)="pageChanged($event)"
                       [nzSize]="'small'"
-                      [nzLoading]="isGettingDataInProcess">
+                      [nzLoading]="isGettingDataInProcess"
+                      [nzPaginationPosition]="'bottom'">
               <thead>
               <tr>
                 <th>SN.</th>
@@ -200,15 +189,17 @@
               <tbody>
               <tr *ngFor="let data of basicTable.data; let i=index;">
                 <td data-label="#">{{(i+1)}}.</td>
-                <td data-label="First Name"><a href="javascript:void(0);">{{data.firstName}}</a></td>
+                <td data-label="First Name">{{data.firstName}}</td>
                 <td data-label="Last Name">{{data.lastName}}</td>
                 <td data-label="Mobile Number">{{data.mobileNumber}}</td>
-                <td data-label="State">{{data.state}}</td>
-                <td data-label="City">{{data.city}}</td>
+                <td data-label="State">{{data.emailId}}</td>
+                <td data-label="State">{{data.state.name}}</td>
+                <td data-label="City">{{data.city.name}}</td>
                 <td data-label="Action">
-                  <a href="javascript:void(0);">Edit</a>
 
-                  <a href="javascript:void(0);" class="text-danger" (click)="removeAdmin(data.id)">Remove</a>
+                  <a href="javascript:void(0);" (click)="enableEdit(data)">Edit</a>
+
+                  <a href="javascript:void(0);" class="text-danger m-l-10" (click)="removeAdmin(data.id)">Remove</a>
 
                 </td>
               </tr>
