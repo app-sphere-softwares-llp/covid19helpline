@@ -51,7 +51,7 @@ export class UserController {
   @Post('delete-admin-user')
   @Roles(MemberTypes.superAdmin)
   @UseGuards(RolesGuard)
-  async deleteAdminUser(@Body() id: string) {
+  async deleteAdminUser(@Body('id') id: string) {
     return await this._userService.deleteAdminUser(id);
   }
 

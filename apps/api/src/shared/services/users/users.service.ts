@@ -125,7 +125,7 @@ export class UsersService extends BaseService<User & Document>
    * @param user
    */
   async updateAdminUser(user: User) {
-    if (!user || user.id) {
+    if (!user || !user.id) {
       BadRequest('User not found');
     }
 

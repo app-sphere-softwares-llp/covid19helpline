@@ -204,6 +204,10 @@ export class CreateAdminComponent implements OnInit {
   enableEdit(user:User) {
     this.formTitle = 'Edit Admin';
     this.adminForm.patchValue(user);
+
+    // disable mobile control because admin mobile is not allowed
+    this.adminForm.get('mobileNumber').disable();
+
     this.adminForm.get('cityId').patchValue(user.city.id);
     this.adminForm.get('stateId').patchValue(user.state.id);
   }
