@@ -80,7 +80,7 @@ export class HomeComponent implements OnInit {
         this.filterRequest.status = status;
       }
 
-      console.log(this.filterRequest);
+      // console.log(this.filterRequest);
 
       this._passServive.getRequests(this.filterRequest).subscribe((data) => {
 

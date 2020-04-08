@@ -2,5 +2,8 @@ import { createUrl } from '../apiUrls/base.url';
 
 export const UserUrls = {
   profile: `${createUrl('user/profile')}`,
-  getAllAdmin: `${createUrl('user/get-all-admin')}`,
+  deleteAdmin: `${createUrl('user/delete-admin-user')}`,
+  getAllAdmin: `${createUrl('user/get-admin-users')}`,
+  createAdmin: `${createUrl('user/create-admin-user')}`,
+  updateAdmin: `${createUrl('user/create-admin-user')}`,
 };

@@ -17,6 +17,7 @@ import { NzNotificationService } from 'ng-zorro-antd';
 import { of } from 'rxjs';
 import { UserStore } from '../../store/user/user.store';
 import { AuthService as SocialAuthService } from 'angularx-social-login';
+import { UserUrls } from './user/user.url';
 
 @Injectable()
 export class AuthService extends BaseService<AuthStore, AuthState> {
@@ -125,19 +126,6 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
           token: null
         });
 
-        return this.handleError(err);
-      })
-    );
-  }
-
-
-  createAdmin(json: User) {
-    return this._http.post(AuthUrls.createAdmin, json).pipe(
-      map((res: BaseResponseModel<string>) => {
-        this.notification.success('Success', res.data);
-        return res;
-      }),
-      catchError((err) => {
         return this.handleError(err);
       })
     );

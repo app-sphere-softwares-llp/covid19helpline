@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BaseResponseModel, User } from '@covid19-helpline/models';
+import { BasePaginatedResponse, BaseResponseModel, GetAllAdminUsersRequestModel, User } from '@covid19-helpline/models';
 import { BaseService } from '../base.service';
 import { HttpWrapperService } from '../httpWrapper.service';
 import { catchError, map } from 'rxjs/operators';
@@ -41,10 +41,10 @@ export class UserService extends BaseService<UserStore, UserState> {
     );
   }
 
-  getAllAdmin() {
+  getAllAdmin(json: GetAllAdminUsersRequestModel) {
 
-    return this._http.get(UserUrls.getAllAdmin).pipe(
-      map((res: BaseResponseModel<User[]>) => {
+    return this._http.post(UserUrls.getAllAdmin, json).pipe(
+      map((res: BaseResponseModel<BasePaginatedResponse<User>>) => {
 
         return res;
       }),
@@ -55,6 +55,40 @@ export class UserService extends BaseService<UserStore, UserState> {
   }
 
 
+  createAdmin(json: User) {
+    return this._http.post(UserUrls.createAdmin, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.notification.success('Success', res.data);
+        return res;
+      }),
+      catchError((err) => {
+        return this.handleError(err);
+      })
+    );
+  }
 
+  updateAdmin(json: any) {
+    return this._http.post(UserUrls.updateAdmin, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.notification.success('Success', res.data);
+        return res;
+      }),
+      catchError((err) => {
+        return this.handleError(err);
+      })
+    );
+  }
+
+  deleteAdmin(json: any) {
+    return this._http.post(UserUrls.deleteAdmin, json).pipe(
+      map((res: BaseResponseModel<string>) => {
+        this.notification.success('Success', res.data);
+        return res;
+      }),
+      catchError((err) => {
+        return this.handleError(err);
+      })
+    );
+  }
 
 }
