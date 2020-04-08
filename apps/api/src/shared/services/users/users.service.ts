@@ -160,7 +160,7 @@ export class UsersService extends BaseService<User & Document>
     const queryFilter: any = {
       $and: [
         {
-          createdBy: toObjectId(this._generalService.userId),
+          createdById: toObjectId(this._generalService.userId),
           isDeleted: false
         },
         {
