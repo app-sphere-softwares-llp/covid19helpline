@@ -9,12 +9,8 @@ export class UsersUtilityService {
   /**
    * create super admin validations
    * @param user
-   * @param userRole
    */
-  async createAdminUserValidations(user: User, userRole: MemberTypes) {
-    if (userRole !== MemberTypes.superAdmin) {
-      BadRequest('Access Denied, Only Super Admin can create an Admin');
-    }
+  async createAdminUserValidations(user: User) {
 
     // check first name
     if (!user.mobileNumber) {
@@ -35,10 +31,12 @@ export class UsersUtilityService {
       throw new BadRequestException('Last Name is mandatory');
     }
 
+    // check state is available
     if (!user.stateId) {
       throw new BadRequestException('State Name is mandatory');
     }
 
+    // check city is available
     if (!user.cityId) {
       throw new BadRequestException('City Name is mandatory');
     }

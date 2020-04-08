@@ -7,7 +7,6 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 export const userSchema = new Schema(
   {
-    emailId: {type: String, required: false},
     userName: {type: String},
     password: {type: String},
     firstName: {type: String, default: ''},
@@ -20,6 +19,7 @@ export const userSchema = new Schema(
     memberType: {type: String, enum: Object.values(MemberTypes)},
     stateId: {type: Schema.Types.ObjectId, ref: DbCollection.state},
     cityId: {type: Schema.Types.ObjectId, ref: DbCollection.city},
+    createdById: { type: Schema.Types.ObjectId, ref: DbCollection.users },
     isDeleted: {type: Boolean, default: false}
   }, schemaOptions
 );
@@ -54,6 +54,13 @@ userSchema
   .virtual('city', {
     ref: DbCollection.city,
     localField: 'cityId',
+    foreignField: '_id'
+  });
+
+userSchema
+  .virtual('createdBy', {
+    ref: DbCollection.users,
+    localField: 'createdById',
     foreignField: '_id'
   });
 

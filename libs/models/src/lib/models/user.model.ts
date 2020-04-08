@@ -1,8 +1,8 @@
-import {MemberTypes} from '../general';
-import {UserLoginProviderEnum, UserStatus} from '../enums';
-import {StateModel} from "./state.model";
-import {CityModel} from "./city.model";
-
+import { MemberTypes } from '../general';
+import { UserLoginProviderEnum, UserStatus } from '../enums';
+import { StateModel } from './state.model';
+import { CityModel } from './city.model';
+import { BaseRequestModel } from '../baseRequest.model';
 
 export class UserLoginWithPasswordRequest {
   emailId?: string;
@@ -18,14 +18,6 @@ export class UserLoginSignUpSuccessResponse {
 export class VerifyOtpRequestModel {
   mobileNumber: string;
   code: string;
-}
-
-export class UserTimeZoneInfo {
-  timezoneNext: string;
-  dateNext: Date;
-  offsetNext: number;
-  timezoneCurrent: string;
-  offsetCurrent: number;
 }
 
 export class User {
@@ -46,5 +38,13 @@ export class User {
   state?: StateModel;
   cityId?: string;
   city?: CityModel;
+  createdById?: string;
+  createdBy?: User;
 }
 
+export class GetAllAdminUsersRequestModel extends BaseRequestModel {
+  constructor() {
+    super();
+    this.query = '';
+  }
+}

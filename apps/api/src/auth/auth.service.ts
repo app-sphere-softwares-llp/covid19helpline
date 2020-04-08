@@ -1,12 +1,17 @@
-import {BadRequestException, Injectable, OnModuleInit, UnauthorizedException} from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
+import {
+  BadRequestException,
+  Injectable,
+  OnModuleInit,
+  UnauthorizedException
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
-import {InjectModel} from '@nestjs/mongoose';
-import {ClientSession, Document, Model} from 'mongoose';
-import {ModuleRef} from '@nestjs/core';
-import {BadRequest, isValidMobileNo} from '../shared/helpers/helpers';
-import {EmailService} from '../shared/services/email/email.service';
-import {ResetPasswordService} from '../shared/services/reset-password/reset-password.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { ClientSession, Document, Model } from 'mongoose';
+import { ModuleRef } from '@nestjs/core';
+import { BadRequest, isValidMobileNo } from '../shared/helpers/helpers';
+import { EmailService } from '../shared/services/email/email.service';
+import { ResetPasswordService } from '../shared/services/reset-password/reset-password.service';
 import {
   DbCollection,
   MongooseQueryModel,
@@ -15,9 +20,9 @@ import {
   UserStatus,
   VerifyOtpRequestModel
 } from '@covid19-helpline/models';
-import {UsersService} from '../shared/services/users/users.service';
-import {OtpRequestService} from '../shared/services/otp-request/otp-request.service';
-import {BaseService} from '../shared/services/base.service';
+import { UsersService } from '../shared/services/users/users.service';
+import { OtpRequestService } from '../shared/services/otp-request/otp-request.service';
+import { BaseService } from '../shared/services/base.service';
 
 @Injectable()
 export class AuthService extends BaseService<User & Document>
@@ -40,7 +45,7 @@ export class AuthService extends BaseService<User & Document>
    * on module init
    */
   onModuleInit(): void {
-    this._userService = this._moduleRef.get('UsersService', {strict: false});
+    this._userService = this._moduleRef.get('UsersService', { strict: false });
     this._resetPasswordService = this._moduleRef.get('ResetPasswordService', {
       strict: false
     });
@@ -57,7 +62,7 @@ export class AuthService extends BaseService<User & Document>
     return this.withRetrySession(async (session: ClientSession) => {
       // get user by mobile no
       const user = await this.findOne({
-        filter: {mobileNumber: req.mobileNumber},
+        filter: { mobileNumber: req.mobileNumber },
         lean: true
       });
 
@@ -109,6 +114,7 @@ export class AuthService extends BaseService<User & Document>
     return this.withRetrySession(async (session: ClientSession) => {
       await this._otpService.verifyOtp(model, session);
 
+      // get user details by mobile no
       const userDetails = await this.getUserByMobileNo(model.mobileNumber);
       if (!userDetails) {
         BadRequest('User not found');
@@ -125,7 +131,8 @@ export class AuthService extends BaseService<User & Document>
         session
       );
 
-      const jwtPayload = {sub: '', id: ''};
+      // create jwt payload holder
+      const jwtPayload = { sub: '', id: '', memberType: '' };
       jwtPayload.id = userDetails._id;
       jwtPayload.sub = userDetails.mobileNumber;
 
@@ -188,7 +195,7 @@ export class AuthService extends BaseService<User & Document>
     userQuery.filter = {
       mobileNumber
     };
-    userQuery.select = '_id mobileNumber';
+    userQuery.select = '_id mobileNumber memberType';
     userQuery.lean = true;
 
     const userDetails = await this._userService.findOne(userQuery);
