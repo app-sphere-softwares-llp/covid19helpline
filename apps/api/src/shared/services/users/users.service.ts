@@ -120,7 +120,6 @@ export class UsersService extends BaseService<User & Document>
 
       // create update user model
       const userModel = new User();
-      userModel.mobileNumber = user.mobileNumber;
       userModel.firstName = user.firstName;
       userModel.lastName = user.lastName;
       userModel.cityId = user.cityId;

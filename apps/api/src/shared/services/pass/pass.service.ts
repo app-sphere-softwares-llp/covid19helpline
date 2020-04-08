@@ -285,6 +285,7 @@ export class PassService extends BaseService<PassModel & Document>
         ]
       };
 
+      // region role based conditions
       /**
        * add user role based condition start
        * 1. normal user :- can only view passes which created by him
@@ -309,6 +310,9 @@ export class PassService extends BaseService<PassModel & Document>
         });
       }
 
+      // endregion
+
+      // region additional queries
       /**
        * normal search related query
        */
@@ -343,6 +347,8 @@ export class PassService extends BaseService<PassModel & Document>
         model.sort = 'passStatus.status';
         model.sortBy = 'asc';
       }
+
+      // endregion
 
       // fire get passes query
       let passes = await this.dbModel
