@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { CityModel, CityRequestModel, MemberTypes, StateModel, User } from '@covid19-helpline/models';
+import {
+  CityModel,
+  CityRequestModel,
+  GetAllAdminUsersRequestModel, GetAllPassesRequestModel,
+  MemberTypes, PassStatusEnum,
+  StateModel,
+  User
+} from '@covid19-helpline/models';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { Subject } from 'rxjs';
@@ -31,6 +38,15 @@ export class CreateAdminComponent implements OnInit {
 
   public allData: User[] = [];
   public isGettingDataInProcess:boolean;
+
+
+  public filterRequest: GetAllAdminUsersRequestModel = {
+    count : 15,
+    page: 1,
+    query : '',
+    sort:'',
+    sortBy: 'desc'
+  }
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -145,9 +161,12 @@ export class CreateAdminComponent implements OnInit {
       const json: User = {...this.adminForm.getRawValue()};
       this.isRequestInProcess = true;
 
-      console.log(json);
+      if(json.id) {
+        await this._userService.updateAdmin(json).toPromise();
+      } else {
+        await this._userService.createAdmin(json).toPromise();
+      }
 
-      await this._authService.createAdmin(json).toPromise();
       this.isRequestInProcess = false;
       this.initForm();
 
@@ -157,6 +176,20 @@ export class CreateAdminComponent implements OnInit {
 
   }
 
+  async removeAdmin(id: string) {
+
+    try {
+
+      const json = { id : id };
+      this.isRequestInProcess = true;
+      await this._userService.deleteAdmin(json).toPromise();
+      this.isRequestInProcess = false;
+
+    } catch (e) {
+      this.isRequestInProcess = false;
+    }
+
+  }
 
   async getAllAdmin() {
 
@@ -164,8 +197,8 @@ export class CreateAdminComponent implements OnInit {
 
       this.isGettingDataInProcess = true;
 
-      const data = await this._userService.getAllAdmin().toPromise();
-      this.allData = data.data;
+      const data = await this._userService.getAllAdmin(this.filterRequest).toPromise();
+      this.allData = data.data.items;
       this.isGettingDataInProcess = false;
 
 
