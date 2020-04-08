@@ -351,6 +351,15 @@ export class UsersService extends BaseService<User & Document>
 
     // return user
     userDetails.id = userDetails._id;
+
+    if (userDetails.state) {
+      userDetails.state.id = userDetails.state._id;
+    }
+
+    if (userDetails.city) {
+      userDetails.city.id = userDetails.city._id;
+    }
+
     return userDetails;
   }
 }
