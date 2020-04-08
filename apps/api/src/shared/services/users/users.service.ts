@@ -7,13 +7,16 @@ import {
   DbCollection,
   GetAllAdminUsersRequestModel,
   MemberTypes,
-  MongooseQueryModel,
+  MongooseQueryModel, SendSmsModel,
   User,
   UserStatus
 } from '@covid19-helpline/models';
 import {UsersUtilityService} from './users.utility.service';
 import {ModuleRef} from '@nestjs/core';
 import {BadRequest, toObjectId} from '../../helpers/helpers';
+import {SmsService} from "../sms/sms.service";
+import {DEFAULT_SMS_SENDING_OPTIONS} from "../../helpers/defaultValueConstant";
+import {environment} from "../../../environments/environment";
 
 /**
  * user sorting key mapper constant
@@ -36,7 +39,8 @@ export class UsersService extends BaseService<User & Document>
     @InjectModel(DbCollection.users)
     protected readonly _userModel: Model<User & Document>,
     private _generalService: GeneralService,
-    private _moduleRef: ModuleRef
+    private _moduleRef: ModuleRef,
+    private _smsService: SmsService
   ) {
     super(_userModel);
   }
@@ -95,7 +99,23 @@ export class UsersService extends BaseService<User & Document>
 
     // create admin process
     return this.withRetrySession(async (session: ClientSession) => {
-      return await this.createUser(user, session, true);
+      const adminUser = await this.createUser(user, session, true);
+
+      // send otp to newly created admin user
+      const smsModel = new SendSmsModel();
+      smsModel.route = DEFAULT_SMS_SENDING_OPTIONS.route;
+      smsModel.sender = DEFAULT_SMS_SENDING_OPTIONS.sender;
+      smsModel.sms = [
+        {
+          to: [user.mobileNumber],
+          message: `You have been registered as Admin Of Covid 19 Helpline app, please login here to get started
+            ${environment.APP_URL}login
+          `
+        }
+      ];
+
+      this._smsService.sendSms(smsModel);
+      return 'Admin user created Successfully';
     });
   }
 
