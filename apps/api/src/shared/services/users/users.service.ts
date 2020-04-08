@@ -1,12 +1,8 @@
-import {
-  Injectable,
-  OnModuleInit,
-  UnauthorizedException
-} from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Document, Model } from 'mongoose';
-import { BaseService } from '../base.service';
-import { GeneralService } from '../general.service';
+import {Injectable, OnModuleInit} from '@nestjs/common';
+import {InjectModel} from '@nestjs/mongoose';
+import {ClientSession, Document, Model} from 'mongoose';
+import {BaseService} from '../base.service';
+import {GeneralService} from '../general.service';
 import {
   DbCollection,
   GetAllAdminUsersRequestModel,
@@ -15,9 +11,9 @@ import {
   User,
   UserStatus
 } from '@covid19-helpline/models';
-import { UsersUtilityService } from './users.utility.service';
-import { ModuleRef } from '@nestjs/core';
-import { BadRequest, toObjectId } from '../../helpers/helpers';
+import {UsersUtilityService} from './users.utility.service';
+import {ModuleRef} from '@nestjs/core';
+import {BadRequest, toObjectId} from '../../helpers/helpers';
 
 /**
  * user sorting key mapper constant
@@ -63,7 +59,6 @@ export class UsersService extends BaseService<User & Document>
     // create user model
     const model = new User();
     model.mobileNumber = user.mobileNumber;
-    model.username = model.mobileNumber;
     model.firstName = user.firstName;
     model.lastName = user.lastName;
     model.status = UserStatus.NotConfirmed;
@@ -119,7 +114,6 @@ export class UsersService extends BaseService<User & Document>
       // create update user model
       const userModel = new User();
       userModel.mobileNumber = user.mobileNumber;
-      userModel.username = userModel.mobileNumber;
       userModel.firstName = user.firstName;
       userModel.lastName = user.lastName;
       userModel.cityId = user.cityId;

@@ -23,13 +23,10 @@ export class VerifyOtpRequestModel {
 export class User {
   id?: string;
   _id?: string;
-  emailId?: string;
-  password?: string;
   firstName?: string;
   lastName?: string;
   profilePic?: string;
   status?: UserStatus;
-  username?: string;
   lastLoginProvider?: UserLoginProviderEnum;
   locale?: string;
   mobileNumber: string;
