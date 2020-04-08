@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import {
   CityModel,
   CityRequestModel,
-  GetAllAdminUsersRequestModel, GetAllPassesRequestModel,
-  MemberTypes, PassStatusEnum,
+  GetAllAdminUsersRequestModel,
+  MemberTypes,
   StateModel,
   User
 } from '@covid19-helpline/models';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -50,7 +50,6 @@ export class CreateAdminComponent implements OnInit {
     sort:'',
     sortBy: 'desc'
   }
-  public isVisibleConfirmRemove: boolean;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
