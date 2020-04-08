@@ -30,7 +30,7 @@ export class UserController {
   @Post('get-admin-users')
   @Roles(MemberTypes.superAdmin)
   @UseGuards(RolesGuard)
-  async getAllAdminUsers(model: GetAllAdminUsersRequestModel) {
+  async getAllAdminUsers(@Body() model: GetAllAdminUsersRequestModel) {
     return await this._userService.getAllAdminUsers(model);
   }
 
