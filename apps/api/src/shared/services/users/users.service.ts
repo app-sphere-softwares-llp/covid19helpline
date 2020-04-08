@@ -203,7 +203,8 @@ export class UsersService extends BaseService<User & Document>
 
     // fire get users query
     let users = await this.dbModel
-      .aggregate(queryFilter)
+      .aggregate()
+      .match(queryFilter)
       .lookup({
         from: DbCollection.state,
         let: {stateId: '$stateId'},
