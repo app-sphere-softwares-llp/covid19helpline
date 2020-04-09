@@ -44,11 +44,9 @@ export class CreateAdminComponent implements OnInit {
 
 
   public filterRequest: GetAllAdminUsersRequestModel = {
-    count : 15,
+    count : 10,
     page: 1,
-    query : '',
-    sort:'',
-    sortBy: 'desc'
+    query : ''
   }
 
   public modelChangedState = new Subject<string>();
@@ -193,6 +191,7 @@ export class CreateAdminComponent implements OnInit {
 
       this.isRequestInProcess = false;
       this.initForm();
+      this.getAllAdmin();
 
     } catch (e) {
       this.isRequestInProcess = false;
@@ -228,6 +227,7 @@ export class CreateAdminComponent implements OnInit {
             const data = await this._userService.deleteAdmin(json).toPromise();
             this.isRequestInProcess = false;
               if(data && data.data) {
+                this.getAllAdmin();
                 setTimeout(Math.random() > 0.5 ? resolve : reject, 10);
               }
             return true;
@@ -248,6 +248,7 @@ export class CreateAdminComponent implements OnInit {
 
       const data = await this._userService.getAllAdmin(this.filterRequest).toPromise();
       this.allData = data.data.items;
+      this.filterRequest.totalItems = data.data.totalItems;
       this.isGettingDataInProcess = false;
 
 
