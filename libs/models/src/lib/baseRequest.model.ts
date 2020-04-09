@@ -1,6 +1,6 @@
 export class BaseRequestModel {
   public sort?: string;
-  public sortBy?: 'asc' | 'desc' = 'asc';
+  public sortBy?: 'asc' | 'desc' = 'desc';
   public query?: string;
   public from?: string;
   public to?: string;
@@ -12,7 +12,7 @@ export class BaseRequestModel {
   constructor() {
     this.page = 1;
     this.count = 10;
-    this.sortBy = 'asc';
+    this.sortBy = 'desc';
   }
 
 }
