@@ -1,4 +1,4 @@
-import {Body, Controller, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Header, Post, Res, UseGuards} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {GetAllPassesRequestModel, PassModel, UpdatePassStatusRequestModel} from "@covid19-helpline/models";
 import {PassService} from "../shared/services/pass/pass.service";
@@ -37,5 +37,13 @@ export class PassController {
   @Post('get-all')
   async getAllPasses(@Body() model: GetAllPassesRequestModel) {
     return await this._passService.getAllPasses(model);
+  }
+
+  @Post('generate-pdf')
+  @Header('Content-Type', 'application/pdf')
+  @Header('Content-Disposition', 'attachment; filename=test.pdf')
+  async createPdf(@Body('id') id: string, @Res() res) {
+    const path = await this._passService.generatePdf(id);
+    res.sendFile(path);
   }
 }

@@ -1,9 +1,10 @@
-import { BaseService } from '../base.service';
-import { ClientSession, Document, Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { ModuleRef } from '@nestjs/core';
-import { Injectable, OnModuleInit } from '@nestjs/common';
-import { GeneralService } from '../general.service';
+import {BaseService} from '../base.service';
+import {ClientSession, Document, Model} from 'mongoose';
+import {InjectModel} from '@nestjs/mongoose';
+import {ModuleRef} from '@nestjs/core';
+import {Injectable, OnModuleInit} from '@nestjs/common';
+import * as pdf from 'html-pdf';
+import {GeneralService} from '../general.service';
 import {
   DbCollection,
   GetAllPassesRequestModel,
@@ -14,12 +15,12 @@ import {
   SendSmsModel,
   UpdatePassStatusRequestModel
 } from '@covid19-helpline/models';
-import { BadRequest, generateUtcDate, toObjectId } from '../../helpers/helpers';
-import { I18nRequestScopeService } from 'nestjs-i18n';
-import { PassUtilityService } from './pass.utility.service';
-import { SmsService } from '../sms/sms.service';
-import { DEFAULT_SMS_SENDING_OPTIONS } from '../../helpers/defaultValueConstant';
-import { UsersService } from '../users/users.service';
+import {BadRequest, generateRandomCode, generateUtcDate, resolvePathHelper, toObjectId} from '../../helpers/helpers';
+import {I18nRequestScopeService} from 'nestjs-i18n';
+import {PassUtilityService} from './pass.utility.service';
+import {SmsService} from '../sms/sms.service';
+import {DEFAULT_SMS_SENDING_OPTIONS} from '../../helpers/defaultValueConstant';
+import {UsersService} from '../users/users.service';
 
 /**
  * common population constant
@@ -102,7 +103,8 @@ export class PassService extends BaseService<PassModel & Document>
     this._utilityService = new PassUtilityService(i18n);
   }
 
-  onModuleInit(): void {}
+  onModuleInit(): void {
+  }
 
   /**
    * add update a get pass
@@ -204,7 +206,7 @@ export class PassService extends BaseService<PassModel & Document>
       // update pass by id
       await this.updateById(
         model.id,
-        { $set: { passStatus: updateStatusDoc } },
+        {$set: {passStatus: updateStatusDoc}},
         session
       );
 
@@ -320,19 +322,19 @@ export class PassService extends BaseService<PassModel & Document>
       // check if state id there, than add it to query filter
       if (model.stateId) {
         queryFilter.$and.push({
-          stateId: { $in: [toObjectId(model.stateId)] }
+          stateId: {$in: [toObjectId(model.stateId)]}
         });
       }
 
       // check if city id there, than add it to query filter
       if (model.cityId) {
-        queryFilter.$and.push({ cityId: { $in: [toObjectId(model.cityId)] } });
+        queryFilter.$and.push({cityId: {$in: [toObjectId(model.cityId)]}});
       }
 
       // check if reasonId there, than add it to query filter
       if (model.reasonId && model.reasonId.length) {
         model.reasonId = model.reasonId.map(reasonId => toObjectId(reasonId));
-        queryFilter.$and.push({ reasonId: { $in: model.reasonId } });
+        queryFilter.$and.push({reasonId: {$in: model.reasonId}});
       }
 
       // check is valid key for sorting...
@@ -356,38 +358,38 @@ export class PassService extends BaseService<PassModel & Document>
         .match(queryFilter)
         .lookup({
           from: DbCollection.reason,
-          let: { reasonId: '$reasonId' },
+          let: {reasonId: '$reasonId'},
           pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$reasonId'] } } },
-            { $project: { name: 1 } },
-            { $addFields: { id: '$_id' } }
+            {$match: {$expr: {$eq: ['$_id', '$$reasonId']}}},
+            {$project: {name: 1}},
+            {$addFields: {id: '$_id'}}
           ],
           as: 'reason'
         })
-        .unwind({ path: '$reason', preserveNullAndEmptyArrays: true })
+        .unwind({path: '$reason', preserveNullAndEmptyArrays: true})
         .lookup({
           from: DbCollection.state,
-          let: { stateId: '$stateId' },
+          let: {stateId: '$stateId'},
           pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$stateId'] } } },
-            { $project: { name: 1 } },
-            { $addFields: { id: '$_id' } }
+            {$match: {$expr: {$eq: ['$_id', '$$stateId']}}},
+            {$project: {name: 1}},
+            {$addFields: {id: '$_id'}}
           ],
           as: 'state'
         })
-        .unwind({ path: '$state', preserveNullAndEmptyArrays: true })
+        .unwind({path: '$state', preserveNullAndEmptyArrays: true})
         .lookup({
           from: DbCollection.city,
-          let: { cityId: '$cityId' },
+          let: {cityId: '$cityId'},
           pipeline: [
-            { $match: { $expr: { $eq: ['$_id', '$$cityId'] } } },
-            { $project: { name: 1 } },
-            { $addFields: { id: '$_id' } }
+            {$match: {$expr: {$eq: ['$_id', '$$cityId']}}},
+            {$project: {name: 1}},
+            {$addFields: {id: '$_id'}}
           ],
           as: 'city'
         })
-        .unwind({ path: '$city', preserveNullAndEmptyArrays: true })
-        .sort({ [model.sort]: model.sortBy === 'asc' ? 1 : -1 })
+        .unwind({path: '$city', preserveNullAndEmptyArrays: true})
+        .sort({[model.sort]: model.sortBy === 'asc' ? 1 : -1})
         .skip(model.count * model.page - model.count)
         .limit(model.count);
 
@@ -461,7 +463,7 @@ export class PassService extends BaseService<PassModel & Document>
 
       // query object
       const detailsQuery = new MongooseQueryModel();
-      detailsQuery.filter = { _id: id };
+      detailsQuery.filter = {_id: id};
       detailsQuery.lean = true;
       detailsQuery.populate = COMMON_POPULATION;
 
@@ -485,5 +487,29 @@ export class PassService extends BaseService<PassModel & Document>
     } catch (e) {
       throw e;
     }
+  }
+
+  /**
+   * generate pass pdf
+   * @param id
+   */
+  async generatePdf(id: string) {
+    return this.withRetrySession(async (session: ClientSession) => {
+      // get pass details
+      const passDetails = await this.getDetails(id, true);
+      const html = `<div>
+        Vishal P Isharani
+      </div>`;
+      const filePath = resolvePathHelper('./pdfs');
+      return new Promise((resolve, reject) => {
+        pdf.create(html).toFile(`${filePath}/${passDetails.id}_${generateRandomCode(2)}.pdf`,(err, res) => {
+          if (err) {
+            reject(err);
+          }
+
+          resolve(res.filename);
+        });
+      });
+    });
   }
 }
