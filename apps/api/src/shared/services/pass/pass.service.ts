@@ -28,7 +28,7 @@ import {
 } from '../../helpers/defaultValueConstant';
 import {UsersService} from '../users/users.service';
 import {environment} from "../../../environments/environment";
-import {moment} from "ngx-bootstrap/chronos/test/chain";
+import * as moment from "moment";
 
 /**
  * common population constant
