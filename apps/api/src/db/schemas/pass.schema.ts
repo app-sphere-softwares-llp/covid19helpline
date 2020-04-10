@@ -1,6 +1,7 @@
 import {Schema} from "mongoose";
 import {commonSchemaFields, mongooseErrorTransformPluginOptions} from "./base.schema";
 import {DbCollection, PassStatusEnum} from "@covid19-helpline/models";
+import {DEFAULT_PASS_VALIDITY} from "../../shared/helpers/defaultValueConstant";
 
 const mongooseValidationErrorTransform = require('mongoose-validation-error-transform');
 
@@ -15,6 +16,7 @@ export const passSchema = new Schema({
   mobileNo: {type: String},
   vehicleNo: {type: String},
   passDate: {type: Date},
+  passValidity: { type: Number, default: DEFAULT_PASS_VALIDITY },
   address: {type: String},
   otherPersonDetails: {
     type: Array,
