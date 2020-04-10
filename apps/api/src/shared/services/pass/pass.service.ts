@@ -535,32 +535,12 @@ export class PassService extends BaseService<PassModel & Document>
    */
   async checkPass(id: string) {
     return this.withRetrySession(async (session: ClientSession) => {
-      const passDetails = await this.getDetails(id);
-      let baseMsg = 'This pass is';
-      let responseMsg = '';
+      const passDetails = await this.getDetails(id, true);
 
-      // set response msg from pass status
-      switch (passDetails.passStatus.status) {
-        case PassStatusEnum.approved:
-          responseMsg = `${baseMsg} Approved`;
-          break;
-
-        case PassStatusEnum.pending:
-          responseMsg = `${baseMsg} Not Approved Yet`;
-          break;
-
-        case PassStatusEnum.rejected:
-          responseMsg = `${baseMsg} Rejected`;
-          break;
-
-        default:
-          responseMsg = `${baseMsg} Not Yet Approved`;
-          break;
-      }
 
       // get template path
       const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);
-      return await ejs.renderFile(templatePath, {msg: responseMsg})
+      return await ejs.renderFile(templatePath, passDetails)
     });
   }
 }

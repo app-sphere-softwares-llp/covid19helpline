@@ -1,3 +1,38 @@
-<div style="height: 500px; display: flex; justify-content: center; align-items: center;border: 1px solid grey">
-    <span style="font-weight: bold"><%= msg %></span>
+<div style="width: 400px; display: flex; justify-content: center; align-items: center; font-family:'Arial'; border:1px solid #ccc; width:500px; border-radius:4px;">
+  
+
+  <table>
+
+    <tr>
+      <td colspan="2" border="0" align="center" style="padding:20px">
+
+        <% if (passStatus.status === 'approved') { %>
+          <div style="display:table-cell; text-align:center; vertical-align:middle; font-size:18px; text-transform:uppercase; font-weight:bold; border:2px solid #15D833; height: 130px; width:130px; color:#15D833; border-radius:50%;">
+            <div> <%= passStatus.status %> </div>
+          </div>
+        <%} else { %>
+            <div style="display:table-cell; text-align:center; vertical-align:middle; font-size:18px; text-transform:uppercase; font-weight:bold; border:2px solid #444; height: 130px; width:130px; color:#444; border-radius:50%;">
+              <div> <%= passStatus.status %> </div>
+            </div>
+        <% } %>
+
+      </td>
+    </tr>
+
+
+    <tr>
+      <td>Name (नाम):</td>
+      <td><%= firstName %> <%= lastName %></td>
+    </tr>
+    <tr>
+      <td>Aadhaar (आधार):</td>
+      <td><%= aadhaarNo %></td>
+    </tr>
+    <tr>
+      <td>Pass Validity (पास वैधता):</td>
+      <td><%= aadhaarNo %></td>
+    </tr>
+  </table>
+
+
 </div>
