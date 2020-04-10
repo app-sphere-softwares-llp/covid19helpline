@@ -174,7 +174,7 @@
           <!--      Row 2-->
 
           <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
               <nz-form-item>
                 <nz-form-label
                 >Aadhaar (आधार)<span class="text-danger">*</span></nz-form-label
@@ -191,7 +191,7 @@
               </nz-form-item>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <nz-form-item>
                 <nz-form-label>Mobile (मोबाइल नंबर)<span class="text-danger">*</span></nz-form-label>
                 <nz-form-control nzErrorTip="Please enter valid Mobile!">
@@ -206,7 +206,7 @@
               </nz-form-item>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <nz-form-item>
                 <nz-form-label
                 >Vehicle Number (गाडी नंबर)<span class="text-danger"
@@ -223,12 +223,13 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
+            <div class="col-md-3"></div>
 
 
             <div class="col-md-12">
               <div class="row">
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <nz-form-item>
                     <nz-form-label
                     >Pass Date (पास की तारीख)<span class="text-danger">*</span
@@ -245,7 +246,32 @@
                 </div>
 
 
-                <div class="col-md-8">
+                <div class="col-md-3">
+                  <nz-form-item>
+                    <nz-form-label
+                    >Pass Validity (पास वैधता)<span class="text-danger">*</span
+                    ></nz-form-label>
+
+                    <nz-form-control  nzErrorTip="Please select pass validity!">
+
+                      <nz-select nzSize="small" formControlName="passValidity" >
+                        <nz-option nzValue="2" nzLabel="2 Hours"></nz-option>
+                        <nz-option nzValue="4" nzLabel="4 Hours"></nz-option>
+                        <nz-option nzValue="6" nzLabel="6 Hours"></nz-option>
+                        <nz-option nzValue="8" nzLabel="8 Hours"></nz-option>
+                        <nz-option nzValue="10" nzLabel="10 Hours"></nz-option>
+                        <nz-option nzValue="12" nzLabel="12 Hours"></nz-option>
+                      </nz-select>
+
+                    </nz-form-control>
+
+                  </nz-form-item>
+
+
+                </div>
+
+
+                <div class="col-md-6">
                   <nz-form-item>
                     <nz-form-label>Full Address (पूरा पता)<span class="text-danger">*</span></nz-form-label>
                     <nz-form-control nzErrorTip="Please enter your Full Address!">

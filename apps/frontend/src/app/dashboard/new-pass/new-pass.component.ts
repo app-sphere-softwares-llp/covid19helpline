@@ -189,6 +189,7 @@ export class NewPassComponent implements OnInit {
       address: [null, [Validators.required]],
       mobileNo: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       passDate: [null, [Validators.required]],
+      passValidity: ['2', [Validators.required]],
       vehicleNo: [null, [Validators.required]],
       reasonId: [null, [Validators.required]],
       reason: [null, [Validators.required]],
@@ -499,7 +500,8 @@ export class NewPassComponent implements OnInit {
 
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
-        status: PassStatusEnum.rejected
+        status: PassStatusEnum.rejected,
+        passValidity: this.applicationForm.get('passValidity').value()
       };
 
       this._passService.updateStatus(json).subscribe((data) => {
@@ -519,7 +521,8 @@ export class NewPassComponent implements OnInit {
       this.isRequestInProcess = true;
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
-        status: PassStatusEnum.approved
+        status: PassStatusEnum.approved,
+        passValidity: this.applicationForm.get('passValidity').value()
       };
       this._passService.updateStatus(json).subscribe((data) => {
         this.isRequestInProcess = false;
