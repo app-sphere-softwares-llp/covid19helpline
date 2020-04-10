@@ -90,6 +90,16 @@ export class PassUtilityService {
         BadRequest(await this.i18n.translate('Please check other person\'s details'));
       }
     }
+
+    // pass validity
+    if (!model.passValidity) {
+      BadRequest('Please select pass validity');
+    } else {
+      // minimum and maximum pass validity
+      if (model.passValidity < 2 || model.passValidity > 12) {
+        BadRequest('Invalid pass validity, Pass should be valid for Minimum 2 hours and Maximum 12 hours');
+      }
+    }
   }
 
   /**
