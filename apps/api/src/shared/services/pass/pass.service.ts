@@ -219,9 +219,12 @@ export class PassService extends BaseService<PassModel & Document>
         session
       );
 
+      const passLink = `${environment.API_URL}public/generate-pdf?id=${passDetails.id}`;
+
       const smsTemplate = PassStatusEnum.approved
-        ? `Your Pass has been Approved
-         Please Carry your Aadhaar Card`
+        ? `Your Pass has been Approved, Please download it from here
+            ${passLink}
+            Note :- Please Carry your Aadhaar Card`
         : `Your Pass has been Rejected, Please try again`;
 
       // send sms that for status is updated
