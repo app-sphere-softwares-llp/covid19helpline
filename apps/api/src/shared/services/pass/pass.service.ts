@@ -21,7 +21,11 @@ import {BadRequest, generateRandomCode, generateUtcDate, resolvePathHelper, toOb
 import {I18nRequestScopeService} from 'nestjs-i18n';
 import {PassUtilityService} from './pass.utility.service';
 import {SmsService} from '../sms/sms.service';
-import {DEFAULT_SMS_SENDING_OPTIONS, DEFAULT_TEMPLATE_PATH} from '../../helpers/defaultValueConstant';
+import {
+  DEFAULT_PASS_VALIDITY,
+  DEFAULT_SMS_SENDING_OPTIONS,
+  DEFAULT_TEMPLATE_PATH
+} from '../../helpers/defaultValueConstant';
 import {UsersService} from '../users/users.service';
 import {environment} from "../../../environments/environment";
 
@@ -137,6 +141,7 @@ export class PassService extends BaseService<PassModel & Document>
         pass.aadhaarNo = model.aadhaarNo;
         pass.vehicleNo = model.vehicleNo;
         pass.passDate = model.passDate;
+        pass.passValidity = model.passValidity || DEFAULT_PASS_VALIDITY;
         pass.address = model.address;
         pass.reasonId = model.reasonId;
         pass.reasonDetails = model.reasonDetails;
@@ -203,7 +208,8 @@ export class PassService extends BaseService<PassModel & Document>
       const updateStatusDoc = {
         status: model.status,
         updatedAt: generateUtcDate(),
-        updatedById: this._generalService.userId
+        updatedById: this._generalService.userId,
+        passValidity: model.passValidity
       };
 
       // update pass by id

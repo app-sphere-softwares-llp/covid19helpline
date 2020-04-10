@@ -35,3 +35,6 @@ export const DEFAULT_SMS_SENDING_OPTIONS = {
   sender: 'SOCKET',
   route: 4
 };
+
+// default pass validity in hours
+export const DEFAULT_PASS_VALIDITY = 2;

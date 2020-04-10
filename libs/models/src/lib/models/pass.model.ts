@@ -19,6 +19,7 @@ export class PassModel extends BaseDbModel {
   address: string;
   mobileNo: string;
   passDate: string;
+  passValidity: number;
   vehicleNo?: string;
   reasonId: string;
   reason?: any;
@@ -33,7 +34,7 @@ export class PassModel extends BaseDbModel {
     updatedAt?: Date;
     updatedById?: string;
     updateBy?: User;
-  }
+  };
   qrCode?: string;
 }
 
@@ -45,6 +46,7 @@ export class OtherPersonDetails {
 export class UpdatePassStatusRequestModel {
   id: string;
   status: PassStatusEnum;
+  passValidity: number;
 }
 
 export class GetAllPassesRequestModel extends BaseRequestModel {
