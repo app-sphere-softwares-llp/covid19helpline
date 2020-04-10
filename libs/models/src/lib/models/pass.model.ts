@@ -4,7 +4,6 @@ import {AttachmentModel} from './attachment.model';
 import {StateModel} from "./state.model";
 import {PassStatusEnum} from "../enums";
 import {User} from "./user.model";
-import {MongoosePaginateQuery} from "../queryOptions";
 import {BaseRequestModel} from "../baseRequest.model";
 
 export class PassModel extends BaseDbModel {
@@ -35,6 +34,7 @@ export class PassModel extends BaseDbModel {
     updatedById?: string;
     updateBy?: User;
   }
+  qrCode?: string;
 }
 
 export class OtherPersonDetails {

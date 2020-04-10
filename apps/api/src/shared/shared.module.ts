@@ -73,7 +73,7 @@ const providers = [
     ...providers,
     {
       provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor
+      useClass: ResponseInterceptor,
     },
     {
       provide: APP_FILTER,

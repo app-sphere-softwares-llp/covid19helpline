@@ -1,0 +1,168 @@
+<div style="font-family:'Arial'; border:1px solid #ccc; width:500px; border-radius:4px;">
+    <table width="100%" border="0" style="font-size:13px; border-collapse: collapse;">
+        <tr>
+            <td align="center" style="padding:10px;">
+                <img src="http://assign.work/assets/images/logo/logo.svg" alt="Logo" width="150px"/>
+                <div style="margin-top:20px; font-weight:bold; font-size:16px;">
+                    <small style="color:#444444;">Permisssion by</small>
+                    <br>NOIDA POLICE
+                </div>
+            </td>
+            <td colspan="2" align="right" style="padding:10px;">
+                <div style="display:table-cell; vertical-align:middle; text-align:center; border:1px solid #ddd; height:150px; width:150px; font-size:16px;">
+                    <img src=<%= qrCode %>/>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="border-top:1px solid #f3f3f3; padding-top:10px;" align="center" colspan="2">कोरोना वायरस
+                (COVID-19) महामारी से बचाव हेतु
+            </td>
+        </tr>
+
+
+        <tr>
+            <td align="center" colspan="2">
+                <div style="margin-top:10px; font-weight:bold; margin-bottom:5px; color: #3a9a4f; background:#f3f3f3; padding:10px 0px; font-size:18px;">
+                    PASS
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <td valign="top" style="max-width:170px;padding:10px; border-right:1px solid #f3f3f3;">
+                <div style="height:180px; width:150px;
+                border:1px solid #ddd; border-radius:4px;display:table-cell; vertical-align:middle; text-align:center;">
+                    <img src=<%= picUrl %>>
+                </div>
+
+                <div style="font-size:11px; color:#444; margin-top:20px;">
+                    <strong class="m-b-5">Note :</strong>
+
+                    <ul>
+                        <li>
+                            Please enter the complete details about your destination.
+                        </li>
+                        <li>
+                            Any <strong>false</strong> information will lead to cancellation of
+                            Pass.
+                        </li>
+                        <li>
+                            Please carry your Aadhaar card while travelling.
+                        </li>
+                    </ul>
+
+
+                    <strong>ध्यान दें :</strong>
+
+                    <ul>
+                        <li>
+                            कृपया अपने गंतव्य के बारे में पूरा विवरण दर्ज करें।
+                        </li>
+                        <li>
+                            कोई भी <strong>गलत</strong> जानकारी पास को रद्द कर देगी।
+                        </li>
+                        <li>
+                            कृपया यात्रा करते समय अपना आधार कार्ड साथ रखें।
+                        </li>
+                    </ul>
+
+                </div>
+
+            </td>
+            <td valign="top" style="padding:10px;">
+
+                <table width="100%" style="font-size:12px;">
+
+
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Name:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= firstName %> <%= lastName %></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Address:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= address %></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Mobile:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= mobileNo %></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Aadhar:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= aadhaarNo %></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Pass Date:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= passDate %></td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Vehical Number:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= vehicleNo %></td>
+                    </tr>
+
+
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px; font-weight:bold;">Reason:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">
+                            <strong><%= reason.name %></strong>
+                            <p><%= reasonDetails %></p></td>
+                    </tr>
+
+
+                    <!-- Destination Address -->
+                    <tr>
+                        <td colspan="2" style="border-bottom:1px solid #f3f3f3; text-align:center;vertical-align:top;
+						padding-top:15px; font-weight:bold;">
+                            Destination Area Address (गंतव्य क्षेत्र का पता)
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">Address:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= destinationAddress %></td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;">PIN:</td>
+                        <td style="vertical-align:top; padding:5px 0px;"><%= destinationPinCode %></td>
+                    </tr>
+
+
+                    <!-- other traveller -->
+                    <tr>
+                        <td colspan="2" style="border-bottom:1px solid #f3f3f3; text-align:center;vertical-align:top;
+						padding-top:15px; font-weight:bold;">
+                            Person who is Travelling with You
+                            <br>आपके साथ यात्रा करने वाले व्यक्ति
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">&nbsp;&nbsp;NAME</td>
+                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">AADHAR</td>
+                    </tr>
+
+                    <% for(let i = 0; i < otherPersonDetails.length; i++) { %>
+
+                        <tr>
+                            <td style="vertical-align:top; padding:5px 0px;"><%= i + 1 %>.&nbsp;<%=  otherPersonDetails[i].fullName  %></td>
+                            <td style="vertical-align:top; padding:5px 0px;"><%= otherPersonDetails[i].aadhaarNo %></td>
+                        </tr>
+
+                    <% } %>
+
+                </table>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:13px;">धारक के हस्ताक्षार</td>
+            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:13px; text-align:right">जारी कर्ता के
+                हस्ताक्षर
+            </td>
+        </tr>
+        <tr>
+    </table>
+</div>

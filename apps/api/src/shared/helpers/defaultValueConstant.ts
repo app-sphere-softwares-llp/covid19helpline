@@ -27,11 +27,8 @@ export const MAX_TRANSACTION_RETRY_TIMEOUT = 120000;
 // default email address for sending email
 export const DEFAULT_EMAIL_ADDRESS = 'support@assign.work';
 
-// default path for storing email templates
-export const DEFAULT_EMAIL_TEMPLATE_PATH = 'shared/email-templates/';
-
-// default reset password code expiry in seconds
-export const DEFAULT_RESET_PASSWORD_CODE_EXPIRY = 10800;
+// default path for storing templates
+export const DEFAULT_TEMPLATE_PATH = 'shared/templates/';
 
 // default sms sending options
 export const DEFAULT_SMS_SENDING_OPTIONS = {

@@ -10,6 +10,7 @@ import {StateModule} from "../state/state.module";
 import {ReasonModule} from "../reason/reason.module";
 import {PassModule} from "../pass/pass.module";
 import { AttachmentModule } from '../attachment/attachment.module';
+import {PublicModule} from "../public/public.module";
 
 // set db connection string on basis of environment
 const dbConnectionString = environment.production ? process.env.DB_CONNECTION_STRING_PROD : process.env.DB_CONNECTION_STRING_DEV;
@@ -28,7 +29,8 @@ const dbConnectionString = environment.production ? process.env.DB_CONNECTION_ST
     CityModule,
     ReasonModule,
     PassModule,
-    AttachmentModule
+    AttachmentModule,
+    PublicModule
   ],
 })
 export class AppModule {

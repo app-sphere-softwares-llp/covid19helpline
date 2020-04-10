@@ -160,7 +160,8 @@
             "assets": [
               "apps/api/src/assets",
               "apps/api/src/.env",
-              "apps/api/src/i18n"
+              "apps/api/src/i18n",
+              "apps/api/src/shared/templates"
             ]
           },
           "configurations": {

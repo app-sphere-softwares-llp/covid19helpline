@@ -4,6 +4,8 @@ import {InjectModel} from '@nestjs/mongoose';
 import {ModuleRef} from '@nestjs/core';
 import {Injectable, OnModuleInit} from '@nestjs/common';
 import * as pdf from 'html-pdf';
+import * as QRCode from 'qrcode';
+import * as ejs from 'ejs';
 import {GeneralService} from '../general.service';
 import {
   DbCollection,
@@ -19,8 +21,9 @@ import {BadRequest, generateRandomCode, generateUtcDate, resolvePathHelper, toOb
 import {I18nRequestScopeService} from 'nestjs-i18n';
 import {PassUtilityService} from './pass.utility.service';
 import {SmsService} from '../sms/sms.service';
-import {DEFAULT_SMS_SENDING_OPTIONS} from '../../helpers/defaultValueConstant';
+import {DEFAULT_SMS_SENDING_OPTIONS, DEFAULT_TEMPLATE_PATH} from '../../helpers/defaultValueConstant';
 import {UsersService} from '../users/users.service';
+import {environment} from "../../../environments/environment";
 
 /**
  * common population constant
@@ -495,14 +498,27 @@ export class PassService extends BaseService<PassModel & Document>
    */
   async generatePdf(id: string) {
     return this.withRetrySession(async (session: ClientSession) => {
+
       // get pass details
-      const passDetails = await this.getDetails(id, true);
-      const html = `<div>
-        Vishal P Isharani
-      </div>`;
-      const filePath = resolvePathHelper('./pdfs');
+      const passDetails: PassModel = await this.getDetails(id, true);
+
+      // get template path
+      const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}pass.template.ejs`);
+      const passLink = `${environment.API_URL}public/check-pass?id=${passDetails.id.toString()}`;
+
+      // generate qr-code
+      passDetails.qrCode = await QRCode.toDataURL(passLink);
+
+      // get html template
+      const html = await ejs.renderFile(templatePath, passDetails);
+
+      // get file path and file name
+      const pdfFilePath = resolvePathHelper('./pdfs');
+      const pdfFileName = `${pdfFilePath}/${passDetails.id}_${generateRandomCode(2)}.pdf`;
+
+      // create pdf and send it
       return new Promise((resolve, reject) => {
-        pdf.create(html).toFile(`${filePath}/${passDetails.id}_${generateRandomCode(2)}.pdf`,(err, res) => {
+        pdf.create(html).toFile(pdfFileName, (err, res) => {
           if (err) {
             reject(err);
           }
@@ -510,6 +526,41 @@ export class PassService extends BaseService<PassModel & Document>
           resolve(res.filename);
         });
       });
+    });
+  }
+
+  /**
+   * checks if pass is approved or not
+   * @param id
+   */
+  async checkPass(id: string) {
+    return this.withRetrySession(async (session: ClientSession) => {
+      const passDetails = await this.getDetails(id);
+      let baseMsg = 'This pass is';
+      let responseMsg = '';
+
+      // set response msg from pass status
+      switch (passDetails.passStatus.status) {
+        case PassStatusEnum.approved:
+          responseMsg = `${baseMsg} Approved`;
+          break;
+
+        case PassStatusEnum.pending:
+          responseMsg = `${baseMsg} Not Approved Yet`;
+          break;
+
+        case PassStatusEnum.rejected:
+          responseMsg = `${baseMsg} Rejected`;
+          break;
+
+        default:
+          responseMsg = `${baseMsg} Not Yet Approved`;
+          break;
+      }
+
+      // get template path
+      const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);
+      return await ejs.renderFile(templatePath, {msg: responseMsg})
     });
   }
 }

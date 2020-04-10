@@ -85,6 +85,7 @@
     "ngx-take-until-destroy": "^5.4.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
+    "qrcode": "^1.4.4",
     "reflect-metadata": "^0.1.12",
     "request": "^2.88.0",
     "rxjs": "~6.4.0",
