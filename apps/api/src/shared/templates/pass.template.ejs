@@ -4,8 +4,13 @@
             <td align="center" style="padding:10px;">
                 <img src="http://assign.work/assets/images/logo/logo.svg" alt="Logo" width="150px"/>
                 <div style="margin-top:20px; font-weight:bold; font-size:16px;">
-                    <small style="color:#444444;">Permisssion by</small>
-                    <br>NOIDA POLICE
+
+                    <small style="color:#444444;">Permission by</small>
+                    <small><%= city.name %>, <%= state.name %>, Administration</small>
+
+                    <small style="color:#444444;">द्वारा अनुमति</small>
+                    <small><%= city.name %>, <%= state.name %>, प्रशासन</small>
+
                 </div>
             </td>
             <td colspan="2" align="right" style="padding:10px;">
@@ -25,7 +30,7 @@
         <tr>
             <td align="center" colspan="2">
                 <div style="margin-top:10px; font-weight:bold; margin-bottom:5px; color: #3a9a4f; background:#f3f3f3; padding:10px 0px; font-size:18px;">
-                    PASS
+                    PASS (पास)
                 </div>
             </td>
         </tr>
@@ -77,29 +82,29 @@
 
 
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Name:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Name (नाम):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= firstName %> <%= lastName %></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Address:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Address (पता):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= address %></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Mobile:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Mobile (मोबाइल):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= mobileNo %></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Aadhaar:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Aadhaar (आधार):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= aadhaarNo %></td>
                     </tr>
 
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Pass Date:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Pass Date (पास की तारीख):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= passDate %></td>
                     </tr>
 
                     <tr>
-                      <td style="vertical-align:top; padding:5px 0px;">Valid For:</td>
+                      <td style="vertical-align:top; padding:5px 0px;">Valid For (के लिए मान्य):</td>
                       <td style="vertical-align:top; padding:5px 0px;"><%= passValidity %></td>
                     </tr>
 
@@ -110,7 +115,7 @@
 
 
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px; font-weight:bold;">Reason:</td>
+                        <td style="vertical-align:top; padding:5px 0px; font-weight:bold;">Reason (कारण):</td>
                         <td style="vertical-align:top; padding:5px 0px;">
                             <strong><%= reason.name %></strong>
                             <p><%= reasonDetails %></p></td>
@@ -126,11 +131,11 @@
                     </tr>
 
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">Address:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">Address (पता):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= destinationAddress %></td>
                     </tr>
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;">PIN:</td>
+                        <td style="vertical-align:top; padding:5px 0px;">PIN Code (पिन कोड):</td>
                         <td style="vertical-align:top; padding:5px 0px;"><%= destinationPinCode %></td>
                     </tr>
 
@@ -145,8 +150,8 @@
                     </tr>
 
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">&nbsp;&nbsp;NAME</td>
-                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">AADHAR</td>
+                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">&nbsp;&nbsp;NAME (नाम)</td>
+                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">AADHAAR (आधार)</td>
                     </tr>
 
                     <% for(let i = 0; i < otherPersonDetails.length; i++) { %>
@@ -164,9 +169,12 @@
         </tr>
 
         <tr>
-            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:13px;">धारक के हस्ताक्षार</td>
-            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:13px; text-align:right">जारी कर्ता के
-                हस्ताक्षर
+            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:12px;">
+              <div>Holder's signature</div>
+              <div>धारक के हस्ताक्षार</div></td>
+            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:12px; text-align:right">
+              <div>This computerized pass, Signature not required.</div>
+              <div>यह कम्प्यूटरीकृत पास, हस्ताक्षर की आवश्यकता नहीं </div>
             </td>
         </tr>
         <tr>

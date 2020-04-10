@@ -11,8 +11,10 @@
       </div>
 
       <div *ngIf="requestId && !showPassNotFoundView && currentUser.memberType!=='normal'" class="inline-block m-r-5">
-        <button nz-button type="button" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
-        <button nz-button type="button" nzType="danger" (click)="rejectRequest()">Reject</button>
+
+        <button nz-button type="button" nzType="primary" class="m-r-5" *ngIf="passStatus!=='approved'" (click)="approveRequest()">Approve</button>
+
+        <button nz-button type="button" nzType="danger" *ngIf="passStatus==='pending'" (click)="rejectRequest()">Reject</button>
       </div>
 
       <button nz-button type="button" nzType="link" routerLink="../../">Back</button>
@@ -229,14 +231,15 @@
             <div class="col-md-12">
               <div class="row">
 
-                <div class="col-md-3">
+                <div class="col-md-4">
                   <nz-form-item>
                     <nz-form-label
                     >Pass Date (पास की तारीख)<span class="text-danger">*</span
                     ></nz-form-label>
 
                     <nz-form-control nzErrorTip="Please enter Pass Date!">
-                      <nz-date-picker [nzSize]="'default'" formControlName="passDate" placeholder="eg : MM/DD/YYYY"
+                      <nz-date-picker
+                        nzShowTime [nzSize]="'default'" formControlName="passDate" placeholder="eg : MM-DD-YYYY HH:mm:ss"
                                       [nzFormat]="dateFormat"></nz-date-picker>
                     </nz-form-control>
 
@@ -271,7 +274,7 @@
                 </div>
 
 
-                <div class="col-md-6">
+                <div class="col-md-5">
                   <nz-form-item>
                     <nz-form-label>Full Address (पूरा पता)<span class="text-danger">*</span></nz-form-label>
                     <nz-form-control nzErrorTip="Please enter your Full Address!">

@@ -34,7 +34,7 @@ export class NewPassComponent implements OnInit {
 
   public applicationForm: FormGroup;
   public requestId: string;
-  public dateFormat = 'MM/dd/yyyy';
+  public dateFormat = 'MM-dd-yyyy HH:mm:ss';
 
   // upload profile pic
   public loadingProfilePic = false;
@@ -70,6 +70,7 @@ export class NewPassComponent implements OnInit {
   public isSearchingReason: boolean;
 
   public showAddPersonBtn: boolean = true;
+  public passStatus:string;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -264,6 +265,7 @@ export class NewPassComponent implements OnInit {
       this.applicationForm.get('reasonId').patchValue(data.data.reason.id);
 
 
+      this.passStatus = data.data.passStatus.status;
       this.aadhaarUrl = data.data.aadharPicUrl;
       this.avatarUrl = data.data.picUrl;
 
@@ -501,11 +503,12 @@ export class NewPassComponent implements OnInit {
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.rejected,
-        passValidity: this.applicationForm.get('passValidity').value()
+        passValidity: this.applicationForm.get('passValidity').value
       };
 
       this._passService.updateStatus(json).subscribe((data) => {
         this.isRequestInProcess = false;
+        this.passStatus = PassStatusEnum.rejected;
       });
 
     } catch (e) {
@@ -522,10 +525,11 @@ export class NewPassComponent implements OnInit {
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.approved,
-        passValidity: this.applicationForm.get('passValidity').value()
+        passValidity: this.applicationForm.get('passValidity').value
       };
       this._passService.updateStatus(json).subscribe((data) => {
         this.isRequestInProcess = false;
+        this.passStatus = PassStatusEnum.approved;
       });
 
     } catch (e) {
