@@ -70,7 +70,7 @@ export class NewPassComponent implements OnInit {
   public isSearchingReason: boolean;
 
   public showAddPersonBtn: boolean = true;
-  public passStatus:string;
+  public passStatus: string;
 
   public modelChangedState = new Subject<string>();
   public modelChangedCity = new Subject<string>();
@@ -91,7 +91,7 @@ export class NewPassComponent implements OnInit {
   ngOnInit() {
 
 
-    this.currentUser =  this._generalService.user;
+    this.currentUser = this._generalService.user;
 
 
     // initializing form
@@ -250,6 +250,12 @@ export class NewPassComponent implements OnInit {
 
       if (!data.data.attachmentDetails) {
         data.data.attachmentDetails = [];
+      }
+
+      if (data.data.otherPersonDetails) {
+        data.data.otherPersonDetails.forEach(person => {
+          this.addOtherPersonDetails();
+        });
       }
 
       this.applicationForm.patchValue(data.data);
@@ -435,11 +441,11 @@ export class NewPassComponent implements OnInit {
 
   }
 
-  public addOtherPersonDetails(group?: FormGroup) {
+  public addOtherPersonDetails() {
     const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
     otherDetailsForm.controls.push(this.initOtherPersonDetails());
 
-    this.showAddPersonBtn = otherDetailsForm.controls.length > 0 ? false : true;
+    this.showAddPersonBtn = otherDetailsForm.controls.length <= 0;
 
   }
 
@@ -447,7 +453,7 @@ export class NewPassComponent implements OnInit {
     const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
     otherDetailsForm.removeAt(index);
 
-    this.showAddPersonBtn = otherDetailsForm.controls.length > 0 ? false : true;
+    this.showAddPersonBtn = otherDetailsForm.controls.length <= 0;
 
   }
 
