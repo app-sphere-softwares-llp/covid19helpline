@@ -28,6 +28,7 @@ import {
 } from '../../helpers/defaultValueConstant';
 import {UsersService} from '../users/users.service';
 import {environment} from "../../../environments/environment";
+import {moment} from "ngx-bootstrap/chronos/test/chain";
 
 /**
  * common population constant
@@ -493,6 +494,7 @@ export class PassService extends BaseService<PassModel & Document>
       } else {
         passDetails.id = passDetails._id;
         passDetails.attachmentDetails = passDetails.attachmentDetails || [];
+        passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
       }
 
       return passDetails;
