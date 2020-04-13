@@ -494,7 +494,6 @@ export class PassService extends BaseService<PassModel & Document>
       } else {
         passDetails.id = passDetails._id;
         passDetails.attachmentDetails = passDetails.attachmentDetails || [];
-        passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
       }
 
       return passDetails;
@@ -512,6 +511,8 @@ export class PassService extends BaseService<PassModel & Document>
 
       // get pass details
       const passDetails: PassModel = await this.getDetails(id, true);
+
+      passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
 
       // get template path
       const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}pass.template.ejs`);
@@ -548,6 +549,7 @@ export class PassService extends BaseService<PassModel & Document>
     return this.withRetrySession(async (session: ClientSession) => {
       const passDetails = await this.getDetails(id, true);
 
+      passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
 
       // get template path
       const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);

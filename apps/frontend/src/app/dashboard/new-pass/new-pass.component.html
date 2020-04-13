@@ -6,7 +6,7 @@
 
     <ng-template #extraTemplate>
       <div *ngIf="!requestId && !showPassNotFoundView" class="inline-block m-r-5">
-        <button nz-button type="submit" nzType="primary" [disabled]="applicationForm.invalid" class="m-r-5">Submit</button>
+        <button nz-button type="button" nzType="primary" (click)="saveRequest()" [disabled]="applicationForm.invalid" class="m-r-5">Submit</button>
         <button nz-button type="reset" nzType="default" (click)="initForm()" class="m-r-5">Cancel</button>
       </div>
 
@@ -543,15 +543,16 @@
 
       <section class="row m-t-25">
 
-        <div *ngIf="!requestId">
+        <div *ngIf="!requestId && !showPassNotFoundView">
           <button nz-button type="submit" nzType="primary" class="m-r-5" [disabled]="applicationForm.invalid">Submit
           </button>
           <button nz-button type="reset" nzType="default" (click)="initForm()">Cancel</button>
         </div>
 
-        <div *ngIf="requestId">
-          <button nz-button type="button" nzType="primary" class="m-r-5" (click)="approveRequest()">Approve</button>
-          <button nz-button type="button" nzType="danger" (click)="rejectRequest()">Reject</button>
+        <div *ngIf="requestId && !showPassNotFoundView && currentUser.memberType!=='normal'" class="inline-block m-r-5">
+          <button nz-button type="button" nzType="primary" *ngIf="passStatus!=='approved'" class="m-r-5" (click)="approveRequest()">Approve</button>
+
+          <button nz-button type="button" nzType="danger" *ngIf="passStatus==='pending'" (click)="rejectRequest()">Reject</button>
         </div>
 
       </section>
