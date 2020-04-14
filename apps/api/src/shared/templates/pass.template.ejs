@@ -1,4 +1,14 @@
-<div style="font-family:'Arial'; border:1px solid #ccc; width:570px; border-radius:4px;">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: 'Noto Sans', sans-serif;
+    }
+  </style>
+</head>
+<body>
+<div style="border:1px solid #ccc; width:570px; border-radius:4px;">
 
   <table width="100%" border="0" >
     <tr>
@@ -124,26 +134,39 @@
                         </td>
                     </tr>
 
+                  <% if(otherPersonDetails && otherPersonDetails.length>0) {  %>
                     <tr>
-                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">&nbsp;&nbsp;NAME (नाम)</td>
-                        <td style="vertical-align:top; padding:5px 0px;font-weight:bold;">AADHAAR (आधार)</td>
+                        <td style="vertical-align:top; padding:1px 0px;font-weight:bold;">&nbsp;&nbsp;NAME (नाम)</td>
+                        <td style="vertical-align:top; padding:1px 0px;font-weight:bold;">AADHAAR (आधार)</td>
                     </tr>
 
-                    <% for(let i = 0; i < otherPersonDetails.length; i++) { %>
 
-                        <tr>
-                            <td style="vertical-align:top; padding:5px 0px;"><%= i + 1 %>.&nbsp;<%=  otherPersonDetails[i].fullName  %></td>
-                            <td style="vertical-align:top; padding:5px 0px;"><%= otherPersonDetails[i].aadhaarNo %></td>
-                        </tr>
 
-                    <% } %>
+                      <% for(let i = 0; i < otherPersonDetails.length; i++) { %>
+
+                          <tr>
+                              <td style="vertical-align:top; padding:5px 0px;"><%= i + 1 %>.&nbsp;<%=  otherPersonDetails[i].fullName  %></td>
+                              <td style="vertical-align:top; padding:5px 0px;"><%= otherPersonDetails[i].aadhaarNo %></td>
+                          </tr>
+
+                      <% } %> <!-- for loop close -->
+
+
+                  <%} else { %>
+
+                    <tr>
+                      <td colspan="2" style="vertical-align:top; padding:3px 15px; color:#444444;">No Available (उपलब्ध नही)</td>
+                    </tr>
+
+                  <% } %>
+                  <!-- if condition close -->
 
                 </table>
 
             </td>
 
 
-            <td valign="top" style="max-width:150px; padding-left:10px; border-left:1px solid #f3f3f3;">
+            <td valign="top" style="width:150px; padding-left:10px; border-left:1px solid #f3f3f3;">
 
               <div style="font-size:10px; color:#444; margin-top:10px;">
                 <strong class="m-b-5">Note :</strong>
@@ -185,13 +208,16 @@
 
         <tr>
             <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:10px;">
-              <div>Holder's signature</div>
-              <div>धारक के हस्ताक्षार</div></td>
-            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:10px; text-align:right">
               <div>This computerized pass, Signature not required.</div>
               <div>यह कम्प्यूटरीकृत पास, हस्ताक्षर की आवश्यकता नहीं </div>
+            </td>
+            <td style="border-top:1px solid #f3f3f3;padding:15px 10px; font-size:10px; text-align:right">
+              <div>Holder's signature</div>
+              <div>धारक के हस्ताक्षार</div>
             </td>
         </tr>
         <tr>
     </table>
 </div>
+
+</body>
