@@ -248,8 +248,10 @@ export class NewPassComponent implements OnInit {
         data.data.otherPersonDetails = [];
       }
 
-      if (!data.data.attachmentDetails) {
-        data.data.attachmentDetails = [];
+      if (!data.data.attachmentsDetails) {
+        data.data.attachmentsDetails = [];
+      } else {
+        this.uploadedImages = data.data.attachmentsDetails;
       }
 
       if (data.data.otherPersonDetails) {
@@ -270,7 +272,7 @@ export class NewPassComponent implements OnInit {
       this.applicationForm.get('reason').patchValue(data.data.reason.name);
       this.applicationForm.get('reasonId').patchValue(data.data.reason.id);
 
-      this.uploadedImages = data.data.attachmentDetails;
+
 
       this.passStatus = data.data.passStatus.status;
       this.aadhaarUrl = data.data.aadharPicUrl;

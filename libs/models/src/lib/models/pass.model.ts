@@ -27,7 +27,7 @@ export class PassModel extends BaseDbModel {
   destinationPinCode: string;
   destinationAddress: string;
   attachments: string[];
-  attachmentDetails?: AttachmentModel[];
+  attachmentsDetails?: AttachmentModel[];
   otherPersonDetails: OtherPersonDetails[];
   passStatus: {
     status: PassStatusEnum;
