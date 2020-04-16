@@ -92,12 +92,12 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
 
   async deleteAttachment(id: string): Promise<string> {
     return await this.withRetrySession(async (session) => {
-      const attachmentDetails = await this._attachmentModel.findById(id).lean().exec();
+      const attachmentsDetails = await this._attachmentModel.findById(id).lean().exec();
 
-      if (!attachmentDetails) {
+      if (!attachmentsDetails) {
         throw new NotFoundException('Attachment not found!');
       }
-      const filePath = attachmentDetails.url.split('image.assign.work/');
+      const filePath = attachmentsDetails.url.split('image.assign.work/');
       await this.s3Client.delete(filePath[1]);
       await this.delete(id, session);
       return 'Attachment Deleted Successfully';
