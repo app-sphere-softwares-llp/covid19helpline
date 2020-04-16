@@ -550,9 +550,10 @@ export class PassService extends BaseService<PassModel & Document>
       const passDetails = await this.getDetails(id, true);
 
       passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
-
+      passDetails.qrCode = null;
       // get template path
-      const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);
+      //const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);
+      const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}pass.template.ejs`);
       return await ejs.renderFile(templatePath, passDetails)
     });
   }

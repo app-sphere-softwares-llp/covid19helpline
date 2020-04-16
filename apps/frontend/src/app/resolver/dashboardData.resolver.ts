@@ -27,6 +27,8 @@ export class DashboardDataResolver implements Resolve<any> {
           return EMPTY;
         })
       );
+    } else {
+      this.router.navigate(['login']);
     }
   }
 }

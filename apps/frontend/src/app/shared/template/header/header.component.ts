@@ -3,6 +3,7 @@ import { ThemeConstantService } from '../../services/theme-constant.service';
 import { User } from '@covid19-helpline/models';
 import { Router } from '@angular/router';
 import { GeneralService } from '../../services/general.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
     selector: 'app-header',
@@ -18,7 +19,8 @@ export class HeaderComponent{
     public currentUser: User;
 
     constructor(private router: Router, private themeService: ThemeConstantService,
-                private _generalService: GeneralService) {}
+                private _generalService: GeneralService,
+                private _authService: AuthService) {}
 
     ngOnInit(): void {
         this.themeService.isMenuFoldedChanges.subscribe(isFolded => this.isFolded = isFolded);
@@ -38,9 +40,7 @@ export class HeaderComponent{
         this.themeService.toggleFold(this.isFolded);
     }
 
-  logOut() {
-
-      this.router.navigate(['login']);
-
-  }
+    logOut() {
+        this._authService.logOut();
+    }
 }
