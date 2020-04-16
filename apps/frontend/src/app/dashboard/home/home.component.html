@@ -59,7 +59,7 @@
 
       <ng-template #titleTemplate2>
         <div class="tab-title" (click)="currentTab('pending')">
-          New Request
+          Pending Request
         </div>
       </ng-template>
 
@@ -88,7 +88,7 @@
               <th>First Name</th>
               <th>Last Name</th>
               <th>Destination Address</th>
-              <th>Pass Date</th>
+              <th>Pass Date & Time</th>
               <th>Valid For</th>
               <th>Action</th>
             </tr>
@@ -99,7 +99,7 @@
               <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
               <td data-label="Last Name">{{data.lastName}}</td>
               <td data-label="Destination Address">{{data.destinationAddress}}</td>
-              <td data-label="Pass Date">{{data.passDate | date : 'fullDate'}}</td>
+              <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
               <td data-label="Valid For">{{data.passValidity}} Hours</td>
               <td data-label="Action">
                 <a routerLink="./pass-request/{{data.id}}">View Request</a>
@@ -146,7 +146,7 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Destination Address</th>
-            <th>Pass Date</th>
+            <th>Pass Date & Time</th>
             <th>Valid For</th>
             <th>Action</th>
           </tr>
@@ -157,7 +157,7 @@
             <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
             <td data-label="Last Name">{{data.lastName}}</td>
             <td data-label="Destination Address">{{data.destinationAddress}}</td>
-            <td data-label="Pass Date">{{data.passDate | date : 'fullDate'}}</td>
+            <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
             <td data-label="Valid For">{{data.passValidity}} Hours</td>
             <td data-label="Action">
               <a routerLink="./pass-request/{{data.id}}">View Request</a>
@@ -201,7 +201,7 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Destination Address</th>
-            <th>Pass Date</th>
+            <th>Pass Date & Time</th>
             <th>Valid For</th>
             <th>Action</th>
           </tr>
@@ -212,7 +212,7 @@
             <td data-label="First Name"><a routerLink="./pass-request/{{data.id}}">{{data.firstName}}</a></td>
             <td data-label="Last Name">{{data.lastName}}</td>
             <td data-label="Destination Address">{{data.destinationAddress}}</td>
-            <td data-label="Pass Date">{{data.passDate | date : 'fullDate'}}</td>
+            <td data-label="Pass Date & Time">{{data.passDate | date : 'medium'}}</td>
             <td data-label="Valid For">{{data.passValidity}} Hours</td>
             <td data-label="Action">
               <a routerLink="./pass-request/{{data.id}}">View Request</a>

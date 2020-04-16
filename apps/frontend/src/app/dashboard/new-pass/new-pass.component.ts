@@ -270,6 +270,7 @@ export class NewPassComponent implements OnInit {
       this.applicationForm.get('reason').patchValue(data.data.reason.name);
       this.applicationForm.get('reasonId').patchValue(data.data.reason.id);
 
+      this.uploadedImages = data.data.attachmentDetails;
 
       this.passStatus = data.data.passStatus.status;
       this.aadhaarUrl = data.data.aadharPicUrl;
