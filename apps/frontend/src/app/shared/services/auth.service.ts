@@ -3,7 +3,6 @@ import { AuthState, AuthStore } from '../../store/auth/auth.store';
 import {
   BaseResponseModel,
   User,
-  UserLoginProviderEnum,
   UserLoginSignUpSuccessResponse,
   VerifyOtpRequestModel
 } from '@covid19-helpline/models';
@@ -14,16 +13,13 @@ import { catchError, map } from 'rxjs/operators';
 import { GeneralService } from './general.service';
 import { Router } from '@angular/router';
 import { NzNotificationService } from 'ng-zorro-antd';
-import { of } from 'rxjs';
 import { UserStore } from '../../store/user/user.store';
-import { AuthService as SocialAuthService } from 'angularx-social-login';
-import { UserUrls } from './user/user.url';
 
 @Injectable()
 export class AuthService extends BaseService<AuthStore, AuthState> {
 
   constructor(protected authStore: AuthStore, private _http: HttpWrapperService, private _generalService: GeneralService, private router: Router,
-              protected notification: NzNotificationService, protected userStore: UserStore, private socialAuthService: SocialAuthService) {
+              protected notification: NzNotificationService, protected userStore: UserStore) {
     super(authStore, notification);
     this.notification.config({
       nzPlacement: 'bottomRight'
@@ -133,18 +129,7 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
 
 
   logOut() {
-    // if login from social user then please logout from social platforms
-    if (this._generalService.user && this._generalService.user.lastLoginProvider === UserLoginProviderEnum.google) {
-      // sign out from google then do normal logout process
-      this.socialAuthService.signOut(true).then(() => {
-        this.doLogout();
-      }).catch(err => {
-        console.log(err);
-      });
-    } else {
-      // normal login
       this.doLogout();
-    }
   }
 
   private doLogout() {
@@ -158,31 +143,4 @@ export class AuthService extends BaseService<AuthStore, AuthState> {
     this.router.navigate(['/login']);
   }
 
-  googleSignIn(token: string, invitationId?: string) {
-    this.updateState({ token: null, isLoginInProcess: true, isLoginSuccess: false });
-    return this._http.post(AuthUrls.googleSignIn, { token, invitationId }).pipe(
-      map((res: BaseResponseModel<UserLoginSignUpSuccessResponse>) => {
-        this.updateState({
-          isLoginSuccess: true,
-          isLoginInProcess: false,
-          token: res.data.access_token
-        });
-
-        this._generalService.token = res.data.access_token;
-        this.router.navigate(['dashboard']);
-        return res;
-      }),
-      catchError(err => {
-        this.updateState({
-          isLoginSuccess: false,
-          isLoginInProcess: false,
-          token: null
-        });
-
-
-        this._generalService.token = null;
-        return this.handleError(err);
-      })
-    );
-  }
 }

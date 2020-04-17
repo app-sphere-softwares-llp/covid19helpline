@@ -4,10 +4,6 @@ import { AuthService } from '../shared/services/auth.service';
 import { AuthQuery } from '../queries/auth/auth.query';
 import { Router } from '@angular/router';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import {
-  AuthService as SocialAuthService,
-  GoogleLoginProvider
-} from 'angularx-social-login';
 import { NzNotificationService } from 'ng-zorro-antd';
 import { User } from '@covid19-helpline/models';
 
@@ -33,8 +29,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _authService: AuthService,
     private _authQuery: AuthQuery,
     private router: Router,
-    protected notification: NzNotificationService,
-    private socialAuthService: SocialAuthService
+    protected notification: NzNotificationService
   ) {
     this.notification.config({
       nzPlacement: 'bottomRight'
@@ -85,21 +80,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.startTimer(60);
         }
       });
-
-    // auth state subscriber if user and user token found then verify that token and re-login user
-    // this.socialAuthService.authState.pipe(untilDestroyed(this)).subscribe((user) => {
-    //   if (user) {
-    //     this._authService.googleSignIn(user.idToken).subscribe();
-    //   }
-    // });
   }
-
-  // loginWithGoogle() {
-  //   this.socialAuthService.signIn(GoogleLoginProvider.PROVIDER_ID).then(result => {
-  //   }).catch(err => {
-  //     console.log(err);
-  //   });
-  // }
 
   submitForm() {
     try {
