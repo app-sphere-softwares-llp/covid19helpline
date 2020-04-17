@@ -1,12 +1,12 @@
-import {BaseService} from '../base.service';
-import {ClientSession, Document, Model} from 'mongoose';
-import {InjectModel} from '@nestjs/mongoose';
-import {ModuleRef} from '@nestjs/core';
-import {Injectable, OnModuleInit} from '@nestjs/common';
-import * as pdf from 'html-pdf';
-import * as QRCode from 'qrcode';
-import * as ejs from 'ejs';
-import {GeneralService} from '../general.service';
+import { BaseService } from "../base.service";
+import { ClientSession, Document, Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { ModuleRef } from "@nestjs/core";
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import * as pdf from "html-pdf";
+import * as QRCode from "qrcode";
+import * as ejs from "ejs";
+import { GeneralService } from "../general.service";
 import {
   DbCollection,
   GetAllPassesRequestModel,
@@ -14,20 +14,20 @@ import {
   MongooseQueryModel,
   PassModel,
   PassStatusEnum,
-  SendSmsModel,
+  SendSmsModel, SmsMessageModel,
   UpdatePassStatusRequestModel
-} from '@covid19-helpline/models';
-import {BadRequest, generateRandomCode, generateUtcDate, resolvePathHelper, toObjectId} from '../../helpers/helpers';
-import {I18nRequestScopeService} from 'nestjs-i18n';
-import {PassUtilityService} from './pass.utility.service';
-import {SmsService} from '../sms/sms.service';
+} from "@covid19-helpline/models";
+import { BadRequest, generateRandomCode, generateUtcDate, resolvePathHelper, toObjectId } from "../../helpers/helpers";
+import { I18nRequestScopeService } from "nestjs-i18n";
+import { PassUtilityService } from "./pass.utility.service";
+import { SmsService } from "../sms/sms.service";
 import {
   DEFAULT_PASS_VALIDITY,
   DEFAULT_SMS_SENDING_OPTIONS,
   DEFAULT_TEMPLATE_PATH
-} from '../../helpers/defaultValueConstant';
-import {UsersService} from '../users/users.service';
-import {environment} from "../../../environments/environment";
+} from "../../helpers/defaultValueConstant";
+import { UsersService } from "../users/users.service";
+import { environment } from "../../../environments/environment";
 import * as moment from "moment";
 
 /**
@@ -35,28 +35,28 @@ import * as moment from "moment";
  */
 const COMMON_POPULATION = [
   {
-    path: 'reason',
-    select: 'name',
+    path: "reason",
+    select: "name",
     justOne: true
   },
   {
-    path: 'state',
-    select: 'name',
+    path: "state",
+    select: "name",
     justOne: true
   },
   {
-    path: 'city',
-    select: 'name',
+    path: "city",
+    select: "name",
     justOne: true
   },
   {
-    path: 'createdBy',
-    select: 'mobileNumber userName firstName lastName profilePic -_id',
+    path: "createdBy",
+    select: "mobileNumber userName firstName lastName profilePic -_id",
     justOne: true
   },
   {
-    path: 'updatedBy',
-    select: 'mobileNumber userName firstName lastName profilePic -_id',
+    path: "updatedBy",
+    select: "mobileNumber userName firstName lastName profilePic -_id",
     justOne: true
   }
 ];
@@ -67,11 +67,11 @@ const COMMON_POPULATION = [
 const DETAILED_POPULATION = [
   ...COMMON_POPULATION,
   {
-    path: 'attachmentsDetails'
+    path: "attachmentsDetails"
   },
   {
-    path: 'passStatus.updatedBy',
-    select: 'mobileNumber userName firstName lastName profilePic -_id',
+    path: "passStatus.updatedBy",
+    select: "mobileNumber userName firstName lastName profilePic -_id",
     justOne: true
   }
 ];
@@ -80,16 +80,16 @@ const DETAILED_POPULATION = [
  * pass sorting key mapper constant
  */
 const PASS_SORTING_MAPPER = new Map<string, string>([
-  ['firstName', 'firstName'],
-  ['lastName', 'lastName'],
-  ['stateId', 'state.name'],
-  ['state', 'state.name'],
-  ['cityId', 'city.name'],
-  ['city', 'city.name'],
-  ['passDate', 'passDate'],
-  ['reasonId', 'reason.name'],
-  ['reason', 'reason.name'],
-  ['status', 'passStatus.status']
+  ["firstName", "firstName"],
+  ["lastName", "lastName"],
+  ["stateId", "state.name"],
+  ["state", "state.name"],
+  ["cityId", "city.name"],
+  ["city", "city.name"],
+  ["passDate", "passDate"],
+  ["reasonId", "reason.name"],
+  ["reason", "reason.name"],
+  ["status", "passStatus.status"]
 ]);
 
 @Injectable()
@@ -159,6 +159,13 @@ export class PassService extends BaseService<PassModel & Document>
           pass.createdById = this._generalService.userId;
 
           const newCity = await this.create([pass], session);
+
+          // send sms for pass is created
+          const sms: SmsMessageModel[] = [
+            { to: [pass.mobileNo], message: "Your pass has been sent for approval" }
+          ];
+          this._smsService.buildAndSendSms({ sms });
+
           return newCity[0];
         } else {
           // if id is there than update pass by id
@@ -193,14 +200,14 @@ export class PassService extends BaseService<PassModel & Document>
       if (passDetails.passStatus.status === PassStatusEnum.approved) {
         BadRequest(
           await this.i18n.translate(
-            'pass.UPDATE_PASS_STATUS_VALIDATIONS.ALREADY_APPROVED'
+            "pass.UPDATE_PASS_STATUS_VALIDATIONS.ALREADY_APPROVED"
           )
         );
       } else if (passDetails.passStatus.status === PassStatusEnum.rejected) {
         // check if pass is already rejected or not
         BadRequest(
           await this.i18n.translate(
-            'pass.UPDATE_PASS_STATUS_VALIDATIONS.ALREADY_REJECTED'
+            "pass.UPDATE_PASS_STATUS_VALIDATIONS.ALREADY_REJECTED"
           )
         );
       }
@@ -216,7 +223,7 @@ export class PassService extends BaseService<PassModel & Document>
       // update pass by id
       await this.updateById(
         model.id,
-        {$set: {passStatus: updateStatusDoc}},
+        { $set: { passStatus: updateStatusDoc } },
         session
       );
 
@@ -229,20 +236,17 @@ export class PassService extends BaseService<PassModel & Document>
         : `Your Pass has been Rejected, Please try again`;
 
       // send sms that for status is updated
-      const smsModel = new SendSmsModel();
-      smsModel.route = DEFAULT_SMS_SENDING_OPTIONS.route;
-      smsModel.sender = DEFAULT_SMS_SENDING_OPTIONS.sender;
-      smsModel.sms = [
-        {
+
+      const sms: SmsMessageModel[] = [{
           to: [passDetails.mobileNo],
           message: smsTemplate
         }
       ];
 
-      this._smsService.sendSms(smsModel);
+      this._smsService.buildAndSendSms({ sms });
 
       // return
-      return await this.i18n.translate('pass.RESPONSES.STATUS_UPDATED');
+      return await this.i18n.translate("pass.RESPONSES.STATUS_UPDATED");
     });
   }
 
@@ -260,7 +264,7 @@ export class PassService extends BaseService<PassModel & Document>
       const queryFilter: any = {
         $and: [
           {
-            'passStatus.status': model.status
+            "passStatus.status": model.status
           },
           {
             // set searching columns
@@ -268,31 +272,31 @@ export class PassService extends BaseService<PassModel & Document>
               {
                 firstName: {
                   $regex: new RegExp(model.query.toString()),
-                  $options: 'i'
+                  $options: "i"
                 }
               },
               {
                 lastName: {
                   $regex: new RegExp(model.query.toString()),
-                  $options: 'i'
+                  $options: "i"
                 }
               },
               {
                 aadhaarNo: {
                   $regex: new RegExp(model.query.toString()),
-                  $options: 'i'
+                  $options: "i"
                 }
               },
               {
                 mobileNo: {
                   $regex: new RegExp(model.query.toString()),
-                  $options: 'i'
+                  $options: "i"
                 }
               },
               {
                 vehicleNo: {
                   $regex: new RegExp(model.query.toString()),
-                  $options: 'i'
+                  $options: "i"
                 }
               }
             ]
@@ -335,19 +339,19 @@ export class PassService extends BaseService<PassModel & Document>
       // check if state id there, than add it to query filter
       if (model.stateId) {
         queryFilter.$and.push({
-          stateId: {$in: [toObjectId(model.stateId)]}
+          stateId: { $in: [toObjectId(model.stateId)] }
         });
       }
 
       // check if city id there, than add it to query filter
       if (model.cityId) {
-        queryFilter.$and.push({cityId: {$in: [toObjectId(model.cityId)]}});
+        queryFilter.$and.push({ cityId: { $in: [toObjectId(model.cityId)] } });
       }
 
       // check if reasonId there, than add it to query filter
       if (model.reasonId && model.reasonId.length) {
         model.reasonId = model.reasonId.map(reasonId => toObjectId(reasonId));
-        queryFilter.$and.push({reasonId: {$in: model.reasonId}});
+        queryFilter.$and.push({ reasonId: { $in: model.reasonId } });
       }
 
       // check is valid key for sorting...
@@ -356,11 +360,11 @@ export class PassService extends BaseService<PassModel & Document>
 
         if (!model.sort) {
           // if sorting key is not available then throw error
-          BadRequest('Invalid soring key');
+          BadRequest("Invalid soring key");
         }
       } else {
-        model.sort = 'passStatus.status';
-        model.sortBy = 'asc';
+        model.sort = "passStatus.status";
+        model.sortBy = "asc";
       }
 
       // endregion
@@ -371,38 +375,38 @@ export class PassService extends BaseService<PassModel & Document>
         .match(queryFilter)
         .lookup({
           from: DbCollection.reason,
-          let: {reasonId: '$reasonId'},
+          let: { reasonId: "$reasonId" },
           pipeline: [
-            {$match: {$expr: {$eq: ['$_id', '$$reasonId']}}},
-            {$project: {name: 1}},
-            {$addFields: {id: '$_id'}}
+            { $match: { $expr: { $eq: ["$_id", "$$reasonId"] } } },
+            { $project: { name: 1 } },
+            { $addFields: { id: "$_id" } }
           ],
-          as: 'reason'
+          as: "reason"
         })
-        .unwind({path: '$reason', preserveNullAndEmptyArrays: true})
+        .unwind({ path: "$reason", preserveNullAndEmptyArrays: true })
         .lookup({
           from: DbCollection.state,
-          let: {stateId: '$stateId'},
+          let: { stateId: "$stateId" },
           pipeline: [
-            {$match: {$expr: {$eq: ['$_id', '$$stateId']}}},
-            {$project: {name: 1}},
-            {$addFields: {id: '$_id'}}
+            { $match: { $expr: { $eq: ["$_id", "$$stateId"] } } },
+            { $project: { name: 1 } },
+            { $addFields: { id: "$_id" } }
           ],
-          as: 'state'
+          as: "state"
         })
-        .unwind({path: '$state', preserveNullAndEmptyArrays: true})
+        .unwind({ path: "$state", preserveNullAndEmptyArrays: true })
         .lookup({
           from: DbCollection.city,
-          let: {cityId: '$cityId'},
+          let: { cityId: "$cityId" },
           pipeline: [
-            {$match: {$expr: {$eq: ['$_id', '$$cityId']}}},
-            {$project: {name: 1}},
-            {$addFields: {id: '$_id'}}
+            { $match: { $expr: { $eq: ["$_id", "$$cityId"] } } },
+            { $project: { name: 1 } },
+            { $addFields: { id: "$_id" } }
           ],
-          as: 'city'
+          as: "city"
         })
-        .unwind({path: '$city', preserveNullAndEmptyArrays: true})
-        .sort({[model.sort]: model.sortBy === 'asc' ? 1 : -1})
+        .unwind({ path: "$city", preserveNullAndEmptyArrays: true })
+        .sort({ [model.sort]: model.sortBy === "asc" ? 1 : -1 })
         .skip(model.count * model.page - model.count)
         .limit(model.count);
 
@@ -410,7 +414,7 @@ export class PassService extends BaseService<PassModel & Document>
       const countQuery = await this.dbModel
         .aggregate()
         .match(queryFilter)
-        .count('totalRecords');
+        .count("totalRecords");
 
       let totalRecordsCount = 0;
 
@@ -459,7 +463,7 @@ export class PassService extends BaseService<PassModel & Document>
       // delete pass
       await this.delete(id, session);
 
-      return 'Pass deleted successfully';
+      return "Pass deleted successfully";
     });
   }
 
@@ -471,12 +475,12 @@ export class PassService extends BaseService<PassModel & Document>
   async getDetails(id: string, getFullDetails: boolean = false) {
     try {
       if (!this.isValidObjectId(id)) {
-        BadRequest('Pass not found..');
+        BadRequest("Pass not found..");
       }
 
       // query object
       const detailsQuery = new MongooseQueryModel();
-      detailsQuery.filter = {_id: id};
+      detailsQuery.filter = { _id: id };
       detailsQuery.lean = true;
       detailsQuery.populate = COMMON_POPULATION;
 
@@ -490,7 +494,7 @@ export class PassService extends BaseService<PassModel & Document>
 
       // if pass details not found then throw error
       if (!passDetails) {
-        BadRequest('Pass not found...');
+        BadRequest("Pass not found...");
       } else {
         passDetails.id = passDetails._id;
         passDetails.attachmentsDetails = passDetails.attachmentsDetails || [];
@@ -512,7 +516,7 @@ export class PassService extends BaseService<PassModel & Document>
       // get pass details
       const passDetails: PassModel = await this.getDetails(id, true);
 
-      passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
+      passDetails.passDate = moment(passDetails.passDate, "DD-MM-YYYY HH:mm:SS").format("DD-MM-YYYY HH:mm:SS");
 
       // get template path
       const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}pass.template.ejs`);
@@ -525,7 +529,7 @@ export class PassService extends BaseService<PassModel & Document>
       const html = await ejs.renderFile(templatePath, passDetails);
 
       // get file path and file name
-      const pdfFilePath = resolvePathHelper('./pdfs');
+      const pdfFilePath = resolvePathHelper("./pdfs");
       const pdfFileName = `${pdfFilePath}/${passDetails.id}_${generateRandomCode(2)}.pdf`;
 
       // create pdf and send it
@@ -549,12 +553,13 @@ export class PassService extends BaseService<PassModel & Document>
     return this.withRetrySession(async (session: ClientSession) => {
       const passDetails = await this.getDetails(id, true);
 
-      passDetails.passDate = moment(passDetails.passDate, 'DD-MM-YYYY HH:mm:SS').format('DD-MM-YYYY HH:mm:SS');
+      passDetails.passDate = moment(passDetails.passDate, "DD-MM-YYYY HH:mm:SS").format("DD-MM-YYYY HH:mm:SS");
       passDetails.qrCode = null;
+
       // get template path
       //const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}check-pass.template.ejs`);
       const templatePath = resolvePathHelper(`${DEFAULT_TEMPLATE_PATH}pass.template.ejs`);
-      return await ejs.renderFile(templatePath, passDetails)
+      return await ejs.renderFile(templatePath, passDetails);
     });
   }
 }

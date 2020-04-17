@@ -1,28 +1,28 @@
-import {Component, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Observable, Subject} from 'rxjs';
-import {debounceTime} from 'rxjs/operators';
-import {NzNotificationService, UploadFile} from 'ng-zorro-antd';
-import {GeneralService} from '../../shared/services/general.service';
-import {ActivatedRoute} from '@angular/router';
-import {PassService} from '../../shared/services/pass/pass.service';
-import {StateQuery} from '../../queries/state/state.query';
+import { Component, OnInit } from "@angular/core";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Observable, Subject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
+import { NzNotificationService, UploadFile } from "ng-zorro-antd";
+import { GeneralService } from "../../shared/services/general.service";
+import { ActivatedRoute } from "@angular/router";
+import { PassService } from "../../shared/services/pass/pass.service";
+import { StateQuery } from "../../queries/state/state.query";
 
 import {
   CityModel,
   CityRequestModel, PassModel, PassStatusEnum, ReasonModel,
   StateModel, UpdatePassStatusRequestModel, User
-} from '@covid19-helpline/models';
-import {CityService} from '../../shared/services/state-city/city.service';
-import {CityQuery} from '../../queries/city/city.query';
-import {StateService} from '../../shared/services/state-city/state.service';
-import {ReasonService} from '../../shared/services/reason/reason.service';
-import {PassUrls} from '../../shared/services/pass/pass.url';
+} from "@covid19-helpline/models";
+import { CityService } from "../../shared/services/state-city/city.service";
+import { CityQuery } from "../../queries/city/city.query";
+import { StateService } from "../../shared/services/state-city/state.service";
+import { ReasonService } from "../../shared/services/reason/reason.service";
+import { PassUrls } from "../../shared/services/pass/pass.url";
 
 @Component({
-  selector: 'nest-js-boiler-plate-new-pass',
-  templateUrl: './new-pass.component.html',
-  styleUrls: ['./new-pass.component.scss']
+  selector: "nest-js-boiler-plate-new-pass",
+  templateUrl: "./new-pass.component.html",
+  styleUrls: ["./new-pass.component.scss"]
 })
 export class NewPassComponent implements OnInit {
 
@@ -34,7 +34,7 @@ export class NewPassComponent implements OnInit {
 
   public applicationForm: FormGroup;
   public requestId: string;
-  public dateFormat = 'MM-dd-yyyy HH:mm:ss';
+  public dateFormat = "MM-dd-yyyy HH:mm:ss";
 
   // upload profile pic
   public loadingProfilePic = false;
@@ -84,7 +84,7 @@ export class NewPassComponent implements OnInit {
               private _reasonService: ReasonService,
               private _cityService: CityService, private _stateService: StateService) {
     this.notification.config({
-      nzPlacement: 'bottomRight'
+      nzPlacement: "bottomRight"
     });
   }
 
@@ -106,7 +106,7 @@ export class NewPassComponent implements OnInit {
     this.attachementUrl = PassUrls.attachment;
 
     this.attachementHeader = {
-      Authorization: 'Bearer ' + this._generalService.token
+      Authorization: "Bearer " + this._generalService.token
     };
 
     // search state
@@ -114,15 +114,15 @@ export class NewPassComponent implements OnInit {
       .pipe(
         debounceTime(500))
       .subscribe(() => {
-        const queryText = this.applicationForm.get('state').value;
+        const queryText = this.applicationForm.get("state").value;
         const name = this.selectedState && this.selectedState.name ? this.selectedState.name : null;
-        if (!queryText || this.applicationForm.get('state').value === name) {
+        if (!queryText || this.applicationForm.get("state").value === name) {
           return;
         }
         this.isSearchingState = true;
         const json = {
           term: queryText
-        }
+        };
         this._stateService.searchState(json).subscribe((data) => {
           this.isSearchingState = false;
           this.stateDataSource = data.data;
@@ -135,16 +135,16 @@ export class NewPassComponent implements OnInit {
       .pipe(
         debounceTime(500))
       .subscribe(() => {
-        const queryText = this.applicationForm.get('city').value;
+        const queryText = this.applicationForm.get("city").value;
         const name = this.selectedCity && this.selectedCity.name ? this.selectedCity.name : null;
-        if (!queryText || this.applicationForm.get('city').value === name) {
+        if (!queryText || this.applicationForm.get("city").value === name) {
           return;
         }
         this.isSearchingCity = true;
         const json: CityRequestModel = {
           stateId: this.selectedState.id,
           term: queryText
-        }
+        };
         this._cityService.searchCity(json).subscribe((data) => {
           this.isSearchingCity = false;
           this.cityDataSource = data.data;
@@ -156,16 +156,16 @@ export class NewPassComponent implements OnInit {
       .pipe(
         debounceTime(500))
       .subscribe(() => {
-        const queryText = this.applicationForm.get('reason').value;
+        const queryText = this.applicationForm.get("reason").value;
         const name = this.selectedReason && this.selectedReason.name ? this.selectedReason.name : null;
 
-        if (!queryText || this.applicationForm.get('reason').value === name) {
+        if (!queryText || this.applicationForm.get("reason").value === name) {
           return;
         }
         this.isSearchingReason = true;
         const json = {
           query: queryText
-        }
+        };
         this._reasonService.searchReason(json).subscribe((data) => {
           this.isSearchingReason = false;
           this.reasonDataSource = data.data;
@@ -186,22 +186,22 @@ export class NewPassComponent implements OnInit {
       state: [null],
       cityId: [null, [Validators.required]],
       stateId: [null, [Validators.required]],
-      aadhaarNo: [null, [Validators.required, Validators.pattern('^[0-9]{12}$')]],
+      aadhaarNo: [null, [Validators.required, Validators.pattern("^[0-9]{12}$")]],
       address: [null, [Validators.required]],
-      mobileNo: [null, [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      mobileNo: [null, [Validators.required, Validators.pattern("^[0-9]{10}$")]],
       passDate: [null, [Validators.required]],
-      passValidity: ['2', [Validators.required]],
+      passValidity: ["2", [Validators.required]],
       vehicleNo: [null, [Validators.required]],
       reasonId: [null, [Validators.required]],
       reason: [null, [Validators.required]],
       reasonDetails: [null, [Validators.required]],
-      destinationPinCode: [null, [Validators.required, Validators.pattern('^[0-9]{6}$')]],
+      destinationPinCode: [null, [Validators.required, Validators.pattern("^[0-9]{6}$")]],
       destinationAddress: [null, [Validators.required]],
       picUrl: [null, [Validators.required]],
       aadharPicUrl: [null, [Validators.required]],
       passStatus: [null],
       attachments: [null],
-      otherPersonDetails: new FormArray([]),
+      otherPersonDetails: new FormArray([])
     });
     this.uploadedImages = [];
     this.attachementIds = [];
@@ -216,14 +216,14 @@ export class NewPassComponent implements OnInit {
   public initOtherPersonDetails() {
     return this.FB.group({
       fullName: [null, [Validators.required]],
-      aadhaarNo: [null, [Validators.required, Validators.pattern('^[0-9]{12}$')]],
+      aadhaarNo: [null, [Validators.required, Validators.pattern("^[0-9]{12}$")]]
     });
   }
 
   public getCities() {
     const json: CityRequestModel = {
       stateId: this.selectedState.id
-    }
+    };
     console.log(json);
     this.isSearchingCity = true;
     this._cityService.getCities(json).subscribe();
@@ -265,13 +265,12 @@ export class NewPassComponent implements OnInit {
       this.selectedCity = data.data.city;
       this.selectedState = data.data.state;
 
-      this.applicationForm.get('cityId').patchValue(data.data.city.id);
-      this.applicationForm.get('city').patchValue(data.data.city.name);
-      this.applicationForm.get('state').patchValue(data.data.state.name);
-      this.applicationForm.get('stateId').patchValue(data.data.state.id);
-      this.applicationForm.get('reason').patchValue(data.data.reason.name);
-      this.applicationForm.get('reasonId').patchValue(data.data.reason.id);
-
+      this.applicationForm.get("cityId").patchValue(data.data.city.id);
+      this.applicationForm.get("city").patchValue(data.data.city.name);
+      this.applicationForm.get("state").patchValue(data.data.state.name);
+      this.applicationForm.get("stateId").patchValue(data.data.state.id);
+      this.applicationForm.get("reason").patchValue(data.data.reason.name);
+      this.applicationForm.get("reasonId").patchValue(data.data.reason.id);
 
 
       this.passStatus = data.data.passStatus.status;
@@ -289,8 +288,8 @@ export class NewPassComponent implements OnInit {
   public selectStateTypeahead(state: StateModel) {
     if (state && state.id) {
       this.selectedState = state;
-      this.applicationForm.get('stateId').patchValue(state.id);
-      this.applicationForm.get('state').patchValue(state.name);
+      this.applicationForm.get("stateId").patchValue(state.id);
+      this.applicationForm.get("state").patchValue(state.name);
     }
     this.modelChangedState.next();
   }
@@ -299,8 +298,8 @@ export class NewPassComponent implements OnInit {
   public selectCityTypeahead(city: CityModel) {
     if (city && city.id) {
       this.selectedCity = city;
-      this.applicationForm.get('cityId').patchValue(city.id);
-      this.applicationForm.get('city').patchValue(city.name);
+      this.applicationForm.get("cityId").patchValue(city.id);
+      this.applicationForm.get("city").patchValue(city.name);
     }
     this.modelChangedCity.next();
   }
@@ -308,8 +307,8 @@ export class NewPassComponent implements OnInit {
   public selectReasonTypeahead(reason: ReasonModel) {
     if (reason && reason.id) {
       this.selectedCity = reason;
-      this.applicationForm.get('reasonId').patchValue(reason.id);
-      this.applicationForm.get('reason').patchValue(reason.name);
+      this.applicationForm.get("reasonId").patchValue(reason.id);
+      this.applicationForm.get("reason").patchValue(reason.name);
     }
     this.modelChangedReason.next();
   }
@@ -317,28 +316,28 @@ export class NewPassComponent implements OnInit {
   public selectPurposeTypeahead(purpose: any) {
     if (purpose && purpose.id) {
       this.selectedPurpose = purpose;
-      this.applicationForm.get('purpose').patchValue(purpose.name);
+      this.applicationForm.get("purpose").patchValue(purpose.name);
     }
     this.modelChangedPurpose.next();
   }
 
 
   // document uploads
-  handleChange({file, fileList}): void {
+  handleChange({ file, fileList }): void {
     const status = file.status;
-    if (status !== 'uploading') {
+    if (status !== "uploading") {
       // console.log(file, fileList);
     }
-    if (status === 'done') {
+    if (status === "done") {
 
       if (file.response && file.response.data.id) {
         this.attachementIds.push(file.response.data.id);
-        this.applicationForm.get('attachments').patchValue(this.attachementIds);
+        this.applicationForm.get("attachments").patchValue(this.attachementIds);
       }
 
-      this.notification.success('Success', `${file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      this.notification.error('Error', `${file.name} file upload failed.`);
+      this.notification.success("Success", `${file.name} file uploaded successfully.`);
+    } else if (status === "error") {
+      this.notification.error("Error", `${file.name} file upload failed.`);
     }
   }
 
@@ -354,52 +353,52 @@ export class NewPassComponent implements OnInit {
   });
 
   beforeUploadDocs = (file: File) => {
-    const isAllow = file.type === 'image/jpeg' || 'image/png' || 'application/pdf';
+    const isAllow = file.type === "image/jpeg" || "image/png" || "application/pdf";
     if (!isAllow) {
-      this.notification.error('Error', 'You can only upload JPG file!');
+      this.notification.error("Error", "You can only upload JPG file!");
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      this.notification.error('Error', 'Image must smaller than 2MB!');
+      this.notification.error("Error", "Image must smaller than 2MB!");
     }
     return isAllow && isLt2M;
-  }
+  };
 
   // profile pic upload
 
   // common for both
   private getBase64(img: File, callback: (img: {}) => void): void {
     const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
+    reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(img);
   }
 
 
   beforeUpload = (file: File) => {
-    const isJPG = file.type === 'image/jpeg' || 'image/png';
+    const isJPG = file.type === "image/jpeg" || "image/png";
     if (!isJPG) {
-      this.notification.error('Error', 'You can only upload JPG file!');
+      this.notification.error("Error", "You can only upload JPG file!");
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
-      this.notification.error('Error', 'Image must smaller than 2MB!');
+      this.notification.error("Error", "Image must smaller than 2MB!");
     }
     return isJPG && isLt2M;
-  }
+  };
 
 
   // profile
   handleProfilePicChange(info: { file: UploadFile }): void {
-    if (info.file.status === 'uploading') {
+    if (info.file.status === "uploading") {
       this.loadingProfilePic = true;
       return;
     }
-    if (info.file.status === 'done') {
+    if (info.file.status === "done") {
       // Get this url from response in real world.
 
       if (info.file.response && info.file.response.data.id) {
         this.attachementIds.push(info.file.response.data.id);
-        this.applicationForm.get('picUrl').patchValue(info.file.response.data.url);
+        this.applicationForm.get("picUrl").patchValue(info.file.response.data.url);
       }
 
       this.getBase64(info.file.originFileObj, (img: string) => {
@@ -408,9 +407,9 @@ export class NewPassComponent implements OnInit {
       });
     }
 
-    if (info.file.status === 'error') {
+    if (info.file.status === "error") {
       this.loadingProfilePic = false;
-      this.notification.error('Error', 'Profile pic not uploaded');
+      this.notification.error("Error", "Profile pic not uploaded");
     }
 
   }
@@ -418,15 +417,15 @@ export class NewPassComponent implements OnInit {
 
   // aadhaar
   handleAadhaarChange(info: { file: UploadFile }): void {
-    if (info.file.status === 'uploading') {
+    if (info.file.status === "uploading") {
       this.loadingAadhaarPic = true;
       return;
     }
-    if (info.file.status === 'done') {
+    if (info.file.status === "done") {
 
       if (info.file.response && info.file.response.data.id) {
         this.attachementIds.push(info.file.response.data.id);
-        this.applicationForm.get('aadharPicUrl').patchValue(info.file.response.data.url);
+        this.applicationForm.get("aadharPicUrl").patchValue(info.file.response.data.url);
       }
 
 
@@ -437,15 +436,15 @@ export class NewPassComponent implements OnInit {
       });
     }
 
-    if (info.file.status === 'error') {
+    if (info.file.status === "error") {
       this.loadingAadhaarPic = false;
-      this.notification.error('Error', 'Aadhaar pic not uploaded');
+      this.notification.error("Error", "Aadhaar pic not uploaded");
     }
 
   }
 
   public addOtherPersonDetails() {
-    const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
+    const otherDetailsForm = this.applicationForm.get("otherPersonDetails") as FormArray;
     otherDetailsForm.controls.push(this.initOtherPersonDetails());
 
     this.showAddPersonBtn = otherDetailsForm.controls.length <= 0;
@@ -453,7 +452,7 @@ export class NewPassComponent implements OnInit {
   }
 
   public removeOtherPersonDetails(index: number) {
-    const otherDetailsForm = this.applicationForm.get('otherPersonDetails') as FormArray;
+    const otherDetailsForm = this.applicationForm.get("otherPersonDetails") as FormArray;
     otherDetailsForm.removeAt(index);
 
     this.showAddPersonBtn = otherDetailsForm.controls.length <= 0;
@@ -465,9 +464,9 @@ export class NewPassComponent implements OnInit {
 
     try {
 
-      const json: any = {...this.applicationForm.getRawValue()};
+      const json: any = { ...this.applicationForm.getRawValue() };
 
-      this.applicationForm.get('attachments').patchValue(this.attachementIds); // uploaded attachments
+      this.applicationForm.get("attachments").patchValue(this.attachementIds); // uploaded attachments
 
       // in case empty row submitted
       if (json.otherPersonDetails && json.otherPersonDetails.length > 0) {
@@ -484,6 +483,8 @@ export class NewPassComponent implements OnInit {
           this.isRequestInProcess = false;
           this.initForm();
           // this.applicationFormData = data.data;
+        }, error => {
+          this.isRequestInProcess = false;
         });
 
       } else {
@@ -492,8 +493,9 @@ export class NewPassComponent implements OnInit {
           this.isRequestInProcess = false;
           this.initForm();
           // this.applicationFormData = data.data;
+        }, error => {
+          this.isRequestInProcess = false;
         });
-
       }
 
     } catch (e) {
@@ -512,7 +514,7 @@ export class NewPassComponent implements OnInit {
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.rejected,
-        passValidity: this.applicationForm.get('passValidity').value
+        passValidity: this.applicationForm.get("passValidity").value
       };
 
       this._passService.updateStatus(json).subscribe((data) => {
@@ -534,7 +536,7 @@ export class NewPassComponent implements OnInit {
       const json: UpdatePassStatusRequestModel = {
         id: this.requestId,
         status: PassStatusEnum.approved,
-        passValidity: this.applicationForm.get('passValidity').value
+        passValidity: this.applicationForm.get("passValidity").value
       };
       this._passService.updateStatus(json).subscribe((data) => {
         this.isRequestInProcess = false;

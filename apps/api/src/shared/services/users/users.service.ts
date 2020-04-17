@@ -1,33 +1,33 @@
-import {Injectable, OnModuleInit} from '@nestjs/common';
-import {InjectModel} from '@nestjs/mongoose';
-import {ClientSession, Document, Model} from 'mongoose';
-import {BaseService} from '../base.service';
-import {GeneralService} from '../general.service';
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { ClientSession, Document, Model } from "mongoose";
+import { BaseService } from "../base.service";
+import { GeneralService } from "../general.service";
 import {
   DbCollection,
   GetAllAdminUsersRequestModel,
   MemberTypes,
-  MongooseQueryModel, SendSmsModel,
+  MongooseQueryModel, SendSmsModel, SmsMessageModel,
   User,
   UserStatus
-} from '@covid19-helpline/models';
-import {UsersUtilityService} from './users.utility.service';
-import {ModuleRef} from '@nestjs/core';
-import {BadRequest, toObjectId} from '../../helpers/helpers';
-import {SmsService} from "../sms/sms.service";
-import {DEFAULT_SMS_SENDING_OPTIONS} from "../../helpers/defaultValueConstant";
-import {environment} from "../../../environments/environment";
+} from "@covid19-helpline/models";
+import { UsersUtilityService } from "./users.utility.service";
+import { ModuleRef } from "@nestjs/core";
+import { BadRequest, toObjectId } from "../../helpers/helpers";
+import { SmsService } from "../sms/sms.service";
+import { DEFAULT_SMS_SENDING_OPTIONS } from "../../helpers/defaultValueConstant";
+import { environment } from "../../../environments/environment";
 
 /**
  * user sorting key mapper constant
  */
 const USER_SORTING_MAPPER = new Map<string, string>([
-  ['firstName', 'firstName'],
-  ['lastName', 'lastName'],
-  ['stateId', 'state.name'],
-  ['state', 'state.name'],
-  ['cityId', 'city.name'],
-  ['city', 'city.name']
+  ["firstName", "firstName"],
+  ["lastName", "lastName"],
+  ["stateId", "state.name"],
+  ["state", "state.name"],
+  ["cityId", "city.name"],
+  ["city", "city.name"]
 ]);
 
 @Injectable()
@@ -91,10 +91,10 @@ export class UsersService extends BaseService<User & Document>
     await this._userUtilityService.createAdminUserValidations(user);
 
     // get user details
-    const userDetails = await this.findOne({filter: {mobileNumber: user.mobileNumber}});
+    const userDetails = await this.findOne({ filter: { mobileNumber: user.mobileNumber } });
     // check if mobile number is already registered or not
     if (userDetails) {
-      BadRequest('This mobile number is already registered');
+      BadRequest("This mobile number is already registered");
     }
 
     // create admin process
@@ -102,20 +102,15 @@ export class UsersService extends BaseService<User & Document>
       const adminUser = await this.createUser(user, session, true);
 
       // send otp to newly created admin user
-      const smsModel = new SendSmsModel();
-      smsModel.route = DEFAULT_SMS_SENDING_OPTIONS.route;
-      smsModel.sender = DEFAULT_SMS_SENDING_OPTIONS.sender;
-      smsModel.sms = [
-        {
-          to: [user.mobileNumber],
-          message: `You have been registered as Admin Of Covid 19 Helpline app, please login here to get started
+      const sms: SmsMessageModel[] = [{
+        to: [user.mobileNumber],
+        message: `You have been registered as Admin Of Covid 19 Helpline app, please login here to get started
             ${environment.APP_URL}login
           `
-        }
-      ];
+      }];
 
-      this._smsService.sendSms(smsModel);
-      return 'Admin user created Successfully';
+      this._smsService.buildAndSendSms({ sms });
+      return "Admin user created Successfully";
     });
   }
 
@@ -126,7 +121,7 @@ export class UsersService extends BaseService<User & Document>
    */
   async updateAdminUser(user: User) {
     if (!user || !user.id) {
-      BadRequest('User not found');
+      BadRequest("User not found");
     }
 
     // update user process
@@ -135,7 +130,7 @@ export class UsersService extends BaseService<User & Document>
 
       // if current logged in user is not creator of this user than he can't update admin details
       if (userDetails.createdById.toString() !== this._generalService.userId) {
-        BadRequest('Permission Denied');
+        BadRequest("Permission Denied");
       }
 
       // create update user model
@@ -147,7 +142,7 @@ export class UsersService extends BaseService<User & Document>
       // update admin user by id
       await this.updateById(user.id, userModel, session);
 
-      return 'Admin user updated Successfully';
+      return "Admin user updated Successfully";
     });
   }
 
@@ -169,19 +164,19 @@ export class UsersService extends BaseService<User & Document>
             {
               firstName: {
                 $regex: new RegExp(model.query.toString()),
-                $options: 'i'
+                $options: "i"
               }
             },
             {
               lastName: {
                 $regex: new RegExp(model.query.toString()),
-                $options: 'i'
+                $options: "i"
               }
             },
             {
               mobileNumber: {
                 $regex: new RegExp(model.query.toString()),
-                $options: 'i'
+                $options: "i"
               }
             }
           ]
@@ -194,11 +189,11 @@ export class UsersService extends BaseService<User & Document>
       model.sort = USER_SORTING_MAPPER.get(model.sort);
 
       if (!model.sort) {
-        BadRequest('Invalid soring key');
+        BadRequest("Invalid soring key");
       }
     } else {
-      model.sort = 'firstName';
-      model.sortBy = 'asc';
+      model.sort = "firstName";
+      model.sortBy = "asc";
     }
 
     // fire get users query
@@ -207,27 +202,27 @@ export class UsersService extends BaseService<User & Document>
       .match(queryFilter)
       .lookup({
         from: DbCollection.state,
-        let: {stateId: '$stateId'},
+        let: { stateId: "$stateId" },
         pipeline: [
-          {$match: {$expr: {$eq: ['$_id', '$$stateId']}}},
-          {$project: {name: 1}},
-          {$addFields: {id: '$_id'}}
+          { $match: { $expr: { $eq: ["$_id", "$$stateId"] } } },
+          { $project: { name: 1 } },
+          { $addFields: { id: "$_id" } }
         ],
-        as: 'state'
+        as: "state"
       })
-      .unwind({path: '$state', preserveNullAndEmptyArrays: true})
+      .unwind({ path: "$state", preserveNullAndEmptyArrays: true })
       .lookup({
         from: DbCollection.city,
-        let: {cityId: '$cityId'},
+        let: { cityId: "$cityId" },
         pipeline: [
-          {$match: {$expr: {$eq: ['$_id', '$$cityId']}}},
-          {$project: {name: 1}},
-          {$addFields: {id: '$_id'}}
+          { $match: { $expr: { $eq: ["$_id", "$$cityId"] } } },
+          { $project: { name: 1 } },
+          { $addFields: { id: "$_id" } }
         ],
-        as: 'city'
+        as: "city"
       })
-      .unwind({path: '$city', preserveNullAndEmptyArrays: true})
-      .sort({[model.sort]: model.sortBy === 'asc' ? 1 : -1})
+      .unwind({ path: "$city", preserveNullAndEmptyArrays: true })
+      .sort({ [model.sort]: model.sortBy === "asc" ? 1 : -1 })
       .skip(model.count * model.page - model.count)
       .limit(model.count);
 
@@ -235,7 +230,7 @@ export class UsersService extends BaseService<User & Document>
     const countQuery = await this.dbModel
       .aggregate()
       .match(queryFilter)
-      .count('totalRecords');
+      .count("totalRecords");
     let totalRecordsCount = 0;
     if (countQuery && countQuery[0]) {
       totalRecordsCount = countQuery[0].totalRecords;
@@ -304,7 +299,7 @@ export class UsersService extends BaseService<User & Document>
       const userDetails = await this.getUserDetails(id);
 
       await this.delete(id, session);
-      return 'User deleted Successfully';
+      return "User deleted Successfully";
     });
   }
 
@@ -324,18 +319,18 @@ export class UsersService extends BaseService<User & Document>
     if (getFullDetails) {
       userQuery.populate = [
         {
-          path: 'state',
-          select: 'name',
+          path: "state",
+          select: "name",
           justOne: true
         },
         {
-          path: 'city',
-          select: 'name',
+          path: "city",
+          select: "name",
           justOne: true
         },
         {
-          path: 'createdBy',
-          select: 'mobileNumber userName firstName lastName profilePic -_id',
+          path: "createdBy",
+          select: "mobileNumber userName firstName lastName profilePic -_id",
           justOne: true
         }
       ];
@@ -346,7 +341,7 @@ export class UsersService extends BaseService<User & Document>
 
     if (!userDetails) {
       // if user not found throw an error
-      BadRequest('User not found');
+      BadRequest("User not found");
     }
 
     // return user
@@ -359,7 +354,6 @@ export class UsersService extends BaseService<User & Document>
     if (userDetails.city) {
       userDetails.city.id = userDetails.city._id;
     }
-
     return userDetails;
   }
 }

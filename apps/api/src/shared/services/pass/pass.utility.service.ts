@@ -1,6 +1,8 @@
 import {OtherPersonDetails, PassModel, PassStatusEnum, UpdatePassStatusRequestModel} from "@covid19-helpline/models";
 import {aadhaarNoValidator, BadRequest, isValidMobileNo} from "../../helpers/helpers";
 import {I18nRequestScopeService} from "nestjs-i18n";
+import * as moment from 'moment';
+import { DEFAULT_DATE_FORMAT } from "../../helpers/defaultValueConstant";
 
 export class PassUtilityService {
   constructor(protected i18n: I18nRequestScopeService) {
@@ -57,6 +59,8 @@ export class PassUtilityService {
     // pass date
     if (!model.passDate) {
       BadRequest(await this.i18n.translate('Please select pass date'));
+    } else if (moment(model.passDate).isBefore(moment(), 'day')) {
+      BadRequest(await this.i18n.translate('Pass can not be created for past date'));
     }
 
     // address

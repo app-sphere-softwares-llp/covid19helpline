@@ -5,23 +5,23 @@ import {
   NotFoundException,
   OnModuleInit,
   PayloadTooLargeException
-} from '@nestjs/common';
-import {ClientSession, Document, Model} from 'mongoose';
-import {InjectModel} from '@nestjs/mongoose';
-import * as aws from 'aws-sdk';
+} from "@nestjs/common";
+import { ClientSession, Document, Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import * as aws from "aws-sdk";
 
-import {ModuleRef} from '@nestjs/core';
-import {BaseService} from '../base.service';
-import {AttachmentModel, DbCollection, MongooseQueryModel, UserStatus} from '@covid19-helpline/models';
-import {GeneralService} from '../general.service';
-import {UsersService} from '../users/users.service';
-import {S3Client} from '../S3Client.service';
+import { ModuleRef } from "@nestjs/core";
+import { BaseService } from "../base.service";
+import { AttachmentModel, DbCollection, MongooseQueryModel, UserStatus } from "@covid19-helpline/models";
+import { GeneralService } from "../general.service";
+import { UsersService } from "../users/users.service";
+import { S3Client } from "../S3Client.service";
 import {
   DEFAULT_DECIMAL_PLACES,
   MAX_FILE_UPLOAD_SIZE,
   MAX_PROFILE_PIC_UPLOAD_SIZE
-} from '../../helpers/defaultValueConstant';
-import {BadRequest} from "../../helpers/helpers";
+} from "../../helpers/defaultValueConstant";
+import { BadRequest, isValidAttachmentMimeType } from "../../helpers/helpers";
 
 @Injectable()
 export class AttachmentService extends BaseService<AttachmentModel & Document> implements OnModuleInit {
@@ -34,34 +34,35 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
   ) {
     super(_attachmentModel);
     aws.config.update({
-      region: 'ap-south-1',
+      region: "ap-south-1",
       accessKeyId: process.env.AWS_ACCESSKEYID,
       secretAccessKey: process.env.AWS_SECRETACCESSKEY
     });
-    this.s3Client = new S3Client(new aws.S3({region: 'ap-south-1'}), 'images.assign.work', '');
+    this.s3Client = new S3Client(new aws.S3({ region: "ap-south-1" }), "images.assign.work", "");
   }
 
   onModuleInit(): void {
-    this._userService = this._moduleRef.get('UsersService');
+    this._userService = this._moduleRef.get("UsersService");
   }
 
+  /**
+   * add attachment to aws s3 and creates and entry in database
+   * @param files
+   */
   async addAttachment(files = []): Promise<{ id: string, url: string }> {
     const file = files[0];
 
     if (!file) {
-      BadRequest('file not found!');
+      BadRequest("file not found!");
     }
 
-    // get mime type
-    const mimeType = file.mimetype.split('/')[0];
-
     // check valid mime type
-    if (!mimeType.includes('image')) {
-      BadRequest('Only images are allowed to upload');
+    if (!isValidAttachmentMimeType(file.mimetype)) {
+      BadRequest("This file is not supported, Only image and pdf are supported");
     }
 
     // prepare file path and file type variables
-    const fileType = mimeType.includes('image') ? 'images' : 'others';
+    const fileType = file.mimetype.includes("image") ? "images" : "others";
     const filePath = `${fileType}/${file.originalname}`;
     let fileUrl: string;
 
@@ -72,7 +73,7 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
       // get file url from uploaded file
       fileUrl = await this.s3Client.upload(filePath, file.buffer);
     } catch (e) {
-      throw new InternalServerErrorException('file not uploaded');
+      throw new InternalServerErrorException("file not uploaded");
     }
 
     const session = await this.startSession();
@@ -90,17 +91,21 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
     }
   }
 
+  /**
+   * delete attachment
+   * @param id
+   */
   async deleteAttachment(id: string): Promise<string> {
     return await this.withRetrySession(async (session) => {
-      const attachmentsDetails = await this._attachmentModel.findById(id).lean().exec();
+      const attachmentDetails = await this._attachmentModel.findById(id).lean().exec();
 
-      if (!attachmentsDetails) {
-        throw new NotFoundException('Attachment not found!');
+      if (!attachmentDetails) {
+        throw new NotFoundException("Attachment not found!");
       }
-      const filePath = attachmentsDetails.url.split('image.assign.work/');
+      const filePath = attachmentDetails.url.split("image.assign.work/");
       await this.s3Client.delete(filePath[1]);
       await this.delete(id, session);
-      return 'Attachment Deleted Successfully';
+      return "Attachment Deleted Successfully";
     });
   }
 
@@ -117,16 +122,16 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
     const file = files[0];
 
     if (!file) {
-      throw new BadRequestException('file not found');
+      throw new BadRequestException("file not found");
     }
 
-    const mimeType = file.mimetype.split('/')[0];
+    const mimeType = file.mimetype.split("/")[0];
     const filePath = `profilePic/${file.originalname}`;
     let fileUrl: string;
 
     // mime type validation
-    if (!mimeType.includes('image')) {
-      throw new BadRequestException('invalid file type! only photos are allowed');
+    if (!mimeType.includes("image")) {
+      throw new BadRequestException("invalid file type! only photos are allowed");
     }
 
     // file size validation
@@ -137,14 +142,14 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
     userQuery.filter = {
       _id: this._generalService.userId, status: UserStatus.Active
     };
-    userQuery.select = '_id';
+    userQuery.select = "_id";
 
     // find user details
     const userDetail = await this._userService.findOne(userQuery);
 
     if (!userDetail) {
       // if no user found then show error
-      throw new BadRequestException('user not found');
+      throw new BadRequestException("user not found");
     }
 
     const session = await this.startSession();
@@ -154,14 +159,14 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
       fileUrl = await this.s3Client.upload(filePath, file.buffer);
     } catch (e) {
       // if file not uploaded then throw error
-      throw new InternalServerErrorException('file not uploaded');
+      throw new InternalServerErrorException("file not uploaded");
     }
 
     try {
       // create attachment doc in db
       const result = await this.createAttachmentInDb(file, fileUrl, session);
       // update user profilePic url
-      await this._userService.updateUser(this._generalService.userId, {$set: {profilePic: result.url}}, session);
+      await this._userService.updateUser(this._generalService.userId, { $set: { profilePic: result.url } }, session);
       await this.commitTransaction(session);
       return result;
     } catch (error) {
@@ -193,7 +198,7 @@ export class AttachmentService extends BaseService<AttachmentModel & Document> i
   private fileSizeValidator(file, isProfilePic: boolean = false) {
     // validations
     if (Number((file.size / (1024 * 1024)).toFixed(DEFAULT_DECIMAL_PLACES)) > (isProfilePic ? MAX_PROFILE_PIC_UPLOAD_SIZE : MAX_FILE_UPLOAD_SIZE)) {
-      throw new PayloadTooLargeException('File size limit exceeded');
+      throw new PayloadTooLargeException("File size limit exceeded");
     }
   }
 }

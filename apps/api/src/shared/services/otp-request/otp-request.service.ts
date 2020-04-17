@@ -1,9 +1,9 @@
-import {BaseService} from '../base.service';
-import {ClientSession, Document, Model} from 'mongoose';
-import {InjectModel} from '@nestjs/mongoose';
-import {ModuleRef} from '@nestjs/core';
-import {Injectable, OnModuleInit} from '@nestjs/common';
-import {GeneralService} from '../general.service';
+import { BaseService } from "../base.service";
+import { ClientSession, Document, Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { ModuleRef } from "@nestjs/core";
+import { Injectable, OnModuleInit } from "@nestjs/common";
+import { GeneralService } from "../general.service";
 import {
   DbCollection,
   MongooseQueryModel,
@@ -11,8 +11,8 @@ import {
   SendSmsModel,
   VerifyOtpRequestModel
 } from "@covid19-helpline/models";
-import {BadRequest, generateRandomCode, generateUtcDate, isOTPExpired} from "../../helpers/helpers";
-import {SmsService} from "../sms/sms.service";
+import { BadRequest, generateRandomCode, generateUtcDate, isOTPExpired } from "../../helpers/helpers";
+import { SmsService } from "../sms/sms.service";
 
 @Injectable()
 export class OtpRequestService extends BaseService<OtpRequestModel & Document> implements OnModuleInit {
@@ -26,13 +26,20 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
   }
 
   onModuleInit(): void {
-    this._smsService = this._moduleRef.get('SmsService');
+    this._smsService = this._moduleRef.get("SmsService");
   }
 
+  /**
+   * create and send otp
+   * @param mobileNumber
+   * @param session
+   */
   async createOtp(mobileNumber: string, session: ClientSession) {
+    // expire all existing otp
     await this.expireExistingRequests(mobileNumber, session);
-    const otpRequest = new OtpRequestModel();
 
+    // otp request model
+    const otpRequest = new OtpRequestModel();
     otpRequest.mobileNumber = mobileNumber;
     otpRequest.code = generateRandomCode(4);
     otpRequest.createdById = this._generalService.userId;
@@ -40,52 +47,74 @@ export class OtpRequestService extends BaseService<OtpRequestModel & Document> i
     otpRequest.isExpired = false;
     otpRequest.codeSentAt = generateUtcDate();
 
+    // create otp
     await this.create([otpRequest], session);
 
-    const smsRequest = new SendSmsModel();
-    smsRequest.sender = 'SOCKET';
-    smsRequest.route = 4;
-    smsRequest.sms = [{
+    // send otp via sms
+    const sms = [{
       to: [otpRequest.mobileNumber],
       message: `Here's your otp :-${otpRequest.code}`
     }];
 
-    await this._smsService.sendSms(smsRequest);
+    await this._smsService.buildAndSendSms({ sms });
     return true;
   }
 
+  /**
+   * verify otp
+   * @param model
+   * @param session
+   */
   async verifyOtp(model: VerifyOtpRequestModel, session: ClientSession) {
+    // get otp details
     const otpDetails = await this.getDetails(model.mobileNumber, model.code);
 
-    await this.updateById(otpDetails.id, {isApproved: true, isExpired: false}, session);
+    // approve otp
+    await this.updateById(otpDetails.id, { isApproved: true, isExpired: false }, session);
+    // expire all existing otp
     await this.expireExistingRequests(model.mobileNumber, session);
     return true;
   }
 
+  /**
+   * expire existing otp
+   * @param mobileNumber
+   * @param session
+   */
   async expireExistingRequests(mobileNumber: string, session: ClientSession) {
-    return this.update({mobileNumber}, {
+    return this.update({ mobileNumber }, {
       isExpired: true
     }, session);
   }
 
+  /**
+   * get otp details
+   * check if otp is valid and not expired
+   * @param mobileNumber
+   * @param code
+   */
   async getDetails(mobileNumber: string, code: string) {
     if (!mobileNumber || !code) {
-      BadRequest('Invalid otp');
+      BadRequest("Invalid otp");
     }
 
+    // otp details query
     const query: MongooseQueryModel = new MongooseQueryModel();
     query.filter = {
       mobileNumber, isExpired: false, isApproved: false, code
     };
     query.lean = true;
 
+    // get otp details
     const otpDetails = await this.findOne(query);
 
+    // if no otp found throw error
     if (!otpDetails) {
-      BadRequest('Invalid otp');
+      BadRequest("Invalid otp");
     } else {
+      // check if otp is expired or not
       if (isOTPExpired(otpDetails.createdAt)) {
-        BadRequest('This otp is expired please ask for new one');
+        BadRequest("This otp is expired please ask for new one");
       }
     }
 

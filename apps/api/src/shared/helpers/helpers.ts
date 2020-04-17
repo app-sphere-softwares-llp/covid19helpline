@@ -1,13 +1,14 @@
-import * as path from 'path';
-import * as moment from 'moment';
+import * as path from "path";
+import * as moment from "moment";
 
 import {
+  ALLOWED_MIME_TYPES_FOR_ATTACHMENT,
   DEFAULT_OTP_EXPIRY
-} from './defaultValueConstant';
-import {BadRequestException} from '@nestjs/common';
-import {Types} from 'mongoose';
-import {EmailSubjectEnum} from '@covid19-helpline/models';
-import {emailSubjectTemplateMapper} from '@covid19-helpline/models';
+} from "./defaultValueConstant";
+import { BadRequestException } from "@nestjs/common";
+import { Types } from "mongoose";
+import { EmailSubjectEnum } from "@covid19-helpline/models";
+import { emailSubjectTemplateMapper } from "@covid19-helpline/models";
 
 /**
  * path resolver helper function
@@ -63,7 +64,7 @@ export const toObjectId = (id: string | number): Types.ObjectId => {
  * @param date
  */
 export const isOTPExpired = (date: Date): boolean => {
-  return moment.utc(date).add(DEFAULT_OTP_EXPIRY, 's').isBefore(moment.utc());
+  return moment.utc(date).add(DEFAULT_OTP_EXPIRY, "s").isBefore(moment.utc());
 };
 
 /**
@@ -78,6 +79,15 @@ export const isValidMobileNo = (mobileNo: string) => {
  * addhaar no validator
  * @param aadhaarNo
  */
-export const aadhaarNoValidator = (aadhaarNo: string = '') => {
+export const aadhaarNoValidator = (aadhaarNo: string = "") => {
   return /^\d{4}\d{4}\d{4}$/g.test(aadhaarNo);
+};
+
+/**
+ * check valid attachment mime type
+ */
+export const isValidAttachmentMimeType = (mimeType: string) => {
+  return ALLOWED_MIME_TYPES_FOR_ATTACHMENT.some(allowedType => {
+    return mimeType.includes(allowedType);
+  });
 };

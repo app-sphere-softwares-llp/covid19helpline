@@ -7,7 +7,7 @@ export const DEFAULT_QUERY_FILTER = {
 export const DEFAULT_PAGINATED_ITEMS_COUNT = 10;
 
 // default date format
-export const DEFAULT_DATE_FORMAT = 'DD-MM-YYYY';
+export const DEFAULT_DATE_FORMAT = 'DD-MM-YYYY HH:mm:SS';
 
 // default decimal places
 export const DEFAULT_DECIMAL_PLACES = 2;
@@ -38,3 +38,5 @@ export const DEFAULT_SMS_SENDING_OPTIONS = {
 
 // default pass validity in hours
 export const DEFAULT_PASS_VALIDITY = 2;
+
+export const ALLOWED_MIME_TYPES_FOR_ATTACHMENT = ['application/pdf', 'image/'];
