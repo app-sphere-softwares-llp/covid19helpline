@@ -10,6 +10,7 @@
     "build": "ng build",
     "build-ui-prod": "ng build --prod && cp package.json dist/apps/UI && cp Dockerfile dist/apps/UI && cp Dockerrun.aws.json dist/apps/UI && cp custom-nginx-file.conf dist/apps/UI",
     "build-api-prod": "ng build api --prod && cp package.json dist/apps/api && cp .npmrc dist/apps/api",
+    "heroku-postbuild": "ng build api",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
     "e2e": "ng e2e",
