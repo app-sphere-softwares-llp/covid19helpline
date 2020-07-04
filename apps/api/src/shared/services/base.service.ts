@@ -163,7 +163,7 @@ export class BaseService<T extends Document> {
    */
   public async delete(id: string, session: ClientSession): Promise<T> {
     return this.model
-      .update({_id: this.toObjectId(id)} as any, {isDeleted: true})
+      .update({_id: this.toObjectId(id)} as any, {isDeleted: true}, session)
       .exec();
   }
 
