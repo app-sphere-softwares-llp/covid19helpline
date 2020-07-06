@@ -154,7 +154,6 @@
             "tsConfig": "apps/api/tsconfig.app.json",
             "assets": [
               "apps/api/src/assets",
-              "apps/api/src/.env",
               "apps/api/src/i18n",
               "apps/api/src/shared/templates"
             ]
