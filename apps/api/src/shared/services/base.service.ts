@@ -57,7 +57,7 @@ export class BaseService<T extends Document> {
    * @param doc
    * @param session
    */
-  public async create(doc: T | T[] | Partial<T> | Partial<T[]>, session: ClientSession): Promise<T | T[]> {
+  public async create(doc: any, session: ClientSession): Promise<T | T[]> {
     return await this.model.create(doc, {session});
   }
 
@@ -163,7 +163,7 @@ export class BaseService<T extends Document> {
    */
   public async delete(id: string, session: ClientSession): Promise<T> {
     return this.model
-      .update({_id: this.toObjectId(id)} as any, {isDeleted: true}, session)
+      .update({_id: this.toObjectId(id)} as any, {isDeleted: true} as any, session)
       .exec();
   }
 
